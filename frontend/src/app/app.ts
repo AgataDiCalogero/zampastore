@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
@@ -13,8 +13,9 @@ import { AuthService } from './services/auth.service';
 })
 export class App {
   protected menuItems: MenuItem[];
-
-  constructor(private authService: AuthService, private router: Router) {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  constructor() {
     this.menuItems = this.buildMenuItems();
   }
 
