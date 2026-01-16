@@ -5,10 +5,20 @@
 
 import express from 'express';
 import * as path from 'node:path';
+import swaggerUI from 'swagger-ui-express';
+import { openApiSpec } from './swagger';
 
 const app = express();
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+app.get('/api/openapi.json', (req, res) => {
+  res.json(openApiSpec);
+});
+app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(openApiSpec));
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true });
+});
 
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to api!' });
