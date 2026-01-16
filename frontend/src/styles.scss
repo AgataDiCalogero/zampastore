@@ -1,2 +1,24 @@
-@import 'primeflex/primeflex.css';
-@import 'primeicons/primeicons.css';
+@import "primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.min.css";
+
+:root {
+  --primary-color: #6d7b4d;
+  --primary-color-text: #f7f3e8;
+  --primary-dark-color: #58643d;
+  --primary-light-color: #9faa7c;
+  --primary-hover-color: #5f6c43;
+  --surface-0: #f7f3e8;
+  --surface-50: #f1ece1;
+  --surface-100: #e7dfd1;
+  --surface-200: #d8cdbd;
+  --surface-300: #c8bcae;
+  --surface-400: #b6a897;
+  --surface-900: #3f372f;
+  --text-color: #3f372f;
+  --text-color-secondary: #6b6056;
+  --surface-border: #d2c6b6;
+  --highlight-bg: #e2d8c6;
+  --highlight-text-color: #3f372f;
+}

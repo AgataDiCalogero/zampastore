@@ -5,6 +5,18 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/api",
+        "webpackConfig": "api/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
     "prune-lockfile": {
       "dependsOn": ["build"],
       "cache": true,
@@ -37,7 +49,9 @@
       "dependsOn": ["build"],
       "options": {
         "buildTarget": "api:build",
-        "runBuildTargetDependencies": false
+        "runBuildTargetDependencies": false,
+        "inspect": false,
+        "watch": false
       },
       "configurations": {
         "development": {

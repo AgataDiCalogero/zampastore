@@ -5,6 +5,7 @@
     "moduleResolution": "bundler",
     "lib": ["es2022", "dom"],
     "strict": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
