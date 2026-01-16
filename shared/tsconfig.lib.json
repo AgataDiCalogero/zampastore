@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../dist/out-tsc/shared",
+    "declaration": true,
+    "types": ["node"],
+    "module": "es2022",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src/**/*.ts"]
+}

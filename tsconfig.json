@@ -1,4 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
-  "compileOnSave": false
+  "compilerOptions": {},
+  "angularCompilerOptions": {
+    "strictTemplates": true
+  }
 }
