@@ -4,5 +4,9 @@
   "angularCompilerOptions": {
     "strictTemplates": true
   },
-  "references": []
+  "references": [
+    {
+      "path": "./shared"
+    }
+  ]
 }
