@@ -1,11 +1,23 @@
 @if (product$ | async; as product) {
-<section>
-  <h1>{{product.name}}</h1>
-  <p>Prezzo: {{product.priceCents / 100 | number: '1.2-2'}} €</p>
-  @if (product.imageUrl) {
-  <img [src]="product.imageUrl" [alt]="product.name" />
-  } @else {
-  <p>Prodotto non trovato</p>
-  }
-</section>
+<p-card [header]="product.name">
+  <ng-template pTemplate="content">
+    @if (product.imageUrl) {
+    <p-image
+      [src]="product.imageUrl"
+      [alt]="product.name"
+      width="320"
+    ></p-image>
+    }
+
+    <p>{{ product.priceCents / 100 | number: '1.2-2' }} €</p>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" [routerLink]="['/prodotti']">
+      Torna ai prodotti
+    </button>
+  </ng-template>
+</p-card>
+} @else {
+<p>Prodotto non trovato.</p>
 }

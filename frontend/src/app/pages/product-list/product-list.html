@@ -1,17 +1,28 @@
-@if (products$ | async; as products) {
-<section>
+@if (products$ | async; as products) { @if (products.length > 0) {
+<section class="grid">
   @for (product of products; track product.id) {
-  <article>
-    <h2>{{product.name}}</h2>
-    <p>{{product.priceCents / 100 | number: '1.2-2'}} €</p>
-    @if (product.imageUrl) {
-    <img [src]="product.imageUrl" [alt]="product.name" />
-    }
+  <p-card [header]="product.name">
+    <ng-template pTemplate="content">
+      @if (product.imageUrl) {
+      <p-image
+        [src]="product.imageUrl"
+        [alt]="product.name"
+        width="240"
+      ></p-image>
+      }
+      <p>{{ product.priceCents / 100 | number: '1.2-2' }} €</p>
+    </ng-template>
 
-    <a [routerLink]="['/prodotti', product.id]"> Vedi Dettaglio</a>
-  </article>
+    <ng-template pTemplate="footer">
+      <button pButton type="button" [routerLink]="['/prodotti', product.id]">
+        Vedi dettaglio
+      </button>
+    </ng-template>
+  </p-card>
   }
 </section>
 } @else {
+<p>Nessun prodotto disponibile.</p>
+} } @else {
 <p>Nessun prodotto disponibile.</p>
 }
