@@ -1,1 +1,17 @@
-<p>Pagina catalogo prodotti</p>
+@if (products$ | async; as products) {
+<section>
+  @for (product of products; track product.id) {
+  <article>
+    <h2>{{product.name}}</h2>
+    <p>{{product.priceCents / 100 | number: '1.2-2'}} €</p>
+    @if (product.imageUrl) {
+    <img [src]="product.imageUrl" [alt]="product.name" />
+    }
+
+    <a [routerLink]="['/prodotti', product.id]"> Vedi Dettaglio</a>
+  </article>
+  }
+</section>
+} @else {
+<p>Nessun prodotto disponibile.</p>
+}

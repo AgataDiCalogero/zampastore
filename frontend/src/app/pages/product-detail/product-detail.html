@@ -1,1 +1,11 @@
-<p>Pagina dettaglio prodotto</p>
+@if (product$ | async; as product) {
+<section>
+  <h1>{{product.name}}</h1>
+  <p>Prezzo: {{product.priceCents / 100 | number: '1.2-2'}} €</p>
+  @if (product.imageUrl) {
+  <img [src]="product.imageUrl" [alt]="product.name" />
+  } @else {
+  <p>Prodotto non trovato</p>
+  }
+</section>
+}
