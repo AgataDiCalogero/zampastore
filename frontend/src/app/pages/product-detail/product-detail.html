@@ -10,10 +10,39 @@
     }
 
     <p>{{ product.priceCents / 100 | number: '1.2-2' }} €</p>
+
+    <div class="flex align-items-center gap-2 mt-3">
+      <span>Quantità</span>
+      <p-inputNumber
+        [(ngModel)]="qty"
+        [min]="1"
+        [showButtons]="true"
+        buttonLayout="horizontal"
+        [minFractionDigits]="0"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        [inputStyle]="{ width: '4rem'}"
+        ariaLabel="Quantità"
+      >
+      </p-inputNumber>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-shopping-cart"
+        (click)="addToCart(product)"
+      >
+        Aggiungi al carrello
+      </button>
+    </div>
   </ng-template>
 
   <ng-template pTemplate="footer">
-    <button pButton type="button" [routerLink]="['/prodotti']">
+    <button
+      pButton
+      type="button"
+      icon="pi pi-arrow-left"
+      [routerLink]="['/prodotti']"
+    >
       Torna ai prodotti
     </button>
   </ng-template>

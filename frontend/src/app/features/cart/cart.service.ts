@@ -1,81 +1,59 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
-import { CartItem, Product } from '@org/shared';
+import { Product } from '@org/shared';
+import { BehaviorSubject, Observable, map } from 'rxjs';
+
+type CartItem = { product: Product; qty: number };
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private readonly productsById = new Map<string, Product>([
-    [
-      'p1',
-      {
-        id: 'p1',
-        name: 'Guinzaglio in cuoio',
-        priceCents: 2990,
-      },
-    ],
-    [
-      'p2',
-      {
-        id: 'p2',
-        name: 'Crocchette premium 2 kg',
-        priceCents: 2450,
-      },
-    ],
-    [
-      'p3',
-      {
-        id: 'p3',
-        name: 'Gioco in corda',
-        priceCents: 1200,
-      },
-    ],
-  ]);
-
-  private readonly cartItemsSubject = new BehaviorSubject<CartItem[]>([
-    { productId: 'p1', qty: 1 },
-    { productId: 'p2', qty: 2 },
-    { productId: 'p3', qty: 1 },
-  ]);
-
-  readonly items$ = this.cartItemsSubject.pipe(
-    map((items) =>
-      items
-        .map((item) => {
-          const product = this.productsById.get(item.productId);
-          if (!product) {
-            return null;
-          }
-          return { product, qty: item.qty };
-        })
-        .filter(
-          (item): item is { product: Product; qty: number } => item !== null
-        )
-    )
+  private readonly cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
+  readonly cartItems$ = this.getCartItems();
+  readonly cartTotal$ = this.cartItems$.pipe(
+    map(
+      (items) =>
+        items.reduce(
+          (total, item) => total + item.product.priceCents * item.qty,
+          0,
+        ) / 100,
+    ),
   );
 
-  readonly total$ = this.items$.pipe(
-    map((items) =>
-      items.reduce(
-        (total, item) => total + item.product.priceCents * item.qty,
-        0
-      ) / 100
-    )
-  );
+  getCartItems(): Observable<CartItem[]> {
+    return this.cartItemsSubject.asObservable();
+  }
+
+  addToCart(product: Product, qty: number): void {
+    const normalizedQty = Math.max(1, Math.floor(qty));
+    const current = this.cartItemsSubject.value;
+    const index = current.findIndex((item) => item.product.id === product.id);
+    let next: CartItem[];
+    if (index === -1) {
+      next = [...current, { product, qty: normalizedQty }];
+    } else {
+      next = current.map((item) =>
+        item.product.id === product.id
+          ? { ...item, qty: item.qty + normalizedQty }
+          : item,
+      );
+    }
+    this.cartItemsSubject.next(next);
+  }
 
   updateQuantity(productId: string, qty: number): void {
     const normalizedQty = Math.max(1, Math.floor(qty));
-    this.cartItemsSubject.next(
-      this.cartItemsSubject.value.map((item) =>
-        item.productId === productId
-          ? { ...item, qty: normalizedQty }
-          : item
-      )
+    const next = this.cartItemsSubject.value.map((item) =>
+      item.product.id === productId ? { ...item, qty: normalizedQty } : item,
     );
+    this.cartItemsSubject.next(next);
   }
 
   removeItem(productId: string): void {
-    this.cartItemsSubject.next(
-      this.cartItemsSubject.value.filter((item) => item.productId !== productId)
+    const next = this.cartItemsSubject.value.filter(
+      (item) => item.product.id !== productId,
     );
+    this.cartItemsSubject.next(next);
+  }
+  clearCart(): void {
+    this.cartItemsSubject.next([]);
   }
 }

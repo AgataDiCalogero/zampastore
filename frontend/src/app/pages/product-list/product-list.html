@@ -14,8 +14,22 @@
     </ng-template>
 
     <ng-template pTemplate="footer">
-      <button pButton type="button" [routerLink]="['/prodotti', product.id]">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-eye"
+        [routerLink]="['/prodotti', product.id]"
+      >
         Vedi dettaglio
+      </button>
+      <button
+        pButton
+        type="button"
+        severity="secondary"
+        icon="pi pi-shopping-cart"
+        (click)="addToCart(product)"
+      >
+        Aggiungi al carrello
       </button>
     </ng-template>
   </p-card>

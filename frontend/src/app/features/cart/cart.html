@@ -1,62 +1,69 @@
 <section>
-  <h1 class="text-xl mb-3">Carrello</h1>
-  <p-table
-    [value]="(cartItems$ | async) ?? []"
-    dataKey="product.id"
-    responsiveLayout="scroll"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Prodotto</th>
-        <th>Prezzo</th>
-        <th>Quantita</th>
-        <th>Totale</th>
-        <th>Azioni</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-item>
-      <tr>
-        <td>{{ item.product.name }}</td>
-        <td>{{ item.product.priceCents / 100 | number: '1.2-2' }} €</td>
-        <td>
-          <p-inputNumber
-            [ngModel]="item.qty"
-            (ngModelChange)="updateQuantity(item.product.id, $event)"
-            [showButtons]="true"
-            buttonLayout="horizontal"
-            [minFractionDigits]="0"
-            [maxFractionDigits]="0"
-            incrementButtonIcon="pi pi-plus"
-            decrementButtonIcon="pi pi-minus"
-            [inputStyle]="{ width: '4rem' }"
-            ariaLabel="Quantita"
-          ></p-inputNumber>
-        </td>
-        <td>
-          {{ (item.product.priceCents * item.qty) / 100 | number: '1.2-2' }} €
-        </td>
-        <td>
-          <p-button
-            icon="pi pi-trash"
-            severity="danger"
-            [text]="true"
-            ariaLabel="Rimuovi"
-            (onClick)="removeItem(item.product.id)"
-          ></p-button>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="5">Il carrello e vuoto.</td>
-      </tr>
-    </ng-template>
-  </p-table>
-
-  <div class="flex justify-content-end align-items-center gap-3 mt-3">
-    <span class="font-semibold"
-      >Totale: {{ ((cartTotal$ | async) ?? 0) | number: '1.2-2' }} €</span
+  <p-card header="Carrello">
+    <p-table
+      [value]="(cartItems$ | async) ?? []"
+      dataKey="product.id"
+      responsiveLayout="scroll"
     >
-    <p-button label="Conferma ordine" icon="pi pi-check"></p-button>
-  </div>
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col">Prodotto</th>
+          <th scope="col">Prezzo</th>
+          <th scope="col">Quantita</th>
+          <th scope="col">Totale</th>
+          <th scope="col">Azioni</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.product.name }}</td>
+          <td>{{ item.product.priceCents / 100 | number: '1.2-2' }} €</td>
+          <td>
+            <p-inputNumber
+              [ngModel]="item.qty"
+              (ngModelChange)="updateQuantity(item.product.id, $event)"
+              [showButtons]="true"
+              buttonLayout="horizontal"
+              [minFractionDigits]="0"
+              [maxFractionDigits]="0"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              [inputStyle]="{ width: '4rem' }"
+              ariaLabel="Quantita"
+            ></p-inputNumber>
+          </td>
+          <td>
+            {{ (item.product.priceCents * item.qty) / 100 | number: '1.2-2' }} €
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [text]="true"
+              ariaLabel="Rimuovi"
+              (onClick)="removeItem(item.product.id)"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">Il carrello e vuoto.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <p-divider></p-divider>
+
+    <div class="flex justify-content-end align-items-center gap-3">
+      <span class="font-semibold"
+        >Totale: {{ ((cartTotal$ | async) ?? 0) | number: '1.2-2' }} €</span
+      >
+      <p-button
+        label="Conferma ordine"
+        icon="pi pi-check"
+        (onClick)="confirmOrder()"
+      ></p-button>
+    </div>
+  </p-card>
 </section>

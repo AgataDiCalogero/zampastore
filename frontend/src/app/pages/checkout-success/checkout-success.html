@@ -1,1 +1,17 @@
-<p>Ordine confermato</p>
+<section class="flex justify-content-center">
+  <p-card header="Ordine confermato">
+    <ng-template pTemplate="content">
+      <p>Grazie! Il tuo ordine e stato confermato.</p>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-arrow-left"
+        [routerLink]="['/prodotti']"
+      >
+        Torna ai prodotti
+      </button>
+    </ng-template>
+  </p-card>
+</section>
