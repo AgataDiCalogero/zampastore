@@ -21,7 +21,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/api', (req, res) => {
-  res.send({ message: 'Welcome to api!' });
+  res.send({ message: 'Welcome to backend!' });
 });
 
 const port = process.env.PORT || 3333;

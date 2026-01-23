@@ -61,7 +61,7 @@
         }
       },
       "defaultConfiguration": "development",
-      "dependsOn": ["api:serve"],
+      "dependsOn": ["backend:serve"],
       "options": {
         "proxyConfig": "frontend/proxy.conf.json"
       }

@@ -4,9 +4,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug api with Nx",
+      "name": "Debug backend with Nx",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["nx", "serve", "api"],
+      "runtimeArgs": ["nx", "serve", "backend"],
       "env": {
         "NODE_OPTIONS": "--inspect=9229"
       },
@@ -15,7 +15,7 @@
       "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
       "outFiles": [
-        "${workspaceFolder}/api/dist/**/*.(m|c|)js",
+        "${workspaceFolder}/backend/dist/**/*.(m|c|)js",
         "!**/node_modules/**"
       ]
     }

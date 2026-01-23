@@ -3,7 +3,7 @@
 Monorepo Nx con:
 
 - `frontend` (app Angular)
-- `api` (app Node/Express)
+- `backend` (app Node/Express)
 - `shared` (libreria TypeScript)
 
 ## Setup
@@ -17,20 +17,20 @@ npm install
 ```sh
 # dev server
 npx nx serve frontend
-npx nx serve api
+npx nx serve backend
 
 # lint, test, typecheck
 npx nx lint frontend
 npx nx test frontend
 npx nx typecheck frontend
-npx nx lint api
-npx nx typecheck api
+npx nx lint backend
+npx nx typecheck backend
 npx nx lint shared
 npx nx typecheck shared
 
 # build
 npx nx build frontend
-npx nx build api
+npx nx build backend
 npx nx build shared
 
 # esegui lo stesso target su piu progetti
@@ -55,4 +55,4 @@ npx nx format:write
 
 - Alcuni target (es. `lint`/`typecheck`) sono inferiti da Nx in base a ESLint/TS e possono non comparire in `project.json`.
 - `frontend:test` esegue un build reale prima dei test: il primo run puo essere lento, poi la cache Nx accelera i successivi.
-- Al momento i test sono presenti solo in `frontend`: `api` e `shared` non hanno test, quindi non esiste un target `test` per loro.
+- Al momento i test sono presenti solo in `frontend`: `backend` e `shared` non hanno test, quindi non esiste un target `test` per loro.
