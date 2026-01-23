@@ -1,0 +1,53 @@
+:root {
+  /* Palette */
+  --color-primary: #083a4f;
+  --color-accent: #a58d66;
+  --color-secondary: #407e8c;
+  --surface-base: #e5e1dd;
+  --surface-subtle: #c0d5d6;
+
+  --text-primary: #083a4f;
+  --text-secondary: rgba(8, 58, 79, 0.7);
+  --text-inverse: #e5e1dd;
+
+  /* Derived */
+  --color-primary-dark: #062f40;
+  --color-primary-light: #0f4e66;
+  --color-accent-soft: #e8ddcc;
+  --color-secondary-soft: #d6e2e4;
+  --border-color: rgba(8, 58, 79, 0.16);
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  /* Shadow */
+  --shadow-1: 0 2px 8px rgba(8, 58, 79, 0.08);
+  --shadow-2: 0 8px 24px rgba(8, 58, 79, 0.12);
+  --shadow-3: 0 16px 48px rgba(8, 58, 79, 0.16);
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+  --space-4xl: 64px;
+
+  /* Typography */
+  --font-sans: "Manrope", "Segoe UI", Arial, sans-serif;
+  --font-serif: "Playfair Display", "Times New Roman", serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 36px;
+  --line-height-base: 1.5;
+}

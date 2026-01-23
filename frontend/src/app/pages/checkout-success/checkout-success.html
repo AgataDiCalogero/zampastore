@@ -1,17 +1,28 @@
-<section class="flex justify-content-center">
-  <p-card header="Ordine confermato">
-    <ng-template pTemplate="content">
+<section class="checkout-success">
+  <div class="checkout-hero">
+    <div class="checkout-badge">
+      <i class="pi pi-check"></i>
+    </div>
+    <div class="checkout-copy">
+      <h2>Ordine confermato</h2>
       <p>Grazie! Il tuo ordine e stato confermato.</p>
-    </ng-template>
-    <ng-template pTemplate="footer">
-      <button
-        pButton
-        type="button"
-        icon="pi pi-arrow-left"
-        [routerLink]="['/prodotti']"
-      >
-        Torna ai prodotti
+    </div>
+
+    <div class="checkout-meta">
+      <div>
+        <span class="label">Riferimento</span>
+        <span class="value">{{ orderReference }}</span>
+      </div>
+      <div>
+        <span class="label">Stato</span>
+        <span class="value">In preparazione</span>
+      </div>
+    </div>
+
+    <div class="checkout-actions">
+      <button pButton type="button" icon="pi pi-arrow-left" [routerLink]="['/prodotti']">
+        Continua lo shopping
       </button>
-    </ng-template>
-  </p-card>
+    </div>
+  </div>
 </section>

@@ -1,52 +1,90 @@
-@if (product$ | async; as product) {
-<p-card [header]="product.name">
-  <ng-template pTemplate="content">
-    @if (product.imageUrl) {
-    <p-image
-      [src]="product.imageUrl"
-      [alt]="product.name"
-      width="320"
-    ></p-image>
-    }
+@if (productState$ | async; as state) {
+  @if (state.status === 'ready') {
+    <section class="product-detail">
+      <p-card class="product-detail-card" [header]="state.product.name">
+        <ng-template pTemplate="content">
+          <div class="product-detail-grid">
+            <div class="product-detail-media">
+              @if (state.product.imageUrl) {
+                <p-image
+                  [src]="state.product.imageUrl"
+                  [alt]="state.product.name"
+                  width="320"
+                ></p-image>
+              }
+            </div>
+            <div class="product-detail-info">
+              <p class="product-detail-price">
+                {{ state.product.priceCents / 100 | number: '1.2-2' }} €
+              </p>
 
-    <p>{{ product.priceCents / 100 | number: '1.2-2' }} €</p>
+              <div class="product-detail-qty">
+                <span class="product-detail-label">Quantità</span>
+                <p-inputNumber
+                  [formControl]="qtyControl"
+                  [min]="1"
+                  [showButtons]="true"
+                  buttonLayout="horizontal"
+                  [minFractionDigits]="0"
+                  incrementButtonIcon="pi pi-plus"
+                  decrementButtonIcon="pi pi-minus"
+                  ariaLabel="Quantità"
+                >
+                </p-inputNumber>
+              </div>
 
-    <div class="flex align-items-center gap-2 mt-3">
-      <span>Quantità</span>
-      <p-inputNumber
-        [(ngModel)]="qty"
-        [min]="1"
-        [showButtons]="true"
-        buttonLayout="horizontal"
-        [minFractionDigits]="0"
-        incrementButtonIcon="pi pi-plus"
-        decrementButtonIcon="pi pi-minus"
-        [inputStyle]="{ width: '4rem'}"
-        ariaLabel="Quantità"
-      >
-      </p-inputNumber>
-      <button
-        pButton
-        type="button"
-        icon="pi pi-shopping-cart"
-        (click)="addToCart(product)"
-      >
-        Aggiungi al carrello
-      </button>
-    </div>
-  </ng-template>
+              <button
+                class="product-detail-cta"
+                pButton
+                type="button"
+                icon="pi pi-shopping-cart"
+                (click)="addToCart(state.product)"
+              >
+                Aggiungi al carrello
+              </button>
+            </div>
+          </div>
+        </ng-template>
 
-  <ng-template pTemplate="footer">
-    <button
-      pButton
-      type="button"
-      icon="pi pi-arrow-left"
-      [routerLink]="['/prodotti']"
-    >
-      Torna ai prodotti
-    </button>
-  </ng-template>
-</p-card>
-} @else {
-<p>Prodotto non trovato.</p>
+        <ng-template pTemplate="footer">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-arrow-left"
+            [routerLink]="['/prodotti']"
+          >
+            Torna ai prodotti
+          </button>
+        </ng-template>
+      </p-card>
+    </section>
+  } @else if (state.status === 'loading') {
+    <section class="product-detail">
+      <div class="product-detail-skeleton">
+        <div class="product-detail-media">
+          <p-skeleton height="320px"></p-skeleton>
+        </div>
+        <div class="product-detail-info">
+          <p-skeleton width="60%" height="24px"></p-skeleton>
+          <p-skeleton width="30%" height="20px"></p-skeleton>
+          <div class="product-detail-qty">
+            <p-skeleton width="80px" height="18px"></p-skeleton>
+            <p-skeleton width="160px" height="44px"></p-skeleton>
+          </div>
+          <p-skeleton width="200px" height="44px"></p-skeleton>
+        </div>
+      </div>
+    </section>
+  } @else {
+    <section class="product-empty">
+      <div class="empty-state">
+        <i class="pi pi-search"></i>
+        <h3>Prodotto non trovato</h3>
+        <p>Il prodotto che cerchi non e disponibile.</p>
+        <button pButton type="button" [routerLink]="['/prodotti']">
+          Torna al catalogo
+        </button>
+      </div>
+    </section>
+  }
 }

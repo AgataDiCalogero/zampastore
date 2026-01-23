@@ -1,4 +1,28 @@
+<p-toast key="app" position="top-right">
+  <ng-template pTemplate="message" let-message>
+    <div class="toast-content">
+      <div class="toast-text">
+        <div class="toast-summary">{{ message.summary }}</div>
+        <div class="toast-detail">{{ message.detail }}</div>
+      </div>
+      <button
+        *ngIf="message?.data?.actionLabel"
+        pButton
+        type="button"
+        class="p-button-text p-button-sm"
+        (click)="message.data.action()"
+      >
+        {{ message.data.actionLabel }}
+      </button>
+    </div>
+  </ng-template>
+</p-toast>
+
 <p-menubar [model]="menuItems"></p-menubar>
 <main class="app-content">
-  <router-outlet></router-outlet>
+  <div class="page">
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </main>

@@ -1,12 +1,15 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
 import { MENU_ITEMS } from './menu-items';
 import { AuthService } from './services/auth.service';
 
 @Component({
-  imports: [MenubarModule, RouterModule],
+  imports: [CommonModule, MenubarModule, RouterModule, ToastModule, ButtonModule],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',

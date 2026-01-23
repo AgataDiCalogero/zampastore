@@ -1,69 +1,90 @@
-<section>
-  <p-card header="Carrello">
-    <p-table
-      [value]="(cartItems$ | async) ?? []"
-      dataKey="product.id"
-      responsiveLayout="scroll"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th scope="col">Prodotto</th>
-          <th scope="col">Prezzo</th>
-          <th scope="col">Quantita</th>
-          <th scope="col">Totale</th>
-          <th scope="col">Azioni</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-item>
-        <tr>
-          <td>{{ item.product.name }}</td>
-          <td>{{ item.product.priceCents / 100 | number: '1.2-2' }} €</td>
-          <td>
-            <p-inputNumber
-              [ngModel]="item.qty"
-              (ngModelChange)="updateQuantity(item.product.id, $event)"
-              [showButtons]="true"
-              buttonLayout="horizontal"
-              [minFractionDigits]="0"
-              [maxFractionDigits]="0"
-              incrementButtonIcon="pi pi-plus"
-              decrementButtonIcon="pi pi-minus"
-              [inputStyle]="{ width: '4rem' }"
-              ariaLabel="Quantita"
-            ></p-inputNumber>
-          </td>
-          <td>
-            {{ (item.product.priceCents * item.qty) / 100 | number: '1.2-2' }} €
-          </td>
-          <td>
+<section class="cart-page">
+  <p-card class="cart-card" header="Carrello">
+    @if (cartItems$ | async; as cartItems) {
+      @if (cartItems.length > 0) {
+        <div class="cart-layout">
+          <div class="cart-table">
+            <p-table
+              [value]="cartItems"
+              dataKey="product.id"
+              responsiveLayout="scroll"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th scope="col">Prodotto</th>
+                  <th scope="col">Prezzo</th>
+                  <th scope="col">Quantita</th>
+                  <th scope="col">Totale</th>
+                  <th scope="col">Azioni</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-cartItem>
+                <tr>
+                  <td>{{ cartItem.product.name }}</td>
+                  <td>
+                    {{ cartItem.product.priceCents / 100 | number: '1.2-2' }} €
+                  </td>
+                  <td>
+                    <p-inputNumber
+                      [ngModel]="cartItem.qty"
+                      (ngModelChange)="updateQuantity(cartItem.product.id, $event)"
+                      [showButtons]="true"
+                      buttonLayout="horizontal"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="0"
+                      incrementButtonIcon="pi pi-plus"
+                      decrementButtonIcon="pi pi-minus"
+                      [inputStyle]="{ width: '4rem' }"
+                      ariaLabel="Quantita"
+                    ></p-inputNumber>
+                  </td>
+                  <td>
+                    {{
+                      (cartItem.product.priceCents * cartItem.qty) / 100
+                        | number: '1.2-2'
+                    }}
+                    €
+                  </td>
+                  <td>
+                    <p-button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      [text]="true"
+                      ariaLabel="Rimuovi"
+                      (onClick)="removeItem(cartItem.product.id)"
+                    ></p-button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+
+          <aside class="cart-summary">
+            <div class="cart-summary-row">
+              <span class="font-semibold"
+                >Totale:
+                {{ ((cartTotal$ | async) ?? 0) | number: '1.2-2' }} €</span
+              >
+            </div>
             <p-button
-              icon="pi pi-trash"
-              severity="danger"
-              [text]="true"
-              ariaLabel="Rimuovi"
-              (onClick)="removeItem(item.product.id)"
+              label="Conferma ordine"
+              icon="pi pi-check"
+              (onClick)="confirmOrder()"
             ></p-button>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="5">Il carrello e vuoto.</td>
-        </tr>
-      </ng-template>
-    </p-table>
-
-    <p-divider></p-divider>
-
-    <div class="flex justify-content-end align-items-center gap-3">
-      <span class="font-semibold"
-        >Totale: {{ ((cartTotal$ | async) ?? 0) | number: '1.2-2' }} €</span
-      >
-      <p-button
-        label="Conferma ordine"
-        icon="pi pi-check"
-        (onClick)="confirmOrder()"
-      ></p-button>
-    </div>
+          </aside>
+        </div>
+      } @else {
+        <div class="cart-empty">
+          <div class="empty-state">
+            <i class="pi pi-shopping-bag"></i>
+            <h3>Il carrello e vuoto</h3>
+            <p>Scegli i migliori prodotti per il tuo animale.</p>
+            <button pButton type="button" [routerLink]="['/prodotti']">
+              Vai al catalogo
+            </button>
+          </div>
+        </div>
+      }
+    }
   </p-card>
 </section>

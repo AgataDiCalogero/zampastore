@@ -3,5 +3,43 @@
 }
 
 .app-content {
-  padding: 1.5rem;
+  background: var(--surface-base);
+}
+
+:host ::ng-deep .p-menubar {
+  background: var(--color-primary);
+  border: 1px solid rgba(8, 58, 79, 0.2);
+  border-radius: var(--radius-md);
+  margin: var(--space-lg) auto 0;
+  max-width: 1200px;
+  padding: 0 var(--space-md);
+}
+
+:host ::ng-deep .p-menubar .p-menubar-button {
+  color: var(--text-inverse);
+}
+
+:host ::ng-deep .p-menubar .p-menubar-root-list {
+  background: var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+:host ::ng-deep .p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-link {
+  color: var(--text-inverse);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+
+:host ::ng-deep
+  .p-menubar
+  .p-menubar-root-list
+  > .p-menuitem
+  > .p-menuitem-link:hover {
+  background: rgba(229, 225, 221, 0.12);
+}
+
+@media (max-width: 768px) {
+  :host ::ng-deep .p-menubar {
+    margin: var(--space-md) var(--space-lg) 0;
+  }
 }

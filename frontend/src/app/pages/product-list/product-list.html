@@ -1,42 +1,38 @@
-@if (products$ | async; as products) { @if (products.length > 0) {
-<section class="grid">
-  @for (product of products; track product.id) {
-  <p-card [header]="product.name">
-    <ng-template pTemplate="content">
-      @if (product.imageUrl) {
-      <p-image
-        [src]="product.imageUrl"
-        [alt]="product.name"
-        width="240"
-      ></p-image>
-      }
-      <p>{{ product.priceCents / 100 | number: '1.2-2' }} €</p>
-    </ng-template>
-
-    <ng-template pTemplate="footer">
-      <button
-        pButton
-        type="button"
-        icon="pi pi-eye"
-        [routerLink]="['/prodotti', product.id]"
-      >
-        Vedi dettaglio
-      </button>
-      <button
-        pButton
-        type="button"
-        severity="secondary"
-        icon="pi pi-shopping-cart"
-        (click)="addToCart(product)"
-      >
-        Aggiungi al carrello
-      </button>
-    </ng-template>
-  </p-card>
+@if (products$ | async; as products) {
+  @if (products.length > 0) {
+    <section class="product-list">
+      <div class="product-grid">
+        @for (product of products; track product.id) {
+          <app-product-card
+            [product]="product"
+            (addToCart)="addToCart($event)"
+          ></app-product-card>
+        }
+      </div>
+    </section>
+  } @else {
+    <section class="product-empty">
+      <div class="empty-state">
+        <i class="pi pi-box"></i>
+        <h3>Nessun prodotto disponibile</h3>
+        <p>Stiamo aggiornando il catalogo. Torna tra poco.</p>
+      </div>
+    </section>
   }
-</section>
 } @else {
-<p>Nessun prodotto disponibile.</p>
-} } @else {
-<p>Nessun prodotto disponibile.</p>
+  <section class="product-list">
+    <div class="product-grid">
+      @for (item of skeletonItems; track $index) {
+        <div class="product-card-skeleton">
+          <p-skeleton width="70%" height="22px"></p-skeleton>
+          <p-skeleton height="180px"></p-skeleton>
+          <p-skeleton width="35%" height="20px"></p-skeleton>
+          <div class="product-card-actions">
+            <p-skeleton width="120px" height="36px"></p-skeleton>
+            <p-skeleton width="160px" height="36px"></p-skeleton>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
 }
