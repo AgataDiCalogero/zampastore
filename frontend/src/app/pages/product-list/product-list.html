@@ -1,8 +1,8 @@
-@if (products$ | async; as products) {
-  @if (products.length > 0) {
+@if (state$ | async; as state) {
+  @if (state.status === 'ready') {
     <section class="product-list">
       <div class="product-grid">
-        @for (product of products; track product.id) {
+        @for (product of state.products; track product.id) {
           <app-product-card
             [product]="product"
             (addToCart)="addToCart($event)"
@@ -10,7 +10,7 @@
         }
       </div>
     </section>
-  } @else {
+  } @else if (state.status === 'empty') {
     <section class="product-empty">
       <div class="empty-state">
         <i class="pi pi-box"></i>
@@ -18,21 +18,29 @@
         <p>Stiamo aggiornando il catalogo. Torna tra poco.</p>
       </div>
     </section>
-  }
-} @else {
-  <section class="product-list">
-    <div class="product-grid">
-      @for (item of skeletonItems; track $index) {
-        <div class="product-card-skeleton">
-          <p-skeleton width="70%" height="22px"></p-skeleton>
-          <p-skeleton height="180px"></p-skeleton>
-          <p-skeleton width="35%" height="20px"></p-skeleton>
-          <div class="product-card-actions">
-            <p-skeleton width="120px" height="36px"></p-skeleton>
-            <p-skeleton width="160px" height="36px"></p-skeleton>
+  } @else if (state.status === 'error') {
+    <section class="product-empty">
+      <div class="empty-state">
+        <i class="pi pi-exclamation-triangle"></i>
+        <h3>Errore nel caricamento</h3>
+        <p>Riprova più tardi.</p>
+      </div>
+    </section>
+  } @else {
+    <section class="product-list">
+      <div class="product-grid">
+        @for (item of skeletonItems; track $index) {
+          <div class="product-card-skeleton">
+            <p-skeleton width="70%" height="22px"></p-skeleton>
+            <p-skeleton height="180px"></p-skeleton>
+            <p-skeleton width="35%" height="20px"></p-skeleton>
+            <div class="product-card-actions">
+              <p-skeleton width="120px" height="36px"></p-skeleton>
+              <p-skeleton width="160px" height="36px"></p-skeleton>
+            </div>
           </div>
-        </div>
-      }
-    </div>
-  </section>
+        }
+      </div>
+    </section>
+  }
 }

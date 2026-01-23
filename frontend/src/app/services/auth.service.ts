@@ -1,18 +1,59 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import {
+  AuthResponse,
+  AuthUser,
+  LoginRequest,
+  RegisterRequest,
+} from '@org/shared';
+import { Observable, catchError, map, of, tap, throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private authenticated = false;
+  private readonly http = inject(HttpClient);
+  private readonly authStateSignal = signal<AuthUser | null>(null);
+  readonly authState = this.authStateSignal.asReadonly();
 
   isAuthenticated(): boolean {
-    return this.authenticated;
+    return this.authState() !== null;
   }
 
-  login(): void {
-    this.authenticated = true;
+  login(credentials: LoginRequest): Observable<AuthUser> {
+    return this.http.post<AuthResponse>('/api/auth/login', credentials).pipe(
+      map((response) => response.user),
+      tap((user) => this.authStateSignal.set(user)),
+    );
   }
 
-  logout(): void {
-    this.authenticated = false;
+  register(payload: RegisterRequest): Observable<AuthUser> {
+    return this.http.post<AuthResponse>('/api/auth/register', payload).pipe(
+      map((response) => response.user),
+      tap((user) => this.authStateSignal.set(user)),
+    );
+  }
+
+  refresh(): Observable<AuthUser | null> {
+    return this.http.get<AuthResponse>('/api/auth/me').pipe(
+      map((response) => response.user),
+      tap((user) => this.authStateSignal.set(user)),
+      catchError(() => {
+        this.authStateSignal.set(null);
+        return of(null);
+      }),
+    );
+  }
+
+  logout(): Observable<void> {
+    return this.http.post<void>('/api/auth/logout', {}).pipe(
+      tap(() => this.authStateSignal.set(null)),
+      catchError((error) => {
+        this.authStateSignal.set(null);
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  clearSession(): void {
+    this.authStateSignal.set(null);
   }
 }

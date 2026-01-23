@@ -1,1 +1,77 @@
-<p>Pagina registrazione</p>
+<section class="auth-page">
+  <p-card header="Crea account" class="auth-card">
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-field">
+        <label for="username">Nome</label>
+        <input
+          pInputText
+          id="username"
+          type="text"
+          autocomplete="name"
+          formControlName="username"
+        />
+        @if (form.controls.username.touched && form.controls.username.invalid) {
+          <small class="form-error">Inserisci almeno 2 caratteri.</small>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          autocomplete="email"
+          formControlName="email"
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <small class="form-error">Inserisci una email valida.</small>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <p-password
+          inputId="password"
+          formControlName="password"
+          [toggleMask]="true"
+          [feedback]="false"
+        ></p-password>
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <small class="form-error">La password deve avere almeno 6 caratteri.</small>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="confirmPassword">Conferma password</label>
+        <p-password
+          inputId="confirmPassword"
+          formControlName="confirmPassword"
+          [toggleMask]="true"
+          [feedback]="false"
+        ></p-password>
+        @if (form.touched && form.errors?.['passwordMismatch']) {
+          <small class="form-error">Le password non coincidono.</small>
+        }
+      </div>
+
+      @if (errorMessage) {
+        <div class="form-error" role="alert">{{ errorMessage }}</div>
+      }
+
+      <div class="form-actions">
+        <button pButton type="submit" [disabled]="form.invalid || submitting">
+          Crea account
+        </button>
+        <button
+          pButton
+          type="button"
+          class="p-button-text"
+          [routerLink]="['/login']"
+        >
+          Ho già un account
+        </button>
+      </div>
+    </form>
+  </p-card>
+</section>

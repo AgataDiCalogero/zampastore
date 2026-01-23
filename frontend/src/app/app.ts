@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
@@ -15,12 +15,9 @@ import { AuthService } from './services/auth.service';
   styleUrl: './app.scss',
 })
 export class App {
-  protected menuItems: MenuItem[];
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  constructor() {
-    this.menuItems = this.buildMenuItems();
-  }
+  protected readonly menuItems = computed(() => this.buildMenuItems());
 
   private buildMenuItems(): MenuItem[] {
     const isAuthenticated = this.authService.isAuthenticated();
@@ -40,8 +37,14 @@ export class App {
             label: 'Logout',
             routerLink: undefined,
             command: () => {
-              this.authService.logout();
-              this.router.navigateByUrl('/');
+              this.authService.logout().subscribe({
+                next: () => {
+                  void this.router.navigateByUrl('/');
+                },
+                error: () => {
+                  void this.router.navigateByUrl('/');
+                },
+              });
             },
           };
         }

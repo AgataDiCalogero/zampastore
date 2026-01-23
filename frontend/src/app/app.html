@@ -5,8 +5,8 @@
         <div class="toast-summary">{{ message.summary }}</div>
         <div class="toast-detail">{{ message.detail }}</div>
       </div>
+      @if (message?.data?.actionLabel) {
       <button
-        *ngIf="message?.data?.actionLabel"
         pButton
         type="button"
         class="p-button-text p-button-sm"
@@ -14,11 +14,12 @@
       >
         {{ message.data.actionLabel }}
       </button>
+      }
     </div>
   </ng-template>
 </p-toast>
 
-<p-menubar [model]="menuItems"></p-menubar>
+<p-menubar [model]="menuItems()"></p-menubar>
 <main class="app-content">
   <div class="page">
     <div class="container">
