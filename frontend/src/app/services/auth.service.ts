@@ -6,13 +6,19 @@ import {
   LoginRequest,
   RegisterRequest,
 } from '@org/shared';
-import { Observable, catchError, map, of, tap, throwError } from 'rxjs';
+import { Router } from '@angular/router';
+import { firstValueFrom, Observable, catchError, map, of, tap, throwError } from 'rxjs';
+import { UiFeedbackService } from './ui-feedback.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly uiFeedback = inject(UiFeedbackService);
   private readonly authStateSignal = signal<AuthUser | null>(null);
   readonly authState = this.authStateSignal.asReadonly();
+  private initialized = false;
+  private initInFlight: Promise<void> | null = null;
 
   isAuthenticated(): boolean {
     return this.authState() !== null;
@@ -43,6 +49,25 @@ export class AuthService {
     );
   }
 
+  init(): Promise<void> {
+    if (this.initialized) {
+      return Promise.resolve();
+    }
+    if (this.initInFlight) {
+      return this.initInFlight;
+    }
+
+    this.initInFlight = firstValueFrom(this.refresh())
+      .then(() => {
+        this.initialized = true;
+      })
+      .finally(() => {
+        this.initInFlight = null;
+      });
+
+    return this.initInFlight;
+  }
+
   logout(): Observable<void> {
     return this.http.post<void>('/api/auth/logout', {}).pipe(
       tap(() => this.authStateSignal.set(null)),
@@ -55,5 +80,19 @@ export class AuthService {
 
   clearSession(): void {
     this.authStateSignal.set(null);
+  }
+
+  handleUnauthorized(returnUrl?: string): void {
+    this.clearSession();
+    this.uiFeedback.showSessionExpired();
+
+    const normalizedReturnUrl = returnUrl ?? '/';
+    const isAuthRoute =
+      normalizedReturnUrl.startsWith('/login') ||
+      normalizedReturnUrl.startsWith('/registrazione');
+    const targetUrl = !isAuthRoute
+      ? `/login?returnUrl=${encodeURIComponent(normalizedReturnUrl)}`
+      : '/login';
+    void this.router.navigateByUrl(targetUrl);
   }
 }

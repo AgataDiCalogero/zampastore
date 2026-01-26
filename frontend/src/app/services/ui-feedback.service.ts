@@ -46,4 +46,14 @@ export class UiFeedbackService {
       life: 4000,
     });
   }
+
+  showSessionExpired(): void {
+    this.messageService.add({
+      key: this.toastKey,
+      severity: 'warn',
+      summary: 'Sessione scaduta',
+      detail: 'Accedi di nuovo per continuare.',
+      life: 3500,
+    });
+  }
 }
