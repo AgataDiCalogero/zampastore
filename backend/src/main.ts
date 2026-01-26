@@ -7,8 +7,12 @@ import express from 'express';
 import * as path from 'node:path';
 import swaggerUI from 'swagger-ui-express';
 import { openApiSpec } from './swagger';
+import { authRouter } from './routes/auth.routes';
+import { productsRouter } from './routes/products.routes';
 
 const app = express();
+
+app.use(express.json());
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
@@ -23,6 +27,9 @@ app.get('/api/health', (req, res) => {
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to backend!' });
 });
+
+app.use('/api/products', productsRouter);
+app.use('/api/auth', authRouter);
 
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {

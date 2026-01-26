@@ -1,0 +1,45 @@
+import type { Request, Response } from 'express';
+import { randomUUID } from 'node:crypto';
+
+export const SESSION_COOKIE = 'zs_session';
+const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
+const isProd = process.env.NODE_ENV === 'production';
+
+export const createSessionId = (): string => randomUUID();
+
+export const getCookie = (req: Request, name: string): string | undefined => {
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) {
+    return undefined;
+  }
+
+  const parts = cookieHeader.split(';');
+  for (const part of parts) {
+    const [key, ...rest] = part.trim().split('=');
+    if (key === name) {
+      return decodeURIComponent(rest.join('='));
+    }
+  }
+
+  return undefined;
+};
+
+export const setSessionCookie = (res: Response, sessionId: string): void => {
+  res.cookie(SESSION_COOKIE, sessionId, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: isProd,
+    maxAge: SESSION_TTL_MS,
+    path: '/',
+  });
+};
+
+export const clearSessionCookie = (res: Response): void => {
+  res.cookie(SESSION_COOKIE, '', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: isProd,
+    maxAge: 0,
+    path: '/',
+  });
+};
