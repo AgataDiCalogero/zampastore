@@ -1,19 +1,25 @@
 <section class="home-hero">
   <div class="hero-content">
     <span class="hero-eyebrow">ZampaStore</span>
-    <h1>Benessere quotidiano per chi ami di piu.</h1>
+    <h1>Benessere quotidiano per chi ami di più.</h1>
     <p class="hero-subtitle">
       Selezioniamo prodotti sicuri e curati per cani e gatti, con spedizioni
       rapide e assistenza dedicata.
     </p>
     <div class="hero-actions">
-      <button pButton type="button" [routerLink]="['/prodotti']">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-arrow-right"
+        [routerLink]="['/prodotti']"
+      >
         Vai al catalogo
       </button>
       <button
         pButton
         type="button"
-        class="p-button-text"
+        class="p-button-secondary"
+        icon="pi pi-shopping-cart"
         [routerLink]="['/carrello']"
       >
         Vedi carrello
@@ -21,11 +27,11 @@
     </div>
   </div>
   <div class="hero-card">
-    <div class="hero-card-title">Perche scegliere ZampaStore</div>
+    <div class="hero-card-title">Perché scegliere ZampaStore</div>
     <ul>
-      <li>Prodotti selezionati con veterinari</li>
-      <li>Spedizioni in 24/48h in tutta Italia</li>
-      <li>Supporto clienti rapido e umano</li>
+      <li>Selezione curata con veterinari</li>
+      <li>Consegna rapida in 24/48h</li>
+      <li>Resi facili e assistenza 7 giorni su 7</li>
     </ul>
   </div>
 </section>
@@ -81,21 +87,21 @@
 
 <section class="home-values">
   <div class="value-card">
-    <h3>Selezione attenta</h3>
+    <h3>Consegna rapida</h3>
     <p class="text-muted">
-      Prodotti scelti per qualita, ingredienti e comfort dei tuoi animali.
+      Spediamo in 24/48h con tracking sempre disponibile.
     </p>
   </div>
   <div class="value-card">
-    <h3>Prezzi onesti</h3>
+    <h3>Resi semplici</h3>
     <p class="text-muted">
-      Offerte chiare e trasparenti, senza costi nascosti al checkout.
+      Reso facile entro 30 giorni, senza stress.
     </p>
   </div>
   <div class="value-card">
-    <h3>Assistenza reale</h3>
+    <h3>Pagamenti sicuri</h3>
     <p class="text-muted">
-      Un team che risponde veloce e ti aiuta a scegliere il meglio.
+      Transazioni protette e checkout veloce con Stripe.
     </p>
   </div>
 </section>

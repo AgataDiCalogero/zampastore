@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '@org/products/data-access';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -6,7 +6,6 @@ import { map, Observable, of, startWith, switchMap } from 'rxjs';
 import { Product } from '@org/shared';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { ImageModule } from 'primeng/image';
 import { CartService } from '@org/cart/data-access';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -25,7 +24,6 @@ type ProductState =
     RouterModule,
     CardModule,
     ButtonModule,
-    ImageModule,
     InputNumberModule,
     ReactiveFormsModule,
     SkeletonModule,
@@ -38,6 +36,7 @@ export class ProductDetail {
   private readonly cartService = inject(CartService);
   private readonly route = inject(ActivatedRoute);
   private readonly uiFeedback = inject(UiFeedbackService);
+  protected readonly imageError = signal(false);
   protected readonly qtyControl = new FormControl<number>(1, {
     nonNullable: true,
     validators: [Validators.min(1)],
@@ -62,5 +61,9 @@ export class ProductDetail {
 
     this.cartService.addToCart(product, safeQty);
     this.uiFeedback.showAdd(product.name);
+  }
+
+  protected handleImageError(): void {
+    this.imageError.set(true);
   }
 }

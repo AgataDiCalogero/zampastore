@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Orders } from '@org/orders/feature';
+import { Orders } from './orders';
 
 describe('Orders', () => {
   beforeEach(async () => {

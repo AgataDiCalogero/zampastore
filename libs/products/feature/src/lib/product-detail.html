@@ -4,18 +4,28 @@
     <ng-template pTemplate="content">
       <div class="product-detail-grid">
         <div class="product-detail-media">
-          @if (state.product.imageUrl) {
-          <p-image
-            [src]="state.product.imageUrl"
-            [alt]="state.product.name"
-            width="320"
-          ></p-image>
+          @if (state.product.imageUrl && !imageError()) {
+            <img
+              [src]="state.product.imageUrl"
+              [alt]="state.product.name"
+              (error)="handleImageError()"
+            />
+          } @else {
+            <div class="product-image-fallback">
+              <i class="pi pi-image"></i>
+              <span>{{ state.product.name }}</span>
+            </div>
           }
         </div>
         <div class="product-detail-info">
           <p class="product-detail-price">
             {{ state.product.priceCents / 100 | number: '1.2-2' }} €
           </p>
+          @if (state.product.description) {
+            <p class="product-detail-description">
+              {{ state.product.description }}
+            </p>
+          }
 
           <div class="product-detail-qty">
             <span class="product-detail-label">Quantità</span>
@@ -79,7 +89,7 @@
   <div class="empty-state">
     <i class="pi pi-search"></i>
     <h3>Prodotto non trovato</h3>
-    <p>Il prodotto che cerchi non e disponibile.</p>
+    <p>Il prodotto che cerchi non è disponibile.</p>
     <button pButton type="button" [routerLink]="['/prodotti']">
       Torna al catalogo
     </button>

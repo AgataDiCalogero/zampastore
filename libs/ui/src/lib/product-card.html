@@ -1,14 +1,23 @@
 <p-card class="product-card" [header]="product.name">
   <ng-template pTemplate="content">
     <div class="product-card-media">
-      @if (product.imageUrl) {
-      <p-image
-        [src]="product.imageUrl"
-        [alt]="product.name"
-        width="240"
-      ></p-image>
+      @if (product.imageUrl && !imageError()) {
+        <img
+          [src]="product.imageUrl"
+          [alt]="product.name"
+          loading="lazy"
+          (error)="handleImageError()"
+        />
+      } @else {
+        <div class="product-image-fallback">
+          <i class="pi pi-image"></i>
+          <span>{{ product.name }}</span>
+        </div>
       }
     </div>
+    @if (product.description) {
+      <p class="product-card-description">{{ product.description }}</p>
+    }
     <p class="product-card-price">
       {{ product.priceCents / 100 | number: '1.2-2' }} €
     </p>
@@ -19,7 +28,7 @@
       <button
         pButton
         type="button"
-        severity="secondary"
+        class="p-button-secondary"
         icon="pi pi-eye"
         [routerLink]="['/prodotti', product.id]"
       >

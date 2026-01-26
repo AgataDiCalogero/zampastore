@@ -116,7 +116,7 @@ export class Checkout {
     }
 
     if (this.cartSnapshot.length === 0) {
-      this.errorMessage = 'Il carrello e vuoto.';
+      this.errorMessage = 'Il carrello è vuoto.';
       return;
     }
 
@@ -149,7 +149,7 @@ export class Checkout {
         },
         error: () => {
           this.errorMessage =
-            'Non e stato possibile avviare il pagamento. Riprova.';
+            'Non è stato possibile avviare il pagamento. Riprova.';
         },
       });
   }

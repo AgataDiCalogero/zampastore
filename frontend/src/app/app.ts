@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
@@ -7,6 +7,14 @@ import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { MENU_ITEMS } from './menu-items';
 import { AuthService } from '@org/auth/data-access';
+
+type NavLink = {
+  id?: string;
+  label: string;
+  routerLink?: string | string[];
+  command?: () => void;
+  icon?: string;
+};
 
 @Component({
   imports: [
@@ -23,46 +31,76 @@ import { AuthService } from '@org/auth/data-access';
 export class App {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  protected readonly menuItems = computed(() => this.buildMenuItems());
+  protected readonly mobileMenuOpen = signal(false);
+  protected readonly desktopLinks = computed(() => this.buildNavLinks());
+  protected readonly mobileLinks = computed(() => this.buildNavLinks());
 
   private buildMenuItems(): MenuItem[] {
     const isAuthenticated = this.authService.isAuthenticated();
 
     return MENU_ITEMS.map((item) => {
-      if (item.label === 'I miei ordini') {
+      if (item.id === 'orders') {
         return {
           ...item,
           visible: isAuthenticated,
         };
       }
 
-      if (item.label === 'Login/Logout') {
+      if (item.id === 'auth') {
         if (isAuthenticated) {
           return {
             ...item,
-            label: 'Logout',
+            label: 'Esci',
             routerLink: undefined,
-            command: () => {
-              this.authService.logout().subscribe({
-                next: () => {
-                  void this.router.navigateByUrl('/');
-                },
-                error: () => {
-                  void this.router.navigateByUrl('/');
-                },
-              });
-            },
+            command: () => this.performLogout(),
           };
         }
 
         return {
           ...item,
-          label: 'Entra',
+          label: 'Accedi',
           routerLink: '/login',
         };
       }
 
       return item;
+    });
+  }
+
+  private buildNavLinks(): NavLink[] {
+    return this.buildMenuItems()
+      .filter((item) => item.visible !== false)
+      .map((item) => ({
+        id: item.id as string | undefined,
+        label: item.label ?? '',
+        routerLink: item.routerLink as string | string[] | undefined,
+        command: item.command ? () => item.command?.({} as never) : undefined,
+        icon: item.icon as string | undefined,
+      }))
+      .filter((item) => item.label);
+  }
+
+  protected toggleMobileMenu(): void {
+    this.mobileMenuOpen.update((value) => !value);
+  }
+
+  protected closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
+  }
+
+  protected handleMobileAction(action?: () => void): void {
+    action?.();
+    this.closeMobileMenu();
+  }
+
+  private performLogout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        void this.router.navigateByUrl('/');
+      },
+      error: () => {
+        void this.router.navigateByUrl('/');
+      },
     });
   }
 }

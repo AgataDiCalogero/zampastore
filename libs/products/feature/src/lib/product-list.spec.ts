@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { ProductList } from '@org/products/feature';
+import { ProductList } from './product-list';
 
 describe('ProductList', () => {
   beforeEach(async () => {

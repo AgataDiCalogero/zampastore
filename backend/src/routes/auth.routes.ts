@@ -42,7 +42,7 @@ authRouter.post('/register', (req, res) => {
 
   const result = register(username, email, password);
   if ('error' in result) {
-    res.status(409).json({ message: 'Email gia registrata.' });
+    res.status(409).json({ message: 'Email già registrata.' });
     return;
   }
 

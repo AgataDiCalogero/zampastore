@@ -34,7 +34,7 @@
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 .hero-card {
@@ -91,6 +91,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-xl);
+  grid-auto-rows: 1fr;
 }
 
 .product-card-skeleton {

@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
-import { ProductDetail } from '@org/products/feature';
+import { ProductDetail } from './product-detail';
 
 describe('ProductDetail', () => {
   beforeEach(async () => {

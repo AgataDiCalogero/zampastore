@@ -1,52 +1,75 @@
 <section class="auth-page">
-  <p-card header="Accedi" class="auth-card">
-    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
-      <div class="form-field">
-        <label for="email">Email</label>
-        <input
-          pInputText
-          id="email"
-          type="email"
-          autocomplete="email"
-          formControlName="email"
-        />
-        @if (form.controls.email.touched && form.controls.email.invalid) {
-        <small class="form-error">Inserisci una email valida.</small>
+  <div class="auth-shell">
+    <p-card header="Accedi" class="auth-card">
+      <p class="auth-intro">
+        Accedi per completare gli acquisti più velocemente e gestire i tuoi
+        ordini.
+      </p>
+      <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input
+            pInputText
+            id="email"
+            type="email"
+            autocomplete="email"
+            formControlName="email"
+          />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+          <small class="form-error">Inserisci una email valida.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="password">Password</label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [toggleMask]="true"
+            [feedback]="false"
+          ></p-password>
+          @if (
+            form.controls.password.touched && form.controls.password.invalid
+          ) {
+          <small class="form-error"
+            >La password deve avere almeno 6 caratteri.</small
+          >
+          }
+        </div>
+
+        @if (errorMessage) {
+        <div class="form-error" role="alert">{{ errorMessage }}</div>
         }
-      </div>
 
-      <div class="form-field">
-        <label for="password">Password</label>
-        <p-password
-          inputId="password"
-          formControlName="password"
-          [toggleMask]="true"
-          [feedback]="false"
-        ></p-password>
-        @if (form.controls.password.touched && form.controls.password.invalid) {
-        <small class="form-error"
-          >La password deve avere almeno 6 caratteri.</small
-        >
-        }
+        <div class="form-actions">
+          <button
+            pButton
+            type="submit"
+            [disabled]="form.invalid || submitting"
+          >
+            Accedi
+          </button>
+        </div>
+      </form>
+      <div class="auth-demo text-muted">
+        Account demo: demo&#64;zampastore.it / Demo123!
       </div>
+    </p-card>
 
-      @if (errorMessage) {
-      <div class="form-error" role="alert">{{ errorMessage }}</div>
-      }
-
-      <div class="form-actions">
-        <button pButton type="submit" [disabled]="form.invalid || submitting">
-          Entra
-        </button>
-        <button
-          pButton
-          type="button"
-          class="p-button-text"
-          [routerLink]="['/registrazione']"
-        >
-          Crea un account
-        </button>
-      </div>
-    </form>
-  </p-card>
+    <div class="auth-side">
+      <h2>Nuovo su ZampaStore?</h2>
+      <p class="text-muted">
+        Crea un account per salvare gli indirizzi, seguire gli ordini e ricevere
+        offerte dedicate.
+      </p>
+      <button
+        pButton
+        type="button"
+        class="p-button-secondary"
+        [routerLink]="['/registrazione']"
+      >
+        Crea il tuo account
+      </button>
+    </div>
+  </div>
 </section>

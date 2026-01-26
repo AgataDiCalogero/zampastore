@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { Cart } from '@org/cart/feature';
+import { Cart } from './cart';
 
 describe('Cart', () => {
   beforeEach(async () => {

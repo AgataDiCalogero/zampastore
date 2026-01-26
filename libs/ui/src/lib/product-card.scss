@@ -4,14 +4,14 @@
 }
 
 .product-card-media {
-  background: var(--surface-50);
+  background: var(--surface-elevated);
   border-radius: var(--radius-md);
   padding: var(--space-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
-  aspect-ratio: 1 / 1;
+  height: 220px;
+  overflow: hidden;
 }
 
 .product-card-price {
@@ -20,16 +20,31 @@
   color: var(--color-primary);
 }
 
+.product-card-description {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6em;
+}
+
 .product-card-actions {
   display: grid;
   grid-template-columns: 1fr;
   align-items: stretch;
   gap: var(--space-sm);
+  margin-top: auto;
 }
 
 :host ::ng-deep .product-card .p-button {
   width: 100%;
   justify-content: center;
+  white-space: nowrap;
+  font-size: 0.9rem;
 }
 
 :host ::ng-deep .product-card.p-card {
@@ -75,10 +90,24 @@
   margin-top: auto;
 }
 
-:host ::ng-deep .product-card .p-image img {
-  max-width: 100%;
+.product-card-media img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   border-radius: var(--radius-sm);
+}
+
+.product-image-fallback {
+  display: grid;
+  place-items: center;
+  gap: var(--space-sm);
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  padding: var(--space-md);
+}
+
+.product-image-fallback .pi {
+  font-size: 1.5rem;
+  color: var(--color-secondary);
 }

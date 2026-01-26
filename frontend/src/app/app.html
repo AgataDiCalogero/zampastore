@@ -20,7 +20,7 @@
 </p-toast>
 
 <header class="app-header">
-  <p-menubar [model]="menuItems()" class="app-menubar">
+  <p-menubar [model]="[]" class="app-menubar">
     <ng-template pTemplate="start">
       <a
         class="brand"
@@ -30,12 +30,112 @@
         <i class="pi pi-heart"></i>
         <span>ZampaStore</span>
       </a>
+      <nav class="desktop-nav" aria-label="Navigazione principale">
+        @for (link of desktopLinks(); track link.label) {
+          @if (link.routerLink) {
+            <a
+              class="desktop-nav-link"
+              [class.desktop-nav-link--cta]="link.id === 'auth'"
+              [routerLink]="link.routerLink"
+            >
+              @if (link.icon) {
+                <i class="{{ link.icon }}"></i>
+              }
+              <span>{{ link.label }}</span>
+            </a>
+          } @else {
+            <button
+              type="button"
+              class="desktop-nav-link"
+              [class.desktop-nav-link--cta]="link.id === 'auth'"
+              (click)="handleMobileAction(link.command)"
+            >
+              @if (link.icon) {
+                <i class="{{ link.icon }}"></i>
+              }
+              <span>{{ link.label }}</span>
+            </button>
+          }
+        }
+      </nav>
     </ng-template>
     <ng-template pTemplate="end">
-      <span class="menubar-note">Spedizioni in 24/48h</span>
+      <div class="menubar-meta">
+        <span>
+          <i class="pi pi-truck"></i>
+          Consegna 24/48h
+        </span>
+        <span>
+          <i class="pi pi-undo"></i>
+          Resi facili
+        </span>
+        <span>
+          <i class="pi pi-lock"></i>
+          Pagamenti sicuri
+        </span>
+      </div>
+      <button
+        pButton
+        type="button"
+        class="p-button-text mobile-toggle"
+        icon="pi pi-bars"
+        aria-label="Apri menu"
+        (click)="toggleMobileMenu()"
+      ></button>
     </ng-template>
   </p-menubar>
 </header>
+
+@if (mobileMenuOpen()) {
+  <button
+    type="button"
+    class="mobile-nav-backdrop"
+    aria-label="Chiudi menu"
+    (click)="closeMobileMenu()"
+  ></button>
+<aside class="mobile-nav" role="dialog" aria-modal="true">
+  <div class="mobile-nav-header">
+    <span>Menu</span>
+    <button
+      pButton
+      type="button"
+      class="p-button-text"
+      icon="pi pi-times"
+      aria-label="Chiudi menu"
+      (click)="closeMobileMenu()"
+    ></button>
+  </div>
+    <nav class="mobile-nav-links">
+      @for (link of mobileLinks(); track link.label) {
+        @if (link.routerLink) {
+          <a
+            class="mobile-nav-link"
+            [class.mobile-nav-link--cta]="link.id === 'auth'"
+            [routerLink]="link.routerLink"
+            (click)="closeMobileMenu()"
+          >
+            @if (link.icon) {
+              <i class="{{ link.icon }}"></i>
+            }
+            <span>{{ link.label }}</span>
+          </a>
+        } @else {
+          <button
+            type="button"
+            class="mobile-nav-button"
+            [class.mobile-nav-button--cta]="link.id === 'auth'"
+            (click)="handleMobileAction(link.command)"
+          >
+            @if (link.icon) {
+              <i class="{{ link.icon }}"></i>
+            }
+            <span>{{ link.label }}</span>
+          </button>
+        }
+      }
+    </nav>
+  </aside>
+}
 
 <main class="app-content">
   <div class="page">
@@ -52,9 +152,8 @@
       <p class="text-muted">Benessere quotidiano per cani e gatti.</p>
     </div>
     <div class="footer-links">
-      <a [routerLink]="['/prodotti']">Catalogo</a>
-      <a [routerLink]="['/carrello']">Carrello</a>
-      <a [routerLink]="['/ordini']">Ordini</a>
+      <span>© 2026 ZampaStore</span>
+      <span>Assistenza clienti 7 giorni su 7</span>
     </div>
   </div>
 </footer>
