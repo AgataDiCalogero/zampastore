@@ -19,7 +19,24 @@
   </ng-template>
 </p-toast>
 
-<p-menubar [model]="menuItems()"></p-menubar>
+<header class="app-header">
+  <p-menubar [model]="menuItems()" class="app-menubar">
+    <ng-template pTemplate="start">
+      <a
+        class="brand"
+        [routerLink]="['/']"
+        aria-label="Vai alla home ZampaStore"
+      >
+        <i class="pi pi-heart"></i>
+        <span>ZampaStore</span>
+      </a>
+    </ng-template>
+    <ng-template pTemplate="end">
+      <span class="menubar-note">Spedizioni in 24/48h</span>
+    </ng-template>
+  </p-menubar>
+</header>
+
 <main class="app-content">
   <div class="page">
     <div class="container">
@@ -27,3 +44,17 @@
     </div>
   </div>
 </main>
+
+<footer class="app-footer">
+  <div class="container footer-content">
+    <div>
+      <strong>ZampaStore</strong>
+      <p class="text-muted">Benessere quotidiano per cani e gatti.</p>
+    </div>
+    <div class="footer-links">
+      <a [routerLink]="['/prodotti']">Catalogo</a>
+      <a [routerLink]="['/carrello']">Carrello</a>
+      <a [routerLink]="['/ordini']">Ordini</a>
+    </div>
+  </div>
+</footer>

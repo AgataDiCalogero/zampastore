@@ -1,10 +1,10 @@
-@use "styles/fonts";
-@use "styles/tokens";
-@use "styles/primeng-overrides";
-@import "primeicons/primeicons.css";
-@import "primeflex/primeflex.css";
-@import "primeng/resources/themes/lara-light-blue/theme.css";
-@import "primeng/resources/primeng.min.css";
+@use 'styles/fonts';
+@use 'styles/tokens';
+@use 'styles/primeng-overrides';
+@import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.css';
+@import 'primeng/resources/themes/lara-light-blue/theme.css';
+@import 'primeng/resources/primeng.min.css';
 
 :root {
   color-scheme: light;
@@ -30,6 +30,7 @@
   --surface-section: var(--surface-base);
   --surface-card: var(--surface-0);
   --surface-overlay: var(--surface-0);
+  --surface-elevated: #fbf9f6;
   --surface-border: var(--border-color);
   --surface-hover: #d9d3cd;
 
@@ -56,6 +57,10 @@ body {
   line-height: var(--line-height-base);
   background: var(--surface-base);
   color: var(--text-primary);
+}
+
+.text-muted {
+  color: var(--text-muted);
 }
 
 h1,

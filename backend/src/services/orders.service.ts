@@ -57,7 +57,12 @@ export const createOrder = (
 export const listOrders = (userId: string): Order[] =>
   orders
     .filter((order) => order.userId === userId)
-    .map(({ userId: _userId, items, shippingAddress, ...base }) => base);
+    .map((order) => ({
+      id: order.id,
+      totalCents: order.totalCents,
+      createdAt: order.createdAt,
+      status: order.status,
+    }));
 
 export const getOrderById = (
   userId: string,
@@ -69,6 +74,12 @@ export const getOrderById = (
   if (!order) {
     return null;
   }
-  const { userId: _userId, ...detail } = order;
-  return detail;
+  return {
+    id: order.id,
+    totalCents: order.totalCents,
+    createdAt: order.createdAt,
+    status: order.status,
+    items: order.items,
+    shippingAddress: order.shippingAddress,
+  };
 };

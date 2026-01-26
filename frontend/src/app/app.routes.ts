@@ -1,15 +1,10 @@
 import { Route } from '@angular/router';
-import { authGuard } from './guards/auth.guard';
-import { Cart } from './features/cart/cart';
-import { Checkout } from './pages/checkout/checkout';
-import { CheckoutSuccess } from './pages/checkout-success/checkout-success';
-import { Home } from './pages/home/home';
-import { Login } from './pages/login/login';
-import { OrderDetail } from './pages/order-detail/order-detail';
-import { Orders } from './pages/orders/orders';
-import { ProductDetail } from './pages/product-detail/product-detail';
-import { ProductList } from './pages/product-list/product-list';
-import { Register } from './pages/register/register';
+import { authGuard, Login, Register } from '@org/auth/feature';
+import { Cart } from '@org/cart/feature';
+import { Checkout, CheckoutSuccess } from '@org/checkout/feature';
+import { Home } from '@org/home/feature';
+import { OrderDetail, Orders } from '@org/orders/feature';
+import { ProductDetail, ProductList } from '@org/products/feature';
 
 export const appRoutes: Route[] = [
   {

@@ -2,13 +2,19 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '@org/auth/data-access';
+import { UiFeedbackService } from '@org/ui';
 
-const AUTH_ENDPOINTS = ['/api/auth/login', '/api/auth/register', '/api/auth/me'];
+const AUTH_ENDPOINTS = [
+  '/api/auth/login',
+  '/api/auth/register',
+  '/api/auth/me',
+];
 
 export const auth401Interceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  const uiFeedback = inject(UiFeedbackService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -17,6 +23,7 @@ export const auth401Interceptor: HttpInterceptorFn = (req, next) => {
           return throwError(() => error);
         }
 
+        uiFeedback.showSessionExpired();
         const currentUrl = router.url || '/';
         authService.handleUnauthorized(currentUrl);
       }

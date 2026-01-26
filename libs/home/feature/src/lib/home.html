@@ -1,0 +1,101 @@
+<section class="home-hero">
+  <div class="hero-content">
+    <span class="hero-eyebrow">ZampaStore</span>
+    <h1>Benessere quotidiano per chi ami di piu.</h1>
+    <p class="hero-subtitle">
+      Selezioniamo prodotti sicuri e curati per cani e gatti, con spedizioni
+      rapide e assistenza dedicata.
+    </p>
+    <div class="hero-actions">
+      <button pButton type="button" [routerLink]="['/prodotti']">
+        Vai al catalogo
+      </button>
+      <button
+        pButton
+        type="button"
+        class="p-button-text"
+        [routerLink]="['/carrello']"
+      >
+        Vedi carrello
+      </button>
+    </div>
+  </div>
+  <div class="hero-card">
+    <div class="hero-card-title">Perche scegliere ZampaStore</div>
+    <ul>
+      <li>Prodotti selezionati con veterinari</li>
+      <li>Spedizioni in 24/48h in tutta Italia</li>
+      <li>Supporto clienti rapido e umano</li>
+    </ul>
+  </div>
+</section>
+
+<section class="home-featured">
+  <div class="section-header">
+    <div>
+      <h2>Prodotti in evidenza</h2>
+      <p class="text-muted">
+        Il meglio del momento per i tuoi amici a quattro zampe.
+      </p>
+    </div>
+    <a class="section-link" [routerLink]="['/prodotti']">Vedi tutto</a>
+  </div>
+
+  @if (featuredState$ | async; as state) { @if (state.status === 'ready') {
+  <div class="product-grid">
+    @for (product of state.products; track product.id) {
+    <app-product-card
+      [product]="product"
+      (addToCart)="addToCart($event)"
+    ></app-product-card>
+    }
+  </div>
+  } @else if (state.status === 'empty') {
+  <div class="empty-state">
+    <i class="pi pi-box"></i>
+    <h3>Nessun prodotto disponibile</h3>
+    <p>Stiamo aggiornando il catalogo. Torna presto.</p>
+  </div>
+  } @else if (state.status === 'error') {
+  <div class="empty-state">
+    <i class="pi pi-exclamation-triangle"></i>
+    <h3>Errore nel caricamento</h3>
+    <p>Riprova tra poco.</p>
+  </div>
+  } @else {
+  <div class="product-grid">
+    @for (item of skeletonItems; track $index) {
+    <div class="product-card-skeleton">
+      <p-skeleton width="70%" height="22px"></p-skeleton>
+      <p-skeleton height="180px"></p-skeleton>
+      <p-skeleton width="35%" height="20px"></p-skeleton>
+      <div class="product-card-actions">
+        <p-skeleton width="120px" height="36px"></p-skeleton>
+        <p-skeleton width="160px" height="36px"></p-skeleton>
+      </div>
+    </div>
+    }
+  </div>
+  } }
+</section>
+
+<section class="home-values">
+  <div class="value-card">
+    <h3>Selezione attenta</h3>
+    <p class="text-muted">
+      Prodotti scelti per qualita, ingredienti e comfort dei tuoi animali.
+    </p>
+  </div>
+  <div class="value-card">
+    <h3>Prezzi onesti</h3>
+    <p class="text-muted">
+      Offerte chiare e trasparenti, senza costi nascosti al checkout.
+    </p>
+  </div>
+  <div class="value-card">
+    <h3>Assistenza reale</h3>
+    <p class="text-muted">
+      Un team che risponde veloce e ti aiuta a scegliere il meglio.
+    </p>
+  </div>
+</section>

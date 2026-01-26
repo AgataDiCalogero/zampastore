@@ -13,7 +13,19 @@
     "noUnusedLocals": true,
     "baseUrl": ".",
     "paths": {
-      "@org/shared": ["shared/src/index.ts"]
+      "@org/shared": ["shared/src/index.ts"],
+      "@org/auth/data-access": ["libs/auth/data-access/src/index.ts"],
+      "@org/auth/feature": ["libs/auth/feature/src/index.ts"],
+      "@org/products/data-access": ["libs/products/data-access/src/index.ts"],
+      "@org/products/feature": ["libs/products/feature/src/index.ts"],
+      "@org/cart/data-access": ["libs/cart/data-access/src/index.ts"],
+      "@org/cart/feature": ["libs/cart/feature/src/index.ts"],
+      "@org/orders/data-access": ["libs/orders/data-access/src/index.ts"],
+      "@org/orders/feature": ["libs/orders/feature/src/index.ts"],
+      "@org/checkout/feature": ["libs/checkout/feature/src/index.ts"],
+      "@org/payment/data-access": ["libs/payment/data-access/src/index.ts"],
+      "@org/home/feature": ["libs/home/feature/src/index.ts"],
+      "@org/ui": ["libs/ui/src/index.ts"]
     }
   }
 }

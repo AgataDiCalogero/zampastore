@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Request, Router } from 'express';
 import Stripe from 'stripe';
 import {
   CreateCheckoutSessionRequest,
@@ -14,7 +14,7 @@ const stripeKey = process.env.STRIPE_SECRET_KEY ?? '';
 const stripe = stripeKey ? new Stripe(stripeKey) : null;
 const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:4200';
 
-const resolveUser = (req: { headers: { cookie?: string } }) => {
+const resolveUser = (req: Request) => {
   const sessionId = getCookie(req, SESSION_COOKIE);
   if (!sessionId) {
     return null;

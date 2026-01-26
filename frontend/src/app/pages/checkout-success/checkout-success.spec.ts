@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { CheckoutSuccess } from './checkout-success';
+import { CheckoutSuccess } from '@org/checkout/feature';
 
 describe('CheckoutSuccess', () => {
   beforeEach(async () => {

@@ -1,0 +1,7 @@
+{
+  "name": "payment-data-access",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/payment/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:payment", "type:data-access"]
+}

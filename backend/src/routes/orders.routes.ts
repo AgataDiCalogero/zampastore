@@ -1,11 +1,11 @@
-import { Router } from 'express';
+import { Request, Router } from 'express';
 import { getUserBySession } from '../services/auth.service';
 import { getOrderById, listOrders } from '../services/orders.service';
 import { getCookie, SESSION_COOKIE } from '../utils/cookies';
 
 export const ordersRouter = Router();
 
-const resolveUser = (req: { headers: { cookie?: string } }) => {
+const resolveUser = (req: Request) => {
   const sessionId = getCookie(req, SESSION_COOKIE);
   if (!sessionId) {
     return null;

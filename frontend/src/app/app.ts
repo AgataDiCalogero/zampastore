@@ -6,10 +6,16 @@ import { MenubarModule } from 'primeng/menubar';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { MENU_ITEMS } from './menu-items';
-import { AuthService } from './services/auth.service';
+import { AuthService } from '@org/auth/data-access';
 
 @Component({
-  imports: [CommonModule, MenubarModule, RouterModule, ToastModule, ButtonModule],
+  imports: [
+    CommonModule,
+    MenubarModule,
+    RouterModule,
+    ToastModule,
+    ButtonModule,
+  ],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',

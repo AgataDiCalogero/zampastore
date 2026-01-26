@@ -9,6 +9,13 @@
   --text-primary: #083a4f;
   --text-secondary: rgba(8, 58, 79, 0.7);
   --text-inverse: #e5e1dd;
+  --text-muted: rgba(8, 58, 79, 0.55);
+
+  /* Semantic */
+  --color-success: #2e7d32;
+  --color-warning: #b85c00;
+  --color-error: #d32f2f;
+  --color-info: #407e8c;
 
   /* Derived */
   --color-primary-dark: #062f40;
@@ -40,8 +47,8 @@
   --space-4xl: 64px;
 
   /* Typography */
-  --font-sans: "Manrope", "Segoe UI", Arial, sans-serif;
-  --font-serif: "Playfair Display", "Times New Roman", serif;
+  --font-sans: 'Manrope', 'Segoe UI', Arial, sans-serif;
+  --font-serif: 'Playfair Display', 'Times New Roman', serif;
   --font-size-xs: 12px;
   --font-size-sm: 14px;
   --font-size-md: 16px;

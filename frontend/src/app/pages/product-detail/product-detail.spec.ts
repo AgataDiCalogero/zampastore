@@ -1,9 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import {
+  ActivatedRoute,
+  convertToParamMap,
+  provideRouter,
+} from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
-import { ProductDetail } from './product-detail';
+import { ProductDetail } from '@org/products/feature';
 
 describe('ProductDetail', () => {
   beforeEach(async () => {

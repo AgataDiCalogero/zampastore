@@ -1,0 +1,7 @@
+{
+  "name": "orders-feature",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/orders/feature/src",
+  "projectType": "library",
+  "tags": ["scope:orders", "type:feature"]
+}

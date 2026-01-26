@@ -1,0 +1,7 @@
+{
+  "name": "products-data-access",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/products/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:products", "type:data-access"]
+}

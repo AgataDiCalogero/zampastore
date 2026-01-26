@@ -1,0 +1,7 @@
+{
+  "name": "checkout-feature",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/checkout/feature/src",
+  "projectType": "library",
+  "tags": ["scope:checkout", "type:feature"]
+}
