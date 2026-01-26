@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { Cart } from './features/cart/cart';
+import { Checkout } from './pages/checkout/checkout';
 import { CheckoutSuccess } from './pages/checkout-success/checkout-success';
 import { Home } from './pages/home/home';
 import { Login } from './pages/login/login';
@@ -27,6 +28,11 @@ export const appRoutes: Route[] = [
   {
     path: 'carrello',
     component: Cart,
+  },
+  {
+    path: 'checkout',
+    component: Checkout,
+    canActivate: [authGuard],
   },
   {
     path: 'login',

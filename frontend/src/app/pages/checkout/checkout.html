@@ -1,0 +1,144 @@
+<section class="checkout-page">
+  <p-card class="checkout-card" header="Checkout">
+    <form class="checkout-layout" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="checkout-form">
+        <div class="form-field">
+          <label for="firstName">Nome</label>
+          <input
+            pInputText
+            id="firstName"
+            type="text"
+            autocomplete="given-name"
+            formControlName="firstName"
+          />
+          @if (form.controls.firstName.touched &&
+          form.controls.firstName.invalid) {
+          <small class="form-error">Inserisci un nome valido.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="lastName">Cognome</label>
+          <input
+            pInputText
+            id="lastName"
+            type="text"
+            autocomplete="family-name"
+            formControlName="lastName"
+          />
+          @if (form.controls.lastName.touched && form.controls.lastName.invalid)
+          {
+          <small class="form-error">Inserisci un cognome valido.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="address">Indirizzo</label>
+          <input
+            pInputText
+            id="address"
+            type="text"
+            autocomplete="address-line1"
+            formControlName="address"
+          />
+          @if (form.controls.address.touched && form.controls.address.invalid) {
+          <small class="form-error">Inserisci un indirizzo valido.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="city">Citta</label>
+          <input
+            pInputText
+            id="city"
+            type="text"
+            autocomplete="address-level2"
+            formControlName="city"
+          />
+          @if (form.controls.city.touched && form.controls.city.invalid) {
+          <small class="form-error">Inserisci una citta valida.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="postalCode">CAP</label>
+          <input
+            pInputText
+            id="postalCode"
+            type="text"
+            autocomplete="postal-code"
+            formControlName="postalCode"
+          />
+          @if (form.controls.postalCode.touched &&
+          form.controls.postalCode.invalid) {
+          <small class="form-error">Inserisci un CAP valido.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="country">Paese</label>
+          <input
+            pInputText
+            id="country"
+            type="text"
+            autocomplete="country-name"
+            formControlName="country"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="shippingMethod">Spedizione</label>
+          <p-select
+            inputId="shippingMethod"
+            formControlName="shippingMethod"
+            [options]="shippingOptions"
+            optionLabel="label"
+            optionValue="value"
+          ></p-select>
+          <small class="text-muted">Prezzo calcolato al checkout.</small>
+        </div>
+      </div>
+
+      <aside class="checkout-summary">
+        <div class="summary-card">
+          <h3>Riepilogo</h3>
+          @if (cartItems$ | async; as cartItems) {
+          <ul class="summary-list">
+            @for (item of cartItems; track item.product.id) {
+            <li>
+              <span>{{ item.product.name }} x {{ item.qty }}</span>
+              <span>
+                {{ (item.product.priceCents * item.qty) / 100 | number: '1.2-2'
+                }} €
+              </span>
+            </li>
+            }
+          </ul>
+          }
+          <div class="summary-total">
+            <span>Totale</span>
+            <strong
+              >{{ ((cartTotal$ | async) ?? 0) | number: '1.2-2' }} €</strong
+            >
+          </div>
+        </div>
+
+        @if (errorMessage) {
+        <div class="form-error" role="alert">{{ errorMessage }}</div>
+        }
+
+        <button pButton type="submit" [disabled]="form.invalid || submitting">
+          Paga con Stripe (test)
+        </button>
+        <button
+          pButton
+          type="button"
+          class="p-button-text"
+          [routerLink]="['/carrello']"
+        >
+          Torna al carrello
+        </button>
+      </aside>
+    </form>
+  </p-card>
+</section>

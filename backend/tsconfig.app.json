@@ -6,5 +6,10 @@
     "moduleResolution": "node",
     "types": ["node", "express"]
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "references": [
+    {
+      "path": "../shared/tsconfig.lib.json"
+    }
+  ]
 }

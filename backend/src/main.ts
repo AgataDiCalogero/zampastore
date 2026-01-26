@@ -9,6 +9,8 @@ import swaggerUI from 'swagger-ui-express';
 import { openApiSpec } from './swagger';
 import { authRouter } from './routes/auth.routes';
 import { productsRouter } from './routes/products.routes';
+import { ordersRouter } from './routes/orders.routes';
+import { paymentsRouter } from './routes/payments.routes';
 
 const app = express();
 
@@ -30,6 +32,8 @@ app.get('/api', (req, res) => {
 
 app.use('/api/products', productsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/orders', ordersRouter);
+app.use('/api/payments', paymentsRouter);
 
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {

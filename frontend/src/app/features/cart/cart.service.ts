@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Product } from '@org/shared';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 
-type CartItem = { product: Product; qty: number };
+export type CartItem = { product: Product; qty: number };
+const STORAGE_KEY = 'zs_cart';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
@@ -12,11 +13,19 @@ export class CartService {
     map(
       (cartItems) =>
         cartItems.reduce(
-          (total, cartItem) => total + cartItem.product.priceCents * cartItem.qty,
+          (total, cartItem) =>
+            total + cartItem.product.priceCents * cartItem.qty,
           0,
         ) / 100,
     ),
   );
+
+  constructor() {
+    const stored = this.readStoredCart();
+    if (stored) {
+      this.cartItemsSubject.next(stored);
+    }
+  }
 
   getCartItems(): Observable<CartItem[]> {
     return this.cartItemsSubject.asObservable();
@@ -39,6 +48,7 @@ export class CartService {
       );
     }
     this.cartItemsSubject.next(next);
+    this.persistCart(next);
   }
 
   updateQuantity(productId: string, qty: number): void {
@@ -49,6 +59,7 @@ export class CartService {
         : cartItem,
     );
     this.cartItemsSubject.next(next);
+    this.persistCart(next);
   }
 
   removeItem(productId: string): void {
@@ -56,8 +67,46 @@ export class CartService {
       (cartItem) => cartItem.product.id !== productId,
     );
     this.cartItemsSubject.next(next);
+    this.persistCart(next);
   }
   clearCart(): void {
     this.cartItemsSubject.next([]);
+    this.persistCart([]);
+  }
+
+  private readStoredCart(): CartItem[] | null {
+    if (typeof localStorage === 'undefined') {
+      return null;
+    }
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return null;
+      }
+      const parsed = JSON.parse(raw) as CartItem[];
+      if (!Array.isArray(parsed)) {
+        return null;
+      }
+      return parsed.filter(
+        (item) =>
+          item &&
+          typeof item.qty === 'number' &&
+          item.product &&
+          typeof item.product.id === 'string',
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  private persistCart(items: CartItem[]): void {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch {
+      // Ignore storage errors (e.g. private mode).
+    }
   }
 }

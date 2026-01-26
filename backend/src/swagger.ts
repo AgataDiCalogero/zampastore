@@ -9,7 +9,13 @@ export const openApiSpec = swaggerJSDoc({
       description: 'API for ZampaStore (Express + Nx monorepo)',
     },
     servers: [{ url: '/api' }],
-    tags: [{ name: 'health' }, { name: 'products' }, { name: 'auth' }],
+    tags: [
+      { name: 'health' },
+      { name: 'products' },
+      { name: 'auth' },
+      { name: 'orders' },
+      { name: 'payments' },
+    ],
     components: {
       schemas: {
         Product: {
@@ -64,6 +70,104 @@ export const openApiSpec = swaggerJSDoc({
           type: 'object',
           properties: {
             message: { type: 'string' },
+          },
+        },
+        OrderStatus: {
+          type: 'string',
+          enum: [
+            'pending',
+            'paid',
+            'processing',
+            'shipped',
+            'delivered',
+            'cancelled',
+          ],
+        },
+        Order: {
+          type: 'object',
+          required: ['id', 'totalCents', 'createdAt', 'status'],
+          properties: {
+            id: { type: 'string', example: 'ord-123' },
+            totalCents: { type: 'number', example: 4590 },
+            createdAt: {
+              type: 'string',
+              example: '2026-01-26T12:00:00.000Z',
+            },
+            status: { $ref: '#/components/schemas/OrderStatus' },
+          },
+        },
+        OrderLine: {
+          type: 'object',
+          required: [
+            'productId',
+            'name',
+            'unitPriceCents',
+            'qty',
+            'lineTotalCents',
+          ],
+          properties: {
+            productId: { type: 'string', example: 'prod-001' },
+            name: { type: 'string', example: 'Crocchette premium pollo' },
+            unitPriceCents: { type: 'number', example: 1899 },
+            qty: { type: 'number', example: 2 },
+            lineTotalCents: { type: 'number', example: 3798 },
+          },
+        },
+        ShippingAddress: {
+          type: 'object',
+          required: ['firstName', 'lastName', 'address', 'city', 'postalCode'],
+          properties: {
+            firstName: { type: 'string', example: 'Agata' },
+            lastName: { type: 'string', example: 'Di Calogero' },
+            address: { type: 'string', example: 'Via Roma 1' },
+            city: { type: 'string', example: 'Milano' },
+            postalCode: { type: 'string', example: '20100' },
+            country: { type: 'string', example: 'Italia' },
+          },
+        },
+        OrderDetail: {
+          allOf: [
+            { $ref: '#/components/schemas/Order' },
+            {
+              type: 'object',
+              required: ['items', 'shippingAddress'],
+              properties: {
+                items: {
+                  type: 'array',
+                  items: { $ref: '#/components/schemas/OrderLine' },
+                },
+                shippingAddress: {
+                  $ref: '#/components/schemas/ShippingAddress',
+                },
+              },
+            },
+          ],
+        },
+        CartItem: {
+          type: 'object',
+          required: ['productId', 'qty'],
+          properties: {
+            productId: { type: 'string', example: 'prod-001' },
+            qty: { type: 'number', example: 1 },
+          },
+        },
+        CreateCheckoutSessionRequest: {
+          type: 'object',
+          required: ['items', 'shippingAddress'],
+          properties: {
+            items: {
+              type: 'array',
+              items: { $ref: '#/components/schemas/CartItem' },
+            },
+            shippingAddress: { $ref: '#/components/schemas/ShippingAddress' },
+          },
+        },
+        CreateCheckoutSessionResponse: {
+          type: 'object',
+          required: ['url', 'orderId'],
+          properties: {
+            url: { type: 'string', example: 'https://checkout.stripe.com' },
+            orderId: { type: 'string', example: 'ord-123' },
           },
         },
       },
@@ -233,6 +337,125 @@ export const openApiSpec = swaggerJSDoc({
           summary: 'Logout and clear session cookie',
           responses: {
             '204': { description: 'Logged out' },
+          },
+        },
+      },
+      '/orders': {
+        get: {
+          tags: ['orders'],
+          summary: 'List orders',
+          responses: {
+            '200': {
+              description: 'Orders list',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'array',
+                    items: { $ref: '#/components/schemas/Order' },
+                  },
+                },
+              },
+            },
+            '401': {
+              description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/orders/{id}': {
+        get: {
+          tags: ['orders'],
+          summary: 'Get order detail',
+          parameters: [
+            {
+              name: 'id',
+              in: 'path',
+              required: true,
+              schema: { type: 'string' },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Order detail',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/OrderDetail' },
+                },
+              },
+            },
+            '401': {
+              description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '404': {
+              description: 'Not found',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/payments/checkout-session': {
+        post: {
+          tags: ['payments'],
+          summary: 'Create Stripe checkout session',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/CreateCheckoutSessionRequest',
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Checkout session',
+              content: {
+                'application/json': {
+                  schema: {
+                    $ref: '#/components/schemas/CreateCheckoutSessionResponse',
+                  },
+                },
+              },
+            },
+            '400': {
+              description: 'Bad request',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '401': {
+              description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
           },
         },
       },

@@ -1,0 +1,47 @@
+.orders-page {
+  display: block;
+}
+
+.orders-card {
+  background: var(--surface-0);
+}
+
+.orders-skeleton {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.orders-empty {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-2xl) 0;
+}
+
+.orders-empty .empty-state {
+  max-width: 420px;
+  text-align: center;
+  padding: var(--space-2xl);
+  background: var(--surface-0);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-1);
+}
+
+.orders-empty .empty-state .pi {
+  font-size: 2rem;
+  color: var(--color-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.orders-empty .empty-state h3 {
+  margin: 0 0 var(--space-sm);
+}
+
+.orders-empty .empty-state p {
+  margin: 0 0 var(--space-lg);
+  color: var(--text-secondary);
+}
+
+.status {
+  text-transform: capitalize;
+}
