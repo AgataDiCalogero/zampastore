@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   gap: var(--space-2xl);
-  align-items: stretch;
+  align-items: start;
   margin-bottom: var(--space-3xl);
 }
 
@@ -37,12 +37,31 @@
   gap: var(--space-md);
 }
 
+:host ::ng-deep .hero-actions .p-button {
+  min-width: 190px;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: var(--shadow-2);
+}
+
+:host ::ng-deep .hero-actions .p-button-secondary {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--surface-0);
+}
+
+:host ::ng-deep .hero-actions .p-button-secondary:enabled:hover {
+  background: var(--surface-50);
+}
+
 .hero-card {
   background: var(--surface-elevated);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-shadow: var(--shadow-1);
+  align-self: start;
 }
 
 .hero-card-title {

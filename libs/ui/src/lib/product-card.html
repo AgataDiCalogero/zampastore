@@ -30,17 +30,17 @@
         type="button"
         class="p-button-secondary"
         icon="pi pi-eye"
+        label="Vedi dettaglio"
         [routerLink]="['/prodotti', product.id]"
       >
-        Vedi dettaglio
       </button>
       <button
         pButton
         type="button"
         icon="pi pi-shopping-cart"
+        label="Aggiungi al carrello"
         (click)="handleAddToCart()"
       >
-        Aggiungi al carrello
       </button>
     </div>
   </ng-template>

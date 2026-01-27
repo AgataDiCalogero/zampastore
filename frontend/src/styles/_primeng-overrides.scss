@@ -36,19 +36,41 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
+  column-gap: var(--space-sm) !important;
   background: var(--color-cta);
   border-color: var(--color-cta-dark);
   color: var(--color-cta-text);
   box-shadow: var(--shadow-1);
 }
 
+.p-button .p-button-label {
+  flex: 0 0 auto !important;
+  display: inline-flex;
+  align-items: center;
+  text-align: center;
+  line-height: 1;
+}
+
 .p-button .p-button-icon {
+  flex: 0 0 auto;
   margin: 0;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-button .p-button-icon-left,
+.p-button .p-button-icon-right {
+  margin: 0 !important;
+}
+
+.p-button .p-button-icon-left {
+  margin-right: var(--space-sm) !important;
 }
 
 .p-button .p-button-icon-right {
-  margin-left: 0;
+  margin-left: var(--space-sm) !important;
 }
 
 .p-button:enabled:hover {
@@ -114,6 +136,32 @@
   font-size: var(--font-size-md);
   color: var(--text-primary);
   background: var(--surface-0);
+}
+
+.p-password {
+  width: 100%;
+  position: relative;
+}
+
+.p-password .p-password-input {
+  width: 100%;
+  padding-right: 3rem;
+}
+
+.p-password .p-password-toggle-mask-icon,
+.p-password .p-password-mask-icon,
+.p-password .p-password-unmask-icon,
+.p-password .p-password-clear-icon {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .p-inputnumber .p-inputnumber-input {
@@ -209,6 +257,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
 }
 
 .toast-summary {

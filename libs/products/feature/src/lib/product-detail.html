@@ -47,9 +47,9 @@
             pButton
             type="button"
             icon="pi pi-shopping-cart"
+            label="Aggiungi al carrello"
             (click)="addToCart(state.product)"
           >
-            Aggiungi al carrello
           </button>
         </div>
       </div>
@@ -60,9 +60,9 @@
         pButton
         type="button"
         icon="pi pi-arrow-left"
+        label="Torna ai prodotti"
         [routerLink]="['/prodotti']"
       >
-        Torna ai prodotti
       </button>
     </ng-template>
   </p-card>

@@ -110,6 +110,8 @@
   padding: var(--space-xs) var(--space-md);
   border: 1px solid var(--color-cta-dark);
   font-weight: 700;
+  border-radius: 999px;
+  box-shadow: var(--shadow-1);
 }
 
 .desktop-nav-link--cta:hover,
@@ -180,6 +182,26 @@
   }
 
   .menubar-meta {
+    display: none;
+  }
+
+  .mobile-toggle {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 1100px) {
+  .menubar-meta {
+    display: none;
+  }
+
+  .desktop-nav {
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 980px) {
+  .desktop-nav {
     display: none;
   }
 
