@@ -1,20 +1,20 @@
 import { Request, Router } from 'express';
-import { getUserBySession } from '../services/auth.service';
+import { authService } from '../services/auth.service';
 import { getOrderById, listOrders } from '../services/orders.service';
 import { getCookie, SESSION_COOKIE } from '../utils/cookies';
 
 export const ordersRouter = Router();
 
-const resolveUser = (req: Request) => {
+const resolveUser = async (req: Request) => {
   const sessionId = getCookie(req, SESSION_COOKIE);
   if (!sessionId) {
     return null;
   }
-  return getUserBySession(sessionId);
+  return authService.getUserBySession(sessionId);
 };
 
-ordersRouter.get('/', (req, res) => {
-  const user = resolveUser(req);
+ordersRouter.get('/', async (req, res) => {
+  const user = await resolveUser(req);
   if (!user) {
     res.status(401).json({ message: 'Non autenticato.' });
     return;
@@ -24,8 +24,8 @@ ordersRouter.get('/', (req, res) => {
   res.json(orders);
 });
 
-ordersRouter.get('/:id', (req, res) => {
-  const user = resolveUser(req);
+ordersRouter.get('/:id', async (req, res) => {
+  const user = await resolveUser(req);
   if (!user) {
     res.status(401).json({ message: 'Non autenticato.' });
     return;

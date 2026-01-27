@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import { AuthResponse } from '@org/shared';
+import { authService } from '../services/auth.service';
 import {
-  clearSession,
-  getUserBySession,
-  login,
-  register,
-} from '../services/auth.service';
+  parseLoginRequest,
+  parseRegisterRequest,
+} from '../services/auth.validation';
 import {
   clearSessionCookie,
   getCookie,
@@ -15,64 +14,87 @@ import {
 
 export const authRouter = Router();
 
-authRouter.post('/login', (req, res) => {
-  const { email, password } = req.body ?? {};
-  if (!email || !password) {
-    res.status(400).json({ message: 'Email e password sono richieste.' });
+authRouter.post('/login', async (req, res) => {
+  const parsed = parseLoginRequest(req.body);
+  if (!parsed.ok) {
+    res.status(400).json({ message: parsed.message });
     return;
   }
 
-  const result = login(email, password);
-  if (!result) {
-    res.status(401).json({ message: 'Credenziali non valide.' });
-    return;
-  }
+  try {
+    const result = await authService.login(
+      parsed.data.email,
+      parsed.data.password,
+    );
+    if (!result) {
+      res.status(401).json({ message: 'Credenziali non valide.' });
+      return;
+    }
 
-  setSessionCookie(res, result.sessionId);
-  const payload: AuthResponse = { user: result.user };
-  res.json(payload);
+    setSessionCookie(res, result.sessionId);
+    const payload: AuthResponse = { user: result.user };
+    res.json(payload);
+  } catch {
+    res.status(500).json({ message: 'Errore durante il login.' });
+  }
 });
 
-authRouter.post('/register', (req, res) => {
-  const { username, email, password } = req.body ?? {};
-  if (!username || !email || !password) {
-    res.status(400).json({ message: 'Nome, email e password sono richiesti.' });
+authRouter.post('/register', async (req, res) => {
+  const parsed = parseRegisterRequest(req.body);
+  if (!parsed.ok) {
+    res.status(400).json({ message: parsed.message });
     return;
   }
 
-  const result = register(username, email, password);
-  if ('error' in result) {
-    res.status(409).json({ message: 'Email già registrata.' });
-    return;
-  }
+  try {
+    const result = await authService.register(
+      parsed.data.username,
+      parsed.data.email,
+      parsed.data.password,
+    );
+    if ('error' in result) {
+      res.status(409).json({ message: 'Email già registrata.' });
+      return;
+    }
 
-  setSessionCookie(res, result.sessionId);
-  const payload: AuthResponse = { user: result.user };
-  res.status(201).json(payload);
+    setSessionCookie(res, result.sessionId);
+    const payload: AuthResponse = { user: result.user };
+    res.status(201).json(payload);
+  } catch {
+    res.status(500).json({ message: 'Errore durante la registrazione.' });
+  }
 });
 
-authRouter.get('/me', (req, res) => {
+authRouter.get('/me', async (req, res) => {
   const sessionId = getCookie(req, SESSION_COOKIE);
   if (!sessionId) {
     res.status(401).json({ message: 'Non autenticato.' });
     return;
   }
 
-  const user = getUserBySession(sessionId);
-  if (!user) {
-    res.status(401).json({ message: 'Sessione non valida.' });
-    return;
-  }
+  try {
+    const user = await authService.getUserBySession(sessionId);
+    if (!user) {
+      res.status(401).json({ message: 'Sessione non valida.' });
+      return;
+    }
 
-  const payload: AuthResponse = { user };
-  res.json(payload);
+    const payload: AuthResponse = { user };
+    res.json(payload);
+  } catch {
+    res.status(500).json({ message: 'Errore durante la verifica sessione.' });
+  }
 });
 
-authRouter.post('/logout', (req, res) => {
+authRouter.post('/logout', async (req, res) => {
   const sessionId = getCookie(req, SESSION_COOKIE);
-  if (sessionId) {
-    clearSession(sessionId);
+  try {
+    if (sessionId) {
+      await authService.clearSession(sessionId);
+    }
+    clearSessionCookie(res);
+    res.status(204).send();
+  } catch {
+    res.status(500).json({ message: 'Errore durante il logout.' });
   }
-  clearSessionCookie(res);
-  res.status(204).send();
 });

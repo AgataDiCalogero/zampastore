@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { randomUUID } from 'node:crypto';
 
 export const SESSION_COOKIE = 'zs_session';
-const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
+export const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
 const isProd = process.env.NODE_ENV === 'production';
 
 export const createSessionId = (): string => randomUUID();

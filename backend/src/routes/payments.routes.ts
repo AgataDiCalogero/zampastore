@@ -4,7 +4,7 @@ import {
   CreateCheckoutSessionRequest,
   CreateCheckoutSessionResponse,
 } from '@org/shared';
-import { getUserBySession } from '../services/auth.service';
+import { authService } from '../services/auth.service';
 import { createOrder } from '../services/orders.service';
 import { getCookie, SESSION_COOKIE } from '../utils/cookies';
 
@@ -14,16 +14,16 @@ const stripeKey = process.env.STRIPE_SECRET_KEY ?? '';
 const stripe = stripeKey ? new Stripe(stripeKey) : null;
 const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:4200';
 
-const resolveUser = (req: Request) => {
+const resolveUser = async (req: Request) => {
   const sessionId = getCookie(req, SESSION_COOKIE);
   if (!sessionId) {
     return null;
   }
-  return getUserBySession(sessionId);
+  return authService.getUserBySession(sessionId);
 };
 
 paymentsRouter.post('/checkout-session', async (req, res) => {
-  const user = resolveUser(req);
+  const user = await resolveUser(req);
   if (!user) {
     res.status(401).json({ message: 'Non autenticato.' });
     return;

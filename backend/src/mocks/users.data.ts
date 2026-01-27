@@ -1,15 +1,10 @@
-export type UserRecord = {
-  id: string;
-  email: string;
-  name: string;
-  password: string;
-};
+import { UserRecord } from '../services/auth.types';
 
 export const USERS: UserRecord[] = [
   {
     id: 'user-001',
     email: 'demo@zampastore.it',
     name: 'Demo Utente',
-    password: 'Demo123!',
+    passwordHash: 'Demo123!',
   },
 ];
