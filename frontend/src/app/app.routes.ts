@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
-import { authGuard, Login, Register } from '@org/auth/feature';
+import { authGuard } from '@org/auth/data-access';
+import { Login, Register } from '@org/auth/feature';
 import { Cart } from '@org/cart/feature';
 import { Checkout, CheckoutSuccess } from '@org/checkout/feature';
 import { Home } from '@org/home/feature';

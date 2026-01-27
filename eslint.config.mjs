@@ -17,6 +17,69 @@ export default [
           allow: [String.raw`^.*/eslint(\.base)?\.config\.[cm]?[jt]s$`],
           depConstraints: [
             {
+              sourceTag: 'scope:auth',
+              onlyDependOnLibsWithTags: [
+                'scope:auth',
+                'scope:shared',
+                'type:ui',
+              ],
+            },
+            {
+              sourceTag: 'scope:products',
+              onlyDependOnLibsWithTags: [
+                'scope:products',
+                'scope:cart',
+                'scope:shared',
+                'type:ui',
+              ],
+            },
+            {
+              sourceTag: 'scope:cart',
+              onlyDependOnLibsWithTags: [
+                'scope:cart',
+                'scope:shared',
+                'type:ui',
+              ],
+            },
+            {
+              sourceTag: 'scope:orders',
+              onlyDependOnLibsWithTags: [
+                'scope:orders',
+                'scope:payment',
+                'scope:shared',
+                'type:ui',
+              ],
+            },
+            {
+              sourceTag: 'scope:checkout',
+              onlyDependOnLibsWithTags: [
+                'scope:checkout',
+                'scope:cart',
+                'scope:orders',
+                'scope:payment',
+                'scope:shared',
+                'type:ui',
+              ],
+            },
+            {
+              sourceTag: 'scope:home',
+              onlyDependOnLibsWithTags: [
+                'scope:home',
+                'scope:products',
+                'scope:cart',
+                'scope:shared',
+                'type:ui',
+              ],
+            },
+            {
+              sourceTag: 'scope:payment',
+              onlyDependOnLibsWithTags: ['scope:payment', 'scope:shared'],
+            },
+            {
+              sourceTag: 'scope:shared',
+              onlyDependOnLibsWithTags: ['scope:shared'],
+            },
+            {
               sourceTag: 'type:feature',
               onlyDependOnLibsWithTags: [
                 'type:data-access',
@@ -39,11 +102,11 @@ export default [
             },
             {
               sourceTag: 'type:data-access',
-              onlyDependOnLibsWithTags: ['type:shared'],
+              onlyDependOnLibsWithTags: ['type:data-access', 'type:shared'],
             },
             {
               sourceTag: 'type:ui',
-              onlyDependOnLibsWithTags: ['type:shared'],
+              onlyDependOnLibsWithTags: ['type:ui', 'type:shared'],
             },
             {
               sourceTag: 'type:shared',
