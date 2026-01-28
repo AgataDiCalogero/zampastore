@@ -3,8 +3,10 @@
  * This is only a minimal backend to get started.
  */
 
+import dotenv from 'dotenv';
 import express from 'express';
 import * as path from 'node:path';
+import cors from 'cors';
 import swaggerUI from 'swagger-ui-express';
 import { openApiSpec } from './swagger';
 import { authRouter } from './routes/auth.routes';
@@ -14,8 +16,17 @@ import { paymentsRouter } from './routes/payments.routes';
 import { dbPing } from './services/db';
 import { getEnv } from './config/env';
 
+dotenv.config();
+
 const app = express();
 const env = getEnv();
+
+app.use(
+  cors({
+    origin: env.clientUrl,
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 
