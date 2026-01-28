@@ -94,6 +94,8 @@
             [options]="shippingOptions"
             optionLabel="label"
             optionValue="value"
+            appendTo="body"
+            panelStyleClass="checkout-select-panel"
           ></p-select>
           <small class="text-muted">Prezzo calcolato al checkout.</small>
         </div>
@@ -133,11 +135,12 @@
         <button
           pButton
           type="button"
-          class="p-button-text"
+          class="p-button-secondary"
           [routerLink]="['/carrello']"
         >
           Torna al carrello
         </button>
+        <app-stripe-test-cards></app-stripe-test-cards>
       </aside>
     </form>
   </p-card>

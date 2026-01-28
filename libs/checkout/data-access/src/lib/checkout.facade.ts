@@ -10,6 +10,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CartItem, CartService } from '@org/cart/data-access';
 import { PaymentService } from '@org/payment/data-access';
 import { CreateCheckoutSessionRequest, ShippingAddress } from '@org/shared';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export type ShippingOption = {
   label: string;
@@ -138,7 +139,14 @@ export class CheckoutFacade {
         next: (response) => {
           window.location.assign(response.url);
         },
-        error: () => {
+        error: (error: unknown) => {
+          if (
+            error instanceof HttpErrorResponse &&
+            typeof error.error?.message === 'string'
+          ) {
+            this.errorMessage.set(error.error.message);
+            return;
+          }
           this.errorMessage.set(
             'Non è stato possibile avviare il pagamento. Riprova.',
           );

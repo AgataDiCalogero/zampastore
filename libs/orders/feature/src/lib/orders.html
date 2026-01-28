@@ -16,12 +16,19 @@
           <td>{{ order.id }}</td>
           <td>{{ order.createdAt | date: 'dd/MM/yyyy' }}</td>
           <td>{{ order.totalCents / 100 | number: '1.2-2' }} €</td>
-          <td class="status">{{ order.status }}</td>
+          <td>
+            <span
+              class="status-chip"
+              [class]="'status-chip status-' + statusFor(order.status).tone"
+            >
+              {{ statusFor(order.status).label }}
+            </span>
+          </td>
           <td>
             <button
               pButton
               type="button"
-              class="p-button-text"
+              class="p-button-secondary orders-detail-button"
               [routerLink]="['/ordini', order.id]"
             >
               Dettagli

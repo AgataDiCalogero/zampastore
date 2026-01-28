@@ -45,3 +45,44 @@
 .status {
   text-transform: capitalize;
 }
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+}
+
+.status-warning {
+  background: rgba(242, 193, 75, 0.2);
+  border-color: rgba(242, 193, 75, 0.5);
+  color: #8a5a00;
+}
+
+.status-success {
+  background: rgba(46, 125, 50, 0.14);
+  border-color: rgba(46, 125, 50, 0.35);
+  color: #1f5a25;
+}
+
+.status-info {
+  background: rgba(64, 126, 140, 0.14);
+  border-color: rgba(64, 126, 140, 0.35);
+  color: #1c4f5a;
+}
+
+.status-danger {
+  background: rgba(211, 47, 47, 0.14);
+  border-color: rgba(211, 47, 47, 0.35);
+  color: #8c1f1f;
+}
+
+:host ::ng-deep .orders-detail-button.p-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  text-decoration: none;
+}

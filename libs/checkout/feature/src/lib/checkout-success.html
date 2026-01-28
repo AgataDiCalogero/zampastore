@@ -1,3 +1,4 @@
+@if (state$ | async; as state) { @if (state.status === 'ready') {
 <section class="checkout-success">
   <div class="checkout-hero">
     <div class="checkout-badge">
@@ -11,15 +12,30 @@
     <div class="checkout-meta">
       <div>
         <span class="label">Riferimento</span>
-        <span class="value">{{ orderReference }}</span>
+        <span class="value">{{ state.order.id }}</span>
       </div>
       <div>
         <span class="label">Stato</span>
-        <span class="value">In preparazione</span>
+        <span class="value">{{ state.order.status }}</span>
+      </div>
+      <div>
+        <span class="label">Totale</span>
+        <span class="value">
+          {{ state.order.totalCents / 100 | number: '1.2-2' }} €
+        </span>
       </div>
     </div>
 
     <div class="checkout-actions">
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined"
+        icon="pi pi-list"
+        label="I miei ordini"
+        [routerLink]="['/ordini']"
+      >
+      </button>
       <button
         pButton
         type="button"
@@ -31,3 +47,49 @@
     </div>
   </div>
 </section>
+} @else if (state.status === 'empty') {
+<section class="checkout-empty">
+  <div class="empty-state">
+    <i class="pi pi-inbox"></i>
+    <h3>Ordine non trovato</h3>
+    <p>Non abbiamo trovato questo ordine. Torna alla lista o allo shop.</p>
+    <div class="checkout-actions">
+      <button pButton type="button" [routerLink]="['/ordini']">
+        Vai agli ordini
+      </button>
+      <button
+        pButton
+        type="button"
+        class="p-button-text"
+        [routerLink]="['/prodotti']"
+      >
+        Torna ai prodotti
+      </button>
+    </div>
+  </div>
+</section>
+} @else if (state.status === 'error') {
+<section class="checkout-empty">
+  <div class="empty-state">
+    <i class="pi pi-exclamation-triangle"></i>
+    <h3>Errore di caricamento</h3>
+    <p>Riprova tra poco.</p>
+  </div>
+</section>
+} @else {
+<section class="checkout-success">
+  <p-card class="checkout-skeleton" header="Ordine confermato">
+    <div class="skeleton-row">
+      <p-skeleton height="32px"></p-skeleton>
+    </div>
+    <div class="skeleton-grid">
+      <p-skeleton height="24px"></p-skeleton>
+      <p-skeleton height="24px"></p-skeleton>
+      <p-skeleton height="24px"></p-skeleton>
+    </div>
+    <div class="skeleton-row">
+      <p-skeleton height="40px"></p-skeleton>
+    </div>
+  </p-card>
+</section>
+} }

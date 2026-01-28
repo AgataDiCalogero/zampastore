@@ -1,0 +1,44 @@
+<section class="stripe-test">
+  <div class="stripe-test-header">
+    <div>
+      <h4>Carte test Stripe</h4>
+      <p>Usa questi numeri per simulare casi reali in ambiente test.</p>
+    </div>
+    <span class="stripe-test-tag">Test</span>
+  </div>
+
+  <div class="stripe-test-grid">
+    @for (card of cards; track card.number) {
+    <article class="stripe-card" [class]="'stripe-card tone-' + card.tone">
+      <div class="stripe-card-title">{{ card.title }}</div>
+      <div class="stripe-card-number">{{ card.number }}</div>
+      <div class="stripe-card-meta">
+        <div>
+          <span>MM/AA</span>
+          <strong>12/34</strong>
+        </div>
+        <div>
+          <span>CVC</span>
+          <strong>123</strong>
+        </div>
+      </div>
+      <p class="stripe-card-desc">{{ card.description }}</p>
+      <div class="stripe-card-actions">
+        <button
+          pButton
+          type="button"
+          class="p-button-text"
+          icon="pi pi-copy"
+          (click)="copyNumber(card.number)"
+          [attr.aria-label]="'Copia ' + card.number"
+        >
+          Copia
+        </button>
+        @if (copied() === card.number) {
+        <span class="stripe-copied">Copiato</span>
+        }
+      </div>
+    </article>
+    }
+  </div>
+</section>

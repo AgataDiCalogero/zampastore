@@ -43,8 +43,15 @@
 :host ::ng-deep .product-card .p-button {
   width: 100%;
   justify-content: center;
-  white-space: nowrap;
-  font-size: 0.9rem;
+  white-space: normal;
+  font-size: 0.88rem;
+  line-height: 1.2;
+  padding: 0.7rem 1rem;
+}
+
+:host ::ng-deep .product-card .p-button-label {
+  white-space: normal;
+  text-align: center;
 }
 
 :host ::ng-deep .product-card.p-card {

@@ -1,0 +1,120 @@
+.stripe-test {
+  width: 100%;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  background: var(--surface-elevated);
+  display: grid;
+  gap: var(--space-md);
+}
+
+.stripe-test-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.stripe-test-header h4 {
+  margin: 0 0 var(--space-xs);
+}
+
+.stripe-test-header p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.stripe-test-tag {
+  align-self: flex-start;
+  background: rgba(64, 126, 140, 0.15);
+  color: #1c4f5a;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.stripe-test-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.stripe-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  background: var(--surface-0);
+  display: grid;
+  gap: var(--space-sm);
+  position: relative;
+}
+
+.stripe-card-title {
+  font-weight: 600;
+}
+
+.stripe-card-number {
+  font-family:
+    'JetBrains Mono',
+    'SFMono-Regular',
+    Consolas,
+    'Liberation Mono',
+    Menlo,
+    monospace;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.stripe-card-meta {
+  display: flex;
+  gap: var(--space-lg);
+  font-size: var(--font-size-xs);
+}
+
+.stripe-card-meta span {
+  display: block;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.65rem;
+}
+
+.stripe-card-meta strong {
+  display: block;
+  font-size: var(--font-size-sm);
+}
+
+.stripe-card-desc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.stripe-card-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.stripe-copied {
+  font-size: var(--font-size-xs);
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.tone-success {
+  border-color: rgba(46, 125, 50, 0.35);
+}
+
+.tone-warning {
+  border-color: rgba(242, 193, 75, 0.6);
+}
+
+.tone-danger {
+  border-color: rgba(211, 47, 47, 0.35);
+}

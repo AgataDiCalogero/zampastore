@@ -1,5 +1,10 @@
 @if (state$ | async; as state) { @if (state.status === 'ready') {
 <section class="order-detail">
+  <nav class="order-breadcrumb">
+    <a [routerLink]="['/ordini']">Ordini</a>
+    <span>/</span>
+    <span>{{ state.order.id }}</span>
+  </nav>
   <p-card class="order-card" header="Dettaglio ordine">
     <div class="order-meta">
       <div>
@@ -14,7 +19,12 @@
       </div>
       <div>
         <span class="label">Stato</span>
-        <span class="value status">{{ state.order.status }}</span>
+        <span
+          class="status-chip"
+          [class]="'status-chip status-' + statusFor(state.order.status).tone"
+        >
+          {{ statusFor(state.order.status).label }}
+        </span>
       </div>
       <div>
         <span class="label">Totale</span>

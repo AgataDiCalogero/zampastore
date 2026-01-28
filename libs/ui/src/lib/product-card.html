@@ -28,17 +28,18 @@
       <button
         pButton
         type="button"
-        class="p-button-secondary"
+        class="p-button-secondary product-card-button"
         icon="pi pi-eye"
-        label="Vedi dettaglio"
+        label="Dettagli"
         [routerLink]="['/prodotti', product.id]"
       >
       </button>
       <button
         pButton
         type="button"
+        class="product-card-button"
         icon="pi pi-shopping-cart"
-        label="Aggiungi al carrello"
+        label="Aggiungi"
         (click)="handleAddToCart()"
       >
       </button>

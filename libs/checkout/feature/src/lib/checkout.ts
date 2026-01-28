@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { CheckoutFacade } from '@org/checkout/data-access';
+import { StripeTestCards } from './stripe-test-cards';
 
 @Component({
   selector: 'app-checkout',
@@ -18,6 +19,7 @@ import { CheckoutFacade } from '@org/checkout/data-access';
     ButtonModule,
     InputTextModule,
     SelectModule,
+    StripeTestCards,
   ],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',

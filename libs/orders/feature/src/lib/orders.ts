@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrdersService } from '@org/orders/data-access';
-import { Order } from '@org/shared';
+import { Order, OrderStatus } from '@org/shared';
 import { Observable, catchError, map, of, startWith } from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -32,6 +32,21 @@ export class Orders {
   private readonly ordersService = inject(OrdersService);
 
   protected readonly skeletonRows = Array.from({ length: 4 });
+  protected readonly statusMeta: Record<
+    OrderStatus,
+    { label: string; tone: 'success' | 'warning' | 'info' | 'danger' }
+  > = {
+    pending: { label: 'In attesa', tone: 'warning' },
+    paid: { label: 'Pagato', tone: 'success' },
+    processing: { label: 'In lavorazione', tone: 'info' },
+    shipped: { label: 'Spedito', tone: 'info' },
+    delivered: { label: 'Consegnato', tone: 'success' },
+    cancelled: { label: 'Annullato', tone: 'danger' },
+  };
+
+  protected statusFor(status: OrderStatus) {
+    return this.statusMeta[status];
+  }
   readonly state$: Observable<OrdersState> = this.ordersService
     .getOrders()
     .pipe(
