@@ -17,6 +17,14 @@ export const openApiSpec = swaggerJSDoc({
       { name: 'payments' },
     ],
     components: {
+      securitySchemes: {
+        sessionCookie: {
+          type: 'apiKey',
+          in: 'cookie',
+          name: 'zs_session',
+          description: 'HttpOnly session cookie',
+        },
+      },
       schemas: {
         Product: {
           type: 'object',
@@ -70,6 +78,16 @@ export const openApiSpec = swaggerJSDoc({
           type: 'object',
           properties: {
             message: { type: 'string' },
+          },
+        },
+        HealthResponse: {
+          type: 'object',
+          required: ['ok', 'db', 'latencyMs'],
+          properties: {
+            ok: { type: 'boolean', example: true },
+            db: { type: 'string', example: 'ok' },
+            latencyMs: { type: 'number', example: 12 },
+            uptimeMs: { type: 'number', example: 4521 },
           },
         },
         OrderStatus: {
@@ -183,9 +201,16 @@ export const openApiSpec = swaggerJSDoc({
               content: {
                 'application/json': {
                   schema: {
-                    type: 'object',
-                    properties: { ok: { type: 'boolean', example: true } },
+                    $ref: '#/components/schemas/HealthResponse',
                   },
+                },
+              },
+            },
+            '503': {
+              description: 'Database unavailable',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/HealthResponse' },
                 },
               },
             },
@@ -264,8 +289,24 @@ export const openApiSpec = swaggerJSDoc({
                 },
               },
             },
+            '400': {
+              description: 'Validation error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
             '401': {
               description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
               content: {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -296,8 +337,24 @@ export const openApiSpec = swaggerJSDoc({
                 },
               },
             },
+            '400': {
+              description: 'Validation error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
             '409': {
               description: 'Email already registered',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
               content: {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -311,6 +368,7 @@ export const openApiSpec = swaggerJSDoc({
         get: {
           tags: ['auth'],
           summary: 'Get current user from session',
+          security: [{ sessionCookie: [] }],
           responses: {
             '200': {
               description: 'Authenticated user',
@@ -328,6 +386,14 @@ export const openApiSpec = swaggerJSDoc({
                 },
               },
             },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
           },
         },
       },
@@ -335,8 +401,17 @@ export const openApiSpec = swaggerJSDoc({
         post: {
           tags: ['auth'],
           summary: 'Logout and clear session cookie',
+          security: [{ sessionCookie: [] }],
           responses: {
             '204': { description: 'Logged out' },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
           },
         },
       },
@@ -344,6 +419,7 @@ export const openApiSpec = swaggerJSDoc({
         get: {
           tags: ['orders'],
           summary: 'List orders',
+          security: [{ sessionCookie: [] }],
           responses: {
             '200': {
               description: 'Orders list',
@@ -364,6 +440,14 @@ export const openApiSpec = swaggerJSDoc({
                 },
               },
             },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
           },
         },
       },
@@ -371,6 +455,7 @@ export const openApiSpec = swaggerJSDoc({
         get: {
           tags: ['orders'],
           summary: 'Get order detail',
+          security: [{ sessionCookie: [] }],
           parameters: [
             {
               name: 'id',
@@ -404,6 +489,14 @@ export const openApiSpec = swaggerJSDoc({
                 },
               },
             },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
           },
         },
       },
@@ -411,6 +504,7 @@ export const openApiSpec = swaggerJSDoc({
         post: {
           tags: ['payments'],
           summary: 'Create Stripe checkout session',
+          security: [{ sessionCookie: [] }],
           requestBody: {
             required: true,
             content: {

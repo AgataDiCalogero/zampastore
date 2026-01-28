@@ -1,29 +1,22 @@
-import { Request, Router } from 'express';
+import { Router } from 'express';
 import Stripe from 'stripe';
 import {
   CreateCheckoutSessionRequest,
   CreateCheckoutSessionResponse,
 } from '@org/shared';
-import { authService } from '../services/auth.service';
 import { createOrder } from '../services/orders.service';
-import { getCookie, SESSION_COOKIE } from '../utils/cookies';
+import { getEnv } from '../config/env';
+import { requireAuth } from '../middleware/auth.middleware';
 
 export const paymentsRouter = Router();
 
-const stripeKey = process.env.STRIPE_SECRET_KEY ?? '';
+const env = getEnv();
+const stripeKey = env.stripeSecretKey;
 const stripe = stripeKey ? new Stripe(stripeKey) : null;
-const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:4200';
+const clientUrl = env.clientUrl;
 
-const resolveUser = async (req: Request) => {
-  const sessionId = getCookie(req, SESSION_COOKIE);
-  if (!sessionId) {
-    return null;
-  }
-  return authService.getUserBySession(sessionId);
-};
-
-paymentsRouter.post('/checkout-session', async (req, res) => {
-  const user = await resolveUser(req);
+paymentsRouter.post('/checkout-session', requireAuth, async (req, res) => {
+  const user = req.authUser;
   if (!user) {
     res.status(401).json({ message: 'Non autenticato.' });
     return;

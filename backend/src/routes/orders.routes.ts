@@ -1,40 +1,39 @@
-import { Request, Router } from 'express';
-import { authService } from '../services/auth.service';
+import { Router } from 'express';
 import { getOrderById, listOrders } from '../services/orders.service';
-import { getCookie, SESSION_COOKIE } from '../utils/cookies';
+import { requireAuth } from '../middleware/auth.middleware';
 
 export const ordersRouter = Router();
 
-const resolveUser = async (req: Request) => {
-  const sessionId = getCookie(req, SESSION_COOKIE);
-  if (!sessionId) {
-    return null;
-  }
-  return authService.getUserBySession(sessionId);
-};
+ordersRouter.get('/', requireAuth, async (req, res) => {
+  try {
+    const user = req.authUser;
+    if (!user) {
+      res.status(401).json({ message: 'Non autenticato.' });
+      return;
+    }
 
-ordersRouter.get('/', async (req, res) => {
-  const user = await resolveUser(req);
-  if (!user) {
-    res.status(401).json({ message: 'Non autenticato.' });
-    return;
+    const orders = listOrders(user.id);
+    res.json(orders);
+  } catch {
+    res.status(500).json({ message: 'Errore durante il recupero ordini.' });
   }
-
-  const orders = listOrders(user.id);
-  res.json(orders);
 });
 
-ordersRouter.get('/:id', async (req, res) => {
-  const user = await resolveUser(req);
-  if (!user) {
-    res.status(401).json({ message: 'Non autenticato.' });
-    return;
-  }
+ordersRouter.get('/:id', requireAuth, async (req, res) => {
+  try {
+    const user = req.authUser;
+    if (!user) {
+      res.status(401).json({ message: 'Non autenticato.' });
+      return;
+    }
 
-  const order = getOrderById(user.id, req.params.id);
-  if (!order) {
-    res.status(404).json({ message: 'Ordine non trovato.' });
-    return;
+    const order = getOrderById(user.id, req.params.id);
+    if (!order) {
+      res.status(404).json({ message: 'Ordine non trovato.' });
+      return;
+    }
+    res.json(order);
+  } catch {
+    res.status(500).json({ message: 'Errore durante il recupero ordine.' });
   }
-  res.json(order);
 });

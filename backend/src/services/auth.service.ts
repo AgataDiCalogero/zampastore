@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { AuthUser } from '@org/shared';
+import bcrypt from 'bcrypt';
 import { createSessionId, SESSION_TTL_MS } from '../utils/cookies';
-import { AuthStore, InMemoryAuthStore } from './auth.store';
+import { AuthStore, MysqlAuthStore } from './auth.store';
+import { getEnv } from '../config/env';
 import { UserRecord } from './auth.types';
 
 export type AuthResult = {
@@ -16,6 +18,11 @@ const toAuthUser = (user: UserRecord): AuthUser => ({
 });
 
 const normalizeEmail = (email: string): string => email.trim().toLowerCase();
+const isDuplicateError = (error: unknown): boolean =>
+  typeof error === 'object' &&
+  error !== null &&
+  'code' in error &&
+  (error as { code?: string }).code === 'ER_DUP_ENTRY';
 
 export class AuthService {
   constructor(private readonly store: AuthStore) {}
@@ -27,7 +34,8 @@ export class AuthService {
       return null;
     }
 
-    if (user.passwordHash !== password) {
+    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+    if (!passwordMatches) {
       return null;
     }
 
@@ -51,13 +59,21 @@ export class AuthService {
       return { error: 'conflict' };
     }
 
+    const passwordHash = await bcrypt.hash(password, getEnv().bcryptCost);
     const user: UserRecord = {
       id: `user-${randomUUID()}`,
       name: name.trim(),
       email: normalizedEmail,
-      passwordHash: password,
+      passwordHash,
     };
-    await this.store.createUser(user);
+    try {
+      await this.store.createUser(user);
+    } catch (error) {
+      if (isDuplicateError(error)) {
+        return { error: 'conflict' };
+      }
+      throw error;
+    }
 
     const sessionId = createSessionId();
     await this.store.createSession({
@@ -88,8 +104,8 @@ export class AuthService {
   }
 }
 
-const store = new InMemoryAuthStore();
+const store = new MysqlAuthStore();
 export const authService = new AuthService(store);
 
 export const createAuthService = (): AuthService =>
-  new AuthService(new InMemoryAuthStore());
+  new AuthService(new MysqlAuthStore());

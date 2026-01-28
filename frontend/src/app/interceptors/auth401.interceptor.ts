@@ -9,6 +9,7 @@ const AUTH_ENDPOINTS = [
   '/api/auth/login',
   '/api/auth/register',
   '/api/auth/me',
+  '/api/auth/logout',
 ];
 
 export const auth401Interceptor: HttpInterceptorFn = (req, next) => {
