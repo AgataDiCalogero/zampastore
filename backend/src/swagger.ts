@@ -24,6 +24,12 @@ export const openApiSpec = swaggerJSDoc({
           name: 'zs_session',
           description: 'HttpOnly session cookie',
         },
+        csrfHeader: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'x-csrf-token',
+          description: 'CSRF token header',
+        },
       },
       schemas: {
         Product: {
@@ -401,7 +407,7 @@ export const openApiSpec = swaggerJSDoc({
         post: {
           tags: ['auth'],
           summary: 'Logout and clear session cookie',
-          security: [{ sessionCookie: [] }],
+          security: [{ sessionCookie: [] }, { csrfHeader: [] }],
           responses: {
             '204': { description: 'Logged out' },
             '500': {
@@ -504,7 +510,7 @@ export const openApiSpec = swaggerJSDoc({
         post: {
           tags: ['payments'],
           summary: 'Create Stripe checkout session',
-          security: [{ sessionCookie: [] }],
+          security: [{ sessionCookie: [] }, { csrfHeader: [] }],
           requestBody: {
             required: true,
             content: {

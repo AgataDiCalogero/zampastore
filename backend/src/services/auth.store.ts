@@ -1,7 +1,7 @@
 import { USERS } from '../mocks/users.data';
 import { UserRecord } from './auth.types';
 import { getDbPool } from './db';
-import type { RowDataPacket } from 'mysql2/promise';
+import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 
 export type SessionRecord = {
   id: string;
@@ -16,6 +16,7 @@ export interface AuthStore {
   createSession(session: SessionRecord): Promise<void>;
   findSession(sessionId: string): Promise<SessionRecord | null>;
   deleteSession(sessionId: string): Promise<void>;
+  deleteExpiredSessions(): Promise<number>;
 }
 
 const normalizeEmail = (email: string): string => email.trim().toLowerCase();
@@ -55,6 +56,18 @@ export class InMemoryAuthStore implements AuthStore {
 
   async deleteSession(sessionId: string): Promise<void> {
     this.sessions.delete(sessionId);
+  }
+
+  async deleteExpiredSessions(): Promise<number> {
+    const now = Date.now();
+    let removed = 0;
+    for (const [id, session] of this.sessions.entries()) {
+      if (session.expiresAt.getTime() <= now) {
+        this.sessions.delete(id);
+        removed += 1;
+      }
+    }
+    return removed;
   }
 }
 
@@ -131,5 +144,12 @@ export class MysqlAuthStore implements AuthStore {
 
   async deleteSession(sessionId: string): Promise<void> {
     await this.pool.execute('DELETE FROM sessions WHERE id = ?', [sessionId]);
+  }
+
+  async deleteExpiredSessions(): Promise<number> {
+    const [result] = await this.pool.execute<ResultSetHeader>(
+      'DELETE FROM sessions WHERE expires_at < NOW()',
+    );
+    return result.affectedRows ?? 0;
   }
 }

@@ -14,6 +14,7 @@ import { productsRouter } from './routes/products.routes';
 import { ordersRouter } from './routes/orders.routes';
 import { paymentsRouter } from './routes/payments.routes';
 import { dbPing } from './services/db';
+import { authService } from './services/auth.service';
 import { getEnv } from './config/env';
 
 dotenv.config();
@@ -25,10 +26,25 @@ app.use(
   cors({
     origin: env.clientUrl,
     credentials: true,
+    allowedHeaders: ['Content-Type', 'x-csrf-token'],
   }),
 );
 
 app.use(express.json());
+
+const SESSION_CLEANUP_INTERVAL_MS = 1000 * 60 * 10;
+const runSessionCleanup = async (): Promise<void> => {
+  try {
+    const removed = await authService.cleanupExpiredSessions();
+    if (removed > 0) {
+      console.log(`Cleaned ${removed} expired sessions.`);
+    }
+  } catch (error) {
+    console.error('Session cleanup failed.', error);
+  }
+};
+runSessionCleanup();
+setInterval(runSessionCleanup, SESSION_CLEANUP_INTERVAL_MS).unref?.();
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 

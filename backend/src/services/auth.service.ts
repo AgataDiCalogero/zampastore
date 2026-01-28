@@ -102,6 +102,10 @@ export class AuthService {
   async clearSession(sessionId: string): Promise<void> {
     await this.store.deleteSession(sessionId);
   }
+
+  async cleanupExpiredSessions(): Promise<number> {
+    return this.store.deleteExpiredSessions();
+  }
 }
 
 const store = new MysqlAuthStore();

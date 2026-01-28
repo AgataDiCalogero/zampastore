@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getOrderById, listOrders } from '../services/orders.service';
 import { requireAuth } from '../middleware/auth.middleware';
+import { mapDbError } from '../utils/db-errors';
 
 export const ordersRouter = Router();
 
@@ -12,9 +13,14 @@ ordersRouter.get('/', requireAuth, async (req, res) => {
       return;
     }
 
-    const orders = listOrders(user.id);
+    const orders = await listOrders(user.id);
     res.json(orders);
-  } catch {
+  } catch (error) {
+    const mapped = mapDbError(error);
+    if (mapped) {
+      res.status(mapped.status).json({ message: mapped.message });
+      return;
+    }
     res.status(500).json({ message: 'Errore durante il recupero ordini.' });
   }
 });
@@ -27,13 +33,18 @@ ordersRouter.get('/:id', requireAuth, async (req, res) => {
       return;
     }
 
-    const order = getOrderById(user.id, req.params.id);
+    const order = await getOrderById(user.id, req.params.id);
     if (!order) {
       res.status(404).json({ message: 'Ordine non trovato.' });
       return;
     }
     res.json(order);
-  } catch {
+  } catch (error) {
+    const mapped = mapDbError(error);
+    if (mapped) {
+      res.status(mapped.status).json({ message: mapped.message });
+      return;
+    }
     res.status(500).json({ message: 'Errore durante il recupero ordine.' });
   }
 });

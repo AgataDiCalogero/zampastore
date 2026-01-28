@@ -1,10 +1,13 @@
 import { randomUUID } from 'node:crypto';
-import { Order, OrderDetail, OrderLine, ShippingAddress } from '@org/shared';
+import {
+  Order,
+  OrderDetail,
+  OrderLine,
+  OrderStatus,
+  ShippingAddress,
+} from '@org/shared';
 import { PRODUCTS } from '../mocks/products.data';
-
-type StoredOrder = OrderDetail & { userId: string };
-
-const orders: StoredOrder[] = [];
+import { ordersStore } from './orders.store';
 
 const buildOrderLine = (productId: string, qty: number): OrderLine | null => {
   const product = PRODUCTS.find((item) => item.id === productId);
@@ -23,11 +26,11 @@ const buildOrderLine = (productId: string, qty: number): OrderLine | null => {
   };
 };
 
-export const createOrder = (
+export const createOrder = async (
   userId: string,
   items: { productId: string; qty: number }[],
   shippingAddress: ShippingAddress,
-): OrderDetail | null => {
+): Promise<OrderDetail | null> => {
   const lines: OrderLine[] = [];
   for (const item of items) {
     const line = buildOrderLine(item.productId, item.qty);
@@ -41,45 +44,37 @@ export const createOrder = (
     (total, line) => total + line.lineTotalCents,
     0,
   );
-  const order: StoredOrder = {
+  const createdAt = new Date();
+  const order: OrderDetail = {
     id: `ord-${randomUUID()}`,
     totalCents,
-    createdAt: new Date().toISOString(),
+    createdAt: createdAt.toISOString(),
     status: 'pending',
     items: lines,
     shippingAddress,
-    userId,
   };
-  orders.unshift(order);
+  await ordersStore.createOrder({
+    id: order.id,
+    userId,
+    totalCents: order.totalCents,
+    status: order.status,
+    createdAt,
+    items: order.items,
+    shippingAddress: order.shippingAddress,
+  });
   return order;
 };
 
-export const listOrders = (userId: string): Order[] =>
-  orders
-    .filter((order) => order.userId === userId)
-    .map((order) => ({
-      id: order.id,
-      totalCents: order.totalCents,
-      createdAt: order.createdAt,
-      status: order.status,
-    }));
+export const listOrders = async (userId: string): Promise<Order[]> =>
+  ordersStore.listOrdersByUser(userId);
 
-export const getOrderById = (
+export const getOrderById = async (
   userId: string,
   orderId: string,
-): OrderDetail | null => {
-  const order = orders.find(
-    (entry) => entry.userId === userId && entry.id === orderId,
-  );
-  if (!order) {
-    return null;
-  }
-  return {
-    id: order.id,
-    totalCents: order.totalCents,
-    createdAt: order.createdAt,
-    status: order.status,
-    items: order.items,
-    shippingAddress: order.shippingAddress,
-  };
-};
+): Promise<OrderDetail | null> => ordersStore.getOrderById(userId, orderId);
+
+export const updateOrderStatus = async (
+  userId: string,
+  orderId: string,
+  status: OrderStatus,
+): Promise<boolean> => ordersStore.updateOrderStatus(orderId, userId, status);
