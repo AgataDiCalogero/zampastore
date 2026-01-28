@@ -7,6 +7,7 @@ import {
 import { createOrder } from '../services/orders.service';
 import { getEnv } from '../config/env';
 import { requireAuth } from '../middleware/auth.middleware';
+import { requireCsrf } from '../middleware/csrf.middleware';
 
 export const paymentsRouter = Router();
 
@@ -15,7 +16,11 @@ const stripeKey = env.stripeSecretKey;
 const stripe = stripeKey ? new Stripe(stripeKey) : null;
 const clientUrl = env.clientUrl;
 
-paymentsRouter.post('/checkout-session', requireAuth, async (req, res) => {
+paymentsRouter.post(
+  '/checkout-session',
+  requireAuth,
+  requireCsrf,
+  async (req, res) => {
   const user = req.authUser;
   if (!user) {
     res.status(401).json({ message: 'Non autenticato.' });
@@ -87,4 +92,5 @@ paymentsRouter.post('/checkout-session', requireAuth, async (req, res) => {
       .status(500)
       .json({ message: 'Impossibile creare la sessione di pagamento.' });
   }
-});
+  },
+);

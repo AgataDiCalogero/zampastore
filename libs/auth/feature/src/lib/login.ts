@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -65,10 +66,24 @@ export class Login {
         next: () => {
           void this.router.navigateByUrl(returnUrl);
         },
-        error: () => {
-          this.errorMessage =
-            'Credenziali non valide o servizio non disponibile.';
+        error: (error: unknown) => {
+          this.errorMessage = this.getErrorMessage(error);
         },
       });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 400) {
+        return 'Email o password non valide.';
+      }
+      if (error.status === 401) {
+        return 'Credenziali non valide.';
+      }
+      if (typeof error.error?.message === 'string') {
+        return error.error.message;
+      }
+    }
+    return 'Servizio non disponibile. Riprova più tardi.';
   }
 }

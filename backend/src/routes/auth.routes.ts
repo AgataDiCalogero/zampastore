@@ -7,10 +7,14 @@ import {
 } from '../services/auth.validation';
 import {
   clearSessionCookie,
+  clearCsrfCookie,
+  createCsrfToken,
   getCookie,
+  setCsrfCookie,
   setSessionCookie,
   SESSION_COOKIE,
 } from '../utils/cookies';
+import { requireCsrf } from '../middleware/csrf.middleware';
 
 export const authRouter = Router();
 
@@ -32,6 +36,7 @@ authRouter.post('/login', async (req, res) => {
     }
 
     setSessionCookie(res, result.sessionId);
+    setCsrfCookie(res, createCsrfToken());
     const payload: AuthResponse = { user: result.user };
     res.json(payload);
   } catch {
@@ -58,6 +63,7 @@ authRouter.post('/register', async (req, res) => {
     }
 
     setSessionCookie(res, result.sessionId);
+    setCsrfCookie(res, createCsrfToken());
     const payload: AuthResponse = { user: result.user };
     res.status(201).json(payload);
   } catch {
@@ -79,6 +85,7 @@ authRouter.get('/me', async (req, res) => {
       return;
     }
 
+    setCsrfCookie(res, createCsrfToken());
     const payload: AuthResponse = { user };
     res.json(payload);
   } catch {
@@ -86,13 +93,14 @@ authRouter.get('/me', async (req, res) => {
   }
 });
 
-authRouter.post('/logout', async (req, res) => {
+authRouter.post('/logout', requireCsrf, async (req, res) => {
   const sessionId = getCookie(req, SESSION_COOKIE);
   try {
     if (sessionId) {
       await authService.clearSession(sessionId);
     }
     clearSessionCookie(res);
+    clearCsrfCookie(res);
     res.status(204).send();
   } catch {
     res.status(500).json({ message: 'Errore durante il logout.' });

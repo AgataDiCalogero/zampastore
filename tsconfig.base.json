@@ -23,6 +23,7 @@
       "@org/orders/data-access": ["libs/orders/data-access/src/index.ts"],
       "@org/orders/feature": ["libs/orders/feature/src/index.ts"],
       "@org/checkout/feature": ["libs/checkout/feature/src/index.ts"],
+      "@org/checkout/data-access": ["libs/checkout/data-access/src/index.ts"],
       "@org/payment/data-access": ["libs/payment/data-access/src/index.ts"],
       "@org/home/feature": ["libs/home/feature/src/index.ts"],
       "@org/ui": ["libs/ui/src/index.ts"]

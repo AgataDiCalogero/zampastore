@@ -123,11 +123,11 @@
           </div>
         </div>
 
-        @if (errorMessage) {
-        <div class="form-error" role="alert">{{ errorMessage }}</div>
+        @if (errorMessage()) {
+        <div class="form-error" role="alert">{{ errorMessage() }}</div>
         }
 
-        <button pButton type="submit" [disabled]="form.invalid || submitting">
+        <button pButton type="submit" [disabled]="form.invalid || submitting()">
           Paga con Stripe (test)
         </button>
         <button

@@ -15,6 +15,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -78,8 +79,8 @@ export class Register {
         next: () => {
           void this.router.navigateByUrl(returnUrl);
         },
-        error: () => {
-          this.errorMessage = 'Registrazione non riuscita. Riprova più tardi.';
+        error: (error: unknown) => {
+          this.errorMessage = this.getErrorMessage(error);
         },
       });
   }
@@ -92,5 +93,20 @@ export class Register {
     return password && confirm && password !== confirm
       ? { passwordMismatch: true }
       : null;
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 400) {
+        return 'Dati non validi. Controlla i campi e riprova.';
+      }
+      if (error.status === 409) {
+        return 'Email già registrata.';
+      }
+      if (typeof error.error?.message === 'string') {
+        return error.error.message;
+      }
+    }
+    return 'Registrazione non riuscita. Riprova più tardi.';
   }
 }
