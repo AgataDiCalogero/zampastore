@@ -1,6 +1,7 @@
 @if (state$ | async; as state) { @if (state.status === 'ready') {
 <section class="orders-page section">
   <p-card header="I miei ordini" class="orders-card">
+    @defer (on viewport) {
     <p-table
       [value]="state.orders"
       dataKey="id"
@@ -42,6 +43,13 @@
         </tr>
       </ng-template>
     </p-table>
+    } @placeholder {
+    <div class="orders-skeleton">
+      @for (row of skeletonRows; track $index) {
+      <p-skeleton height="32px"></p-skeleton>
+      }
+    </div>
+    }
   </p-card>
 </section>
 } @else if (state.status === 'empty') {

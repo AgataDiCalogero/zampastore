@@ -30,11 +30,12 @@ const buildOrderLines = (
     if (product.stock < safeQty) {
       throw new OrderCreationError('out-of-stock');
     }
-    const lineTotalCents = product.priceCents * safeQty;
+    const unitPriceCents = product.price_cents;
+    const lineTotalCents = unitPriceCents * safeQty;
     lines.push({
       productId: product.id,
       name: product.name,
-      unitPriceCents: product.priceCents,
+      unitPriceCents,
       qty: safeQty,
       lineTotalCents,
     });

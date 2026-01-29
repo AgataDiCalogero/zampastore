@@ -3,7 +3,11 @@ import {
   inject,
   provideAppInitializer,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {
+  PreloadAllModules,
+  provideRouter,
+  withPreloading,
+} from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { appRoutes } from '../app.routes';
@@ -15,7 +19,7 @@ import { AuthService } from '@org/auth/data-access';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(appRoutes),
+    provideRouter(appRoutes, withPreloading(PreloadAllModules)),
     provideAnimations(),
     provideHttpClient(
       withInterceptors([credentialsInterceptor, auth401Interceptor]),

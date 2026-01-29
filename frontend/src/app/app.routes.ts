@@ -1,11 +1,11 @@
 import { Route } from '@angular/router';
 import { authGuard } from '@org/auth/data-access';
+import { Home } from '@org/home/feature';
 
 export const appRoutes: Route[] = [
   {
     path: '',
-    loadComponent: () =>
-      import('@org/home/feature').then((m) => m.Home),
+    component: Home,
     pathMatch: 'full',
   },
   {

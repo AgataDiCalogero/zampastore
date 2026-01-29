@@ -140,7 +140,15 @@
         >
           Torna al carrello
         </button>
+        @defer (on idle) {
         <app-stripe-test-cards></app-stripe-test-cards>
+        } @placeholder {
+        <div class="summary-card">
+          <p-skeleton height="18px"></p-skeleton>
+          <p-skeleton height="18px"></p-skeleton>
+          <p-skeleton height="18px"></p-skeleton>
+        </div>
+        }
       </aside>
     </form>
   </p-card>
