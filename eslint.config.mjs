@@ -37,6 +37,7 @@ export default [
               sourceTag: 'scope:cart',
               onlyDependOnLibsWithTags: [
                 'scope:cart',
+                'scope:auth',
                 'scope:shared',
                 'type:ui',
               ],

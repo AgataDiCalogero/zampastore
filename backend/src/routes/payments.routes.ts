@@ -11,6 +11,7 @@ import { requireAuth } from '../middleware/auth.middleware';
 import { requireCsrf } from '../middleware/csrf.middleware';
 import { mapDbError } from '../utils/db-errors';
 import { parseCheckoutRequest } from '../services/checkout.validation';
+import { stripeEventsStore } from '../services/stripe-events.store';
 
 export const paymentsRouter = Router();
 
@@ -40,6 +41,192 @@ const shouldFallbackOnStripeError =
   !stripeStrict || !stripeKey || isPlaceholderKey(stripeKey);
 const clientUrl = env.clientUrl;
 
+type CreatedOrder = Awaited<ReturnType<typeof createOrder>>;
+type AuthenticatedUser = NonNullable<express.Request['authUser']>;
+type CheckoutPayload = Extract<
+  ReturnType<typeof parseCheckoutRequest>,
+  { ok: true }
+>['data'];
+
+const isCheckoutSessionCompletedEvent = (
+  event: Stripe.Event,
+): event is Stripe.Event & {
+  type: 'checkout.session.completed';
+  data: { object: Stripe.Checkout.Session };
+} => event.type === 'checkout.session.completed';
+
+const sendOrderPaidResponse = (
+  res: express.Response,
+  orderId: string,
+  url: string,
+): void => {
+  const response: CreateCheckoutSessionResponse = {
+    url,
+    orderId,
+  };
+  res.json(response);
+};
+
+const markOrderPaidOr500 = async (
+  res: express.Response,
+  userId: string,
+  orderId: string,
+  url: string,
+): Promise<boolean> => {
+  const updated = await updateOrderStatus(userId, orderId, 'paid');
+  if (!updated) {
+    res
+      .status(500)
+      .json({ message: 'Impossibile aggiornare lo stato ordine.' });
+    return false;
+  }
+  sendOrderPaidResponse(res, orderId, url);
+  return true;
+};
+
+const handleOrderCreationError = (
+  res: express.Response,
+  error: unknown,
+): boolean => {
+  if (!(error instanceof OrderCreationError)) {
+    return false;
+  }
+
+  if (error.code === 'out-of-stock') {
+    res.status(409).json({ message: 'Prodotto esaurito.' });
+    return true;
+  }
+
+  res.status(400).json({ message: 'Prodotti non validi.' });
+  return true;
+};
+
+const getAuthenticatedUser = (
+  req: express.Request,
+  res: express.Response,
+): AuthenticatedUser | null => {
+  const user = req.authUser;
+  if (!user) {
+    res.status(401).json({ message: 'Non autenticato.' });
+    return null;
+  }
+  return user;
+};
+
+const parseCheckoutPayload = (
+  req: express.Request,
+  res: express.Response,
+): CheckoutPayload | null => {
+  const parsed = parseCheckoutRequest(req.body);
+  if (!parsed.ok) {
+    res.status(400).json({ message: parsed.message });
+    return null;
+  }
+  return parsed.data;
+};
+
+const createOrderOrRespond = async (
+  res: express.Response,
+  userId: string,
+  payload: CheckoutPayload,
+): Promise<CreatedOrder | null> => {
+  try {
+    const order = await createOrder(
+      userId,
+      payload.items,
+      payload.shippingAddress,
+    );
+    if (!order) {
+      res.status(500).json({ message: 'Impossibile creare l’ordine.' });
+      return null;
+    }
+    return order;
+  } catch (error) {
+    if (handleOrderCreationError(res, error)) {
+      return null;
+    }
+    throw error;
+  }
+};
+
+const createStripeSession = (
+  stripeClient: Stripe,
+  order: CreatedOrder,
+  user: AuthenticatedUser,
+  successUrl: string,
+  cancelUrl: string,
+): Promise<Stripe.Checkout.Session> =>
+  stripeClient.checkout.sessions.create({
+    mode: 'payment',
+    payment_method_types: ['card'],
+    client_reference_id: order.id,
+    metadata: {
+      orderId: order.id,
+      userId: user.id,
+    },
+    line_items: order.items.map((item) => ({
+      quantity: item.qty,
+      price_data: {
+        currency: 'eur',
+        unit_amount: item.unitPriceCents,
+        product_data: {
+          name: item.name,
+        },
+      },
+    })),
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    customer_email: user.email,
+  });
+
+const handleStripeCheckout = async (
+  res: express.Response,
+  user: AuthenticatedUser,
+  order: CreatedOrder,
+  successUrl: string,
+  cancelUrl: string,
+): Promise<void> => {
+  if (!stripe) {
+    await markOrderPaidOr500(res, user.id, order.id, successUrl);
+    return;
+  }
+
+  try {
+    const session = await createStripeSession(
+      stripe,
+      order,
+      user,
+      successUrl,
+      cancelUrl,
+    );
+
+    if (!session.url) {
+      res
+        .status(500)
+        .json({ message: 'Sessione Stripe senza URL di redirect.' });
+      return;
+    }
+
+    if (shouldAutoPaidForTest) {
+      const updated = await updateOrderStatus(user.id, order.id, 'paid');
+      if (!updated) {
+        console.warn(`Unable to auto-mark order ${order.id} as paid.`);
+      }
+    }
+
+    sendOrderPaidResponse(res, order.id, session.url);
+  } catch (error) {
+    if (shouldFallbackOnStripeError) {
+      await markOrderPaidOr500(res, user.id, order.id, successUrl);
+      return;
+    }
+    console.error('Stripe session error', error);
+    res
+      .status(500)
+      .json({ message: 'Impossibile creare la sessione di pagamento.' });
+  }
+};
+
 paymentsRouter.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
@@ -66,8 +253,14 @@ paymentsRouter.post(
       return;
     }
 
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as Stripe.Checkout.Session;
+    const recorded = await stripeEventsStore.recordEvent(event.id, event.type);
+    if (!recorded) {
+      res.json({ received: true, duplicate: true });
+      return;
+    }
+
+    if (isCheckoutSessionCompletedEvent(event)) {
+      const session = event.data.object;
       const orderId = session.metadata?.orderId;
       const userId = session.metadata?.userId;
       if (!orderId || !userId) {
@@ -91,39 +284,18 @@ paymentsRouter.post(
   requireCsrf,
   async (req, res) => {
     try {
-      const user = req.authUser;
+      const user = getAuthenticatedUser(req, res);
       if (!user) {
-        res.status(401).json({ message: 'Non autenticato.' });
         return;
       }
 
-      const parsed = parseCheckoutRequest(req.body);
-      if (!parsed.ok) {
-        res.status(400).json({ message: parsed.message });
+      const payload = parseCheckoutPayload(req, res);
+      if (!payload) {
         return;
       }
-      const payload = parsed.data;
 
-      let order: Awaited<ReturnType<typeof createOrder>> | null = null;
-      try {
-        order = await createOrder(
-          user.id,
-          payload.items,
-          payload.shippingAddress,
-        );
-      } catch (error) {
-        if (error instanceof OrderCreationError) {
-          if (error.code === 'out-of-stock') {
-            res.status(409).json({ message: 'Prodotto esaurito.' });
-            return;
-          }
-          res.status(400).json({ message: 'Prodotti non validi.' });
-          return;
-        }
-        throw error;
-      }
+      const order = await createOrderOrRespond(res, user.id, payload);
       if (!order) {
-        res.status(500).json({ message: 'Impossibile creare l’ordine.' });
         return;
       }
 
@@ -132,101 +304,11 @@ paymentsRouter.post(
       const isE2e = req.headers['x-e2e-test'] === 'true';
 
       if (isE2e) {
-        const updated = await updateOrderStatus(user.id, order.id, 'paid');
-        if (!updated) {
-          res
-            .status(500)
-            .json({ message: 'Impossibile aggiornare lo stato ordine.' });
-          return;
-        }
-        const response: CreateCheckoutSessionResponse = {
-          url: successUrl,
-          orderId: order.id,
-        };
-        res.json(response);
+        await markOrderPaidOr500(res, user.id, order.id, successUrl);
         return;
       }
 
-      if (!stripe) {
-        const updated = await updateOrderStatus(user.id, order.id, 'paid');
-        if (!updated) {
-          res
-            .status(500)
-            .json({ message: 'Impossibile aggiornare lo stato ordine.' });
-          return;
-        }
-        const response: CreateCheckoutSessionResponse = {
-          url: successUrl,
-          orderId: order.id,
-        };
-        res.json(response);
-        return;
-      }
-
-      try {
-        const session = await stripe.checkout.sessions.create({
-          mode: 'payment',
-          payment_method_types: ['card'],
-          client_reference_id: order.id,
-          metadata: {
-            orderId: order.id,
-            userId: user.id,
-          },
-          line_items: order.items.map((item) => ({
-            quantity: item.qty,
-            price_data: {
-              currency: 'eur',
-              unit_amount: item.unitPriceCents,
-              product_data: {
-                name: item.name,
-              },
-            },
-          })),
-          success_url: successUrl,
-          cancel_url: cancelUrl,
-          customer_email: user.email,
-        });
-
-        if (!session.url) {
-          res
-            .status(500)
-            .json({ message: 'Sessione Stripe senza URL di redirect.' });
-          return;
-        }
-
-        if (shouldAutoPaidForTest) {
-          const updated = await updateOrderStatus(user.id, order.id, 'paid');
-          if (!updated) {
-            console.warn(`Unable to auto-mark order ${order.id} as paid.`);
-          }
-        }
-
-        const response: CreateCheckoutSessionResponse = {
-          url: session.url,
-          orderId: order.id,
-        };
-        res.json(response);
-      } catch (error) {
-        if (shouldFallbackOnStripeError) {
-          const updated = await updateOrderStatus(user.id, order.id, 'paid');
-          if (!updated) {
-            res
-              .status(500)
-              .json({ message: 'Impossibile aggiornare lo stato ordine.' });
-            return;
-          }
-          const response: CreateCheckoutSessionResponse = {
-            url: successUrl,
-            orderId: order.id,
-          };
-          res.json(response);
-          return;
-        }
-        console.error('Stripe session error', error);
-        res
-          .status(500)
-          .json({ message: 'Impossibile creare la sessione di pagamento.' });
-      }
+      await handleStripeCheckout(res, user, order, successUrl, cancelUrl);
     } catch (error) {
       const mapped = mapDbError(error);
       if (mapped) {

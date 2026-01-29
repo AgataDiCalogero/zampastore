@@ -12,12 +12,10 @@ const buildUser = () => {
 const registerViaUi = async (page: Page) => {
   const user = buildUser();
   await page.goto('/registrazione');
-  await page.getByLabel('Nome', { exact: true }).fill(user.name);
-  await page.getByLabel('Email').fill(user.email);
-  await page.getByLabel('Password', { exact: true }).fill(user.password);
-  await page
-    .getByLabel('Conferma password', { exact: true })
-    .fill(user.password);
+  await page.locator('#username').fill(user.name);
+  await page.locator('#email').fill(user.email);
+  await page.locator('#password').fill(user.password);
+  await page.locator('#confirmPassword').fill(user.password);
   await page.getByRole('button', { name: 'Crea account' }).click();
   await page.waitForURL('**/');
   return user;
@@ -38,7 +36,12 @@ test('checkout flow: register → add to cart → confirmation', async ({
   await registerViaUi(page);
 
   await page.goto('/prodotti');
-  const firstAdd = page.getByRole('button', { name: 'Aggiungi' }).first();
+  await page.waitForResponse((response) =>
+    response.url().includes('/api/products') && response.ok(),
+  );
+  const productCard = page.locator('app-product-card').first();
+  await expect(productCard).toBeVisible();
+  const firstAdd = productCard.getByRole('button', { name: 'Aggiungi' });
   await expect(firstAdd).toBeVisible();
   await firstAdd.click();
 
@@ -79,5 +82,6 @@ test('ordini richiede autenticazione', async ({ page }) => {
   await page.goto('/ordini');
   await page.waitForURL('**/login**');
   await expect(page.locator('.auth-card')).toBeVisible();
-  await expect(page.locator('form .form-actions button')).toBeVisible();
+  await expect(page.locator('form.auth-form #email')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Accedi' })).toBeVisible();
 });

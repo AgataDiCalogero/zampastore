@@ -97,11 +97,11 @@ export class App {
     return this.buildMenuItems()
       .filter((item) => item.visible !== false)
       .map((item) => ({
-        id: item.id as string | undefined,
+        id: item.id,
         label: item.label ?? '',
-        routerLink: item.routerLink as string | string[] | undefined,
+        routerLink: item.routerLink,
         command: item.command ? () => item.command?.({} as never) : undefined,
-        icon: item.icon as string | undefined,
+        icon: item.icon,
       }))
       .filter((item) => item.label);
   }

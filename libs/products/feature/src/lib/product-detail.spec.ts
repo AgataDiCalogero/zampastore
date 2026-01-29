@@ -7,6 +7,7 @@ import {
 } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
+import { describe, beforeEach, it, expect } from 'vitest';
 import { ProductDetail } from './product-detail';
 
 describe('ProductDetail', () => {

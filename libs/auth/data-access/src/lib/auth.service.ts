@@ -95,9 +95,9 @@ export class AuthService {
     const isAuthRoute =
       normalizedReturnUrl.startsWith('/login') ||
       normalizedReturnUrl.startsWith('/registrazione');
-    const targetUrl = !isAuthRoute
-      ? `/login?returnUrl=${encodeURIComponent(normalizedReturnUrl)}`
-      : '/login';
+    const targetUrl = isAuthRoute
+      ? '/login'
+      : `/login?returnUrl=${encodeURIComponent(normalizedReturnUrl)}`;
     void this.router.navigateByUrl(targetUrl);
   }
 }

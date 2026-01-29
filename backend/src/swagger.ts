@@ -9,6 +9,7 @@ export const openApiSpec = {
     tags: [
       { name: 'health' },
       { name: 'products' },
+      { name: 'cart' },
       { name: 'auth' },
       { name: 'orders' },
       { name: 'payments' },
@@ -172,6 +173,14 @@ export const openApiSpec = {
             qty: { type: 'number', example: 1 },
           },
         },
+        CartItemDetail: {
+          type: 'object',
+          required: ['product', 'qty'],
+          properties: {
+            product: { $ref: '#/components/schemas/Product' },
+            qty: { type: 'number', example: 1 },
+          },
+        },
         CreateCheckoutSessionRequest: {
           type: 'object',
           required: ['items', 'shippingAddress'],
@@ -262,6 +271,255 @@ export const openApiSpec = {
             },
             '404': {
               description: 'Not found',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/cart': {
+        get: {
+          tags: ['cart'],
+          summary: 'Get current cart',
+          security: [{ sessionCookie: [] }],
+          responses: {
+            '200': {
+              description: 'Cart items',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'array',
+                    items: { $ref: '#/components/schemas/CartItemDetail' },
+                  },
+                },
+              },
+            },
+            '401': {
+              description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+          },
+        },
+        delete: {
+          tags: ['cart'],
+          summary: 'Clear cart',
+          security: [{ sessionCookie: [] }, { csrfHeader: [] }],
+          responses: {
+            '204': { description: 'Cleared' },
+            '401': {
+              description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/cart/merge': {
+        post: {
+          tags: ['cart'],
+          summary: 'Merge local cart into server cart',
+          security: [{ sessionCookie: [] }, { csrfHeader: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['items'],
+                  properties: {
+                    items: {
+                      type: 'array',
+                      items: { $ref: '#/components/schemas/CartItem' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '204': { description: 'Merged' },
+            '400': {
+              description: 'Validation error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '401': {
+              description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/cart/items': {
+        post: {
+          tags: ['cart'],
+          summary: 'Add item to cart',
+          security: [{ sessionCookie: [] }, { csrfHeader: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/CartItem' },
+              },
+            },
+          },
+          responses: {
+            '204': { description: 'Added' },
+            '400': {
+              description: 'Validation error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '401': {
+              description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/cart/items/{productId}': {
+        patch: {
+          tags: ['cart'],
+          summary: 'Update cart item quantity',
+          security: [{ sessionCookie: [] }, { csrfHeader: [] }],
+          parameters: [
+            {
+              name: 'productId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string' },
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['qty'],
+                  properties: {
+                    qty: { type: 'number', example: 2 },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '204': { description: 'Updated' },
+            '400': {
+              description: 'Validation error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '401': {
+              description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '404': {
+              description: 'Not found',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+          },
+        },
+        delete: {
+          tags: ['cart'],
+          summary: 'Remove cart item',
+          security: [{ sessionCookie: [] }, { csrfHeader: [] }],
+          parameters: [
+            {
+              name: 'productId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string' },
+            },
+          ],
+          responses: {
+            '204': { description: 'Removed' },
+            '401': {
+              description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
               content: {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -539,6 +797,51 @@ export const openApiSpec = {
             },
             '401': {
               description: 'Unauthorized',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+            '500': {
+              description: 'Server error',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/payments/webhook': {
+        post: {
+          tags: ['payments'],
+          summary: 'Stripe webhook',
+          description:
+            'Endpoint per eventi Stripe (es. checkout.session.completed). Richiede header stripe-signature.',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                },
+              },
+            },
+          },
+          parameters: [
+            {
+              name: 'stripe-signature',
+              in: 'header',
+              required: true,
+              schema: { type: 'string' },
+            },
+          ],
+          responses: {
+            '200': { description: 'OK' },
+            '400': {
+              description: 'Bad request',
               content: {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/ErrorResponse' },

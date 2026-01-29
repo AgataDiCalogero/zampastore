@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideRouter } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
-import { convertToParamMap } from '@angular/router';
+import { provideRouter, ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
+import { describe, beforeEach, it, expect } from 'vitest';
 import { CheckoutSuccess } from './checkout-success';
 
 describe('CheckoutSuccess', () => {

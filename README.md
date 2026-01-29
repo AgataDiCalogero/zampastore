@@ -12,6 +12,58 @@ Monorepo Nx con:
 npm install
 ```
 
+## Configurazione ambiente
+
+1) Copia il file `.env.example` in `.env` (root repo):
+
+Windows (PowerShell):
+```sh
+Copy-Item .env.example .env
+```
+
+macOS/Linux:
+```sh
+cp .env.example .env
+```
+
+2) Compila le variabili in `.env`:
+- `CLIENT_URL` e `PORT`
+- `TIDB_*` (host, user, password, database)
+- **TLS CA**: usa `TIDB_CA_PATH` (o `TIDB_CA_BASE64`)
+- Stripe (opzionale): `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET`
+
+## Database (TiDB/MySQL)
+
+Script SQL disponibili:
+- `backend/sql/initial.sql` (users, sessions, products, cart_items, stripe_events)
+- `backend/sql/orders.sql` (orders, order_items, shipping_addresses)
+
+Se il DB è nuovo:
+```sql
+SOURCE backend/sql/initial.sql;
+SOURCE backend/sql/orders.sql;
+```
+
+Se il DB esiste già:
+- esegui solo le parti mancanti (tabelle products/cart_items e FK su order_items.product_id).
+
+## Stripe (opzionale)
+
+Webhook locale (consigliato):
+```sh
+stripe listen --forward-to http://localhost:3333/api/payments/webhook
+```
+
+Se `stripe` non è nel PATH, usa il percorso completo al binario:
+```sh
+C:\\path\\to\\stripe.exe listen --forward-to http://localhost:3333/api/payments/webhook
+```
+
+L'endpoint backend è:
+```
+POST /api/payments/webhook
+```
+
 ## Comandi principali
 
 Dev server (frontend):
@@ -89,6 +141,16 @@ E2E (Playwright) CI:
 npx nx run frontend-e2e:e2e:ci
 ```
 
+Report HTML Playwright:
+```sh
+dist/playwright/index.html
+```
+
+API Docs (Swagger):
+```
+http://localhost:3333/api/docs
+```
+
 ## Checklist pre-deploy (locale)
 
 ```sh
@@ -97,6 +159,11 @@ npx nx format:check --base="remotes/origin/main"
 
 ```sh
 npx nx run-many -t lint test build typecheck
+```
+
+Check totale (incluso E2E, senza cache):
+```sh
+npx nx run-many -t lint test typecheck build e2e --configuration=ci --skip-nx-cache
 ```
 ## Formattazione
 

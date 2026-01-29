@@ -1,6 +1,5 @@
 /**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
+ * Minimal backend to get started.
  */
 
 import dotenv from 'dotenv';
@@ -12,6 +11,7 @@ import swaggerUI from 'swagger-ui-express';
 import { openApiSpec } from './swagger';
 import { authRouter } from './routes/auth.routes';
 import { productsRouter } from './routes/products.routes';
+import { cartRouter } from './routes/cart.routes';
 import { ordersRouter } from './routes/orders.routes';
 import { paymentsRouter } from './routes/payments.routes';
 import { dbPing } from './services/db';
@@ -53,9 +53,13 @@ app.use((req, res, next) => {
   jsonParser(req, res, next);
 });
 
-productsStore.ensureSeeded().catch((error) => {
-  console.error('Product seed failed.', error);
-});
+void (async () => {
+  try {
+    await productsStore.ensureSeeded();
+  } catch (error) {
+    console.error('Product seed failed.', error);
+  }
+})();
 
 const SESSION_CLEANUP_INTERVAL_MS = 1000 * 60 * 10;
 const runSessionCleanup = async (): Promise<void> => {
@@ -101,6 +105,7 @@ app.get('/api', (req, res) => {
 });
 
 app.use('/api/products', productsRouter);
+app.use('/api/cart', cartRouter);
 app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/payments', checkoutLimiter, paymentsRouter);

@@ -2,6 +2,13 @@ type DbError = { code?: string };
 
 export type DbErrorMapping = { status: number; message: string };
 
+export const isDuplicateKey = (error: unknown): boolean => {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+  return (error as DbError).code === 'ER_DUP_ENTRY';
+};
+
 export const mapDbError = (error: unknown): DbErrorMapping | null => {
   if (!error || typeof error !== 'object') {
     return null;

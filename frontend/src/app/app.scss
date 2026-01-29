@@ -91,7 +91,9 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  font: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 .desktop-nav-link:hover,
