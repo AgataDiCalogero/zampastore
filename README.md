@@ -14,28 +14,79 @@ npm install
 
 ## Comandi principali
 
+Dev server (frontend):
 ```sh
-# dev server
 npx nx serve frontend
+```
+
+Dev server (backend):
+```sh
 npx nx serve backend
+```
 
-# lint, test, typecheck
+Lint frontend:
+```sh
 npx nx lint frontend
+```
+
+Test frontend:
+```sh
 npx nx test frontend
+```
+
+Typecheck frontend:
+```sh
 npx nx typecheck frontend
+```
+
+Lint backend:
+```sh
 npx nx lint backend
+```
+
+Typecheck backend:
+```sh
 npx nx typecheck backend
+```
+
+Lint shared:
+```sh
 npx nx lint shared
+```
+
+Typecheck shared:
+```sh
 npx nx typecheck shared
+```
 
-# build
+Build frontend:
+```sh
 npx nx build frontend
-npx nx build backend
-npx nx build shared
+```
 
-# esegui lo stesso target su piu progetti
-npx nx run-many -t lint test build typecheck
-npx nx affected -t lint test build typecheck
+Build backend:
+```sh
+npx nx build backend
+```
+
+Build shared:
+```sh
+npx nx build shared
+```
+
+E2E (Playwright) - install browser:
+```sh
+npx playwright install
+```
+
+E2E (Playwright):
+```sh
+npx nx run frontend-e2e:e2e
+```
+
+E2E (Playwright) CI:
+```sh
+npx nx run frontend-e2e:e2e:ci
 ```
 
 ## Checklist pre-deploy (locale)

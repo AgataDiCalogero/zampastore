@@ -1,7 +1,4 @@
-import swaggerJSDoc from 'swagger-jsdoc';
-
-export const openApiSpec = swaggerJSDoc({
-  definition: {
+export const openApiSpec = {
     openapi: '3.0.3',
     info: {
       title: 'ZampaStore API',
@@ -560,6 +557,4 @@ export const openApiSpec = swaggerJSDoc({
         },
       },
     },
-  },
-  apis: [],
-});
+  };
