@@ -1,4 +1,9 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormArray,
@@ -48,6 +53,7 @@ type CartRowForm = {
   ],
   templateUrl: './cart.html',
   styleUrl: './cart.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Cart {
   private readonly cartService = inject(CartService);

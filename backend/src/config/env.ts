@@ -14,6 +14,7 @@ export type AppEnv = {
   port: number;
   clientUrl: string;
   stripeSecretKey?: string;
+  stripeWebhookSecret?: string;
   bcryptCost: number;
   tidb: TidbEnv;
 };
@@ -77,6 +78,7 @@ const env: AppEnv = {
   port: parseNumber('PORT', 3333),
   clientUrl: required('CLIENT_URL'),
   stripeSecretKey: optional('STRIPE_SECRET_KEY'),
+  stripeWebhookSecret: optional('STRIPE_WEBHOOK_SECRET'),
   bcryptCost: parseNumber('BCRYPT_COST'),
   tidb: {
     host: required('TIDB_HOST'),

@@ -1,56 +1,60 @@
 import { Route } from '@angular/router';
 import { authGuard } from '@org/auth/data-access';
-import { Login, Register } from '@org/auth/feature';
-import { Cart } from '@org/cart/feature';
-import { Checkout, CheckoutSuccess } from '@org/checkout/feature';
-import { Home } from '@org/home/feature';
-import { OrderDetail, Orders } from '@org/orders/feature';
-import { ProductDetail, ProductList } from '@org/products/feature';
 
 export const appRoutes: Route[] = [
   {
     path: '',
-    component: Home,
+    loadComponent: () =>
+      import('@org/home/feature').then((m) => m.Home),
     pathMatch: 'full',
   },
   {
     path: 'prodotti',
-    component: ProductList,
+    loadComponent: () =>
+      import('@org/products/feature').then((m) => m.ProductList),
   },
   {
     path: 'prodotti/:id',
-    component: ProductDetail,
+    loadComponent: () =>
+      import('@org/products/feature').then((m) => m.ProductDetail),
   },
   {
     path: 'carrello',
-    component: Cart,
+    loadComponent: () =>
+      import('@org/cart/feature').then((m) => m.Cart),
   },
   {
     path: 'checkout',
-    component: Checkout,
+    loadComponent: () =>
+      import('@org/checkout/feature').then((m) => m.Checkout),
     canActivate: [authGuard],
   },
   {
     path: 'login',
-    component: Login,
+    loadComponent: () =>
+      import('@org/auth/feature').then((m) => m.Login),
   },
   {
     path: 'registrazione',
-    component: Register,
+    loadComponent: () =>
+      import('@org/auth/feature').then((m) => m.Register),
   },
   {
     path: 'ordini',
-    component: Orders,
+    loadComponent: () =>
+      import('@org/orders/feature').then((m) => m.Orders),
     canActivate: [authGuard],
   },
   {
     path: 'ordini/:id',
-    component: OrderDetail,
+    loadComponent: () =>
+      import('@org/orders/feature').then((m) => m.OrderDetail),
     canActivate: [authGuard],
   },
   {
     path: 'ordine-confermato',
-    component: CheckoutSuccess,
+    loadComponent: () =>
+      import('@org/checkout/feature').then((m) => m.CheckoutSuccess),
   },
   {
     path: '**',

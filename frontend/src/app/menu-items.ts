@@ -21,7 +21,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'auth',
-    label: 'Login/Logout',
+    label: 'Entra/Esci',
     icon: 'pi pi-user',
     routerLink: '/login',
   },

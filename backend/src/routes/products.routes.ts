@@ -1,16 +1,17 @@
 import { Router } from 'express';
-import { PRODUCTS } from '../mocks/products.data';
+import { productsStore } from '../services/products.store';
 
 export const productsRouter = Router();
 
-productsRouter.get('/', (_req, res) => {
-  res.json(PRODUCTS);
+productsRouter.get('/', async (_req, res) => {
+  const products = await productsStore.listProducts();
+  res.json(products);
 });
 
-productsRouter.get('/:id', (req, res) => {
-  const product = PRODUCTS.find((item) => item.id === req.params.id);
+productsRouter.get('/:id', async (req, res) => {
+  const product = await productsStore.getProductById(req.params.id);
   if (!product) {
-    res.status(404).json({ message: 'Prodotto non trovato' });
+    res.status(404).json({ message: 'Prodotto non trovato.' });
     return;
   }
   res.json(product);

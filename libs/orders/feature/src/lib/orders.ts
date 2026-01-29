@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrdersService } from '@org/orders/data-access';
 import { Order, OrderStatus } from '@org/shared';
@@ -27,6 +27,7 @@ type OrdersState =
   ],
   templateUrl: './orders.html',
   styleUrl: './orders.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Orders {
   private readonly ordersService = inject(OrdersService);

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '@org/products/data-access';
 import { Observable, catchError, map, of, startWith } from 'rxjs';
@@ -18,6 +18,7 @@ type ProductListState =
   imports: [CommonModule, SkeletonModule, ProductCardComponent],
   templateUrl: './product-list.html',
   styleUrl: './product-list.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductList {
   private readonly productService = inject(ProductService);

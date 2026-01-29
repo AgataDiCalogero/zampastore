@@ -1,5 +1,5 @@
 -- ZampaStore: schema ordini (TiDB/MySQL)
--- Note: richiede che la tabella `users` esista già.
+-- Note: richiede che le tabelle `users` e `products` esistano già.
 
 CREATE TABLE IF NOT EXISTS orders (
   id VARCHAR(64) NOT NULL PRIMARY KEY,
@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS order_items (
   line_total_cents INT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_order_items_order_id (order_id),
-  CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+  CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  CONSTRAINT fk_order_items_product FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
 CREATE TABLE IF NOT EXISTS shipping_addresses (

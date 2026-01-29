@@ -1,4 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '@org/products/data-access';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -30,6 +35,7 @@ type ProductState =
   ],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductDetail {
   private readonly productService = inject(ProductService);

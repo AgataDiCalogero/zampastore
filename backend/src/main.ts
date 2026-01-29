@@ -16,6 +16,12 @@ import { paymentsRouter } from './routes/payments.routes';
 import { dbPing } from './services/db';
 import { authService } from './services/auth.service';
 import { getEnv } from './config/env';
+import { errorHandler } from './middleware/error.middleware';
+import {
+  authLimiter,
+  checkoutLimiter,
+} from './middleware/rate-limit.middleware';
+import { productsStore } from './services/products.store';
 
 dotenv.config();
 
@@ -30,7 +36,18 @@ app.use(
   }),
 );
 
-app.use(express.json());
+const jsonParser = express.json();
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/payments/webhook') {
+    next();
+    return;
+  }
+  jsonParser(req, res, next);
+});
+
+productsStore.ensureSeeded().catch((error) => {
+  console.error('Product seed failed.', error);
+});
 
 const SESSION_CLEANUP_INTERVAL_MS = 1000 * 60 * 10;
 const runSessionCleanup = async (): Promise<void> => {
@@ -76,9 +93,10 @@ app.get('/api', (req, res) => {
 });
 
 app.use('/api/products', productsRouter);
-app.use('/api/auth', authRouter);
+app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/orders', ordersRouter);
-app.use('/api/payments', paymentsRouter);
+app.use('/api/payments', checkoutLimiter, paymentsRouter);
+app.use(errorHandler);
 
 const port = env.port;
 const server = app.listen(port, () => {

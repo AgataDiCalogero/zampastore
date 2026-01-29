@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -14,6 +14,7 @@ import { Observable, catchError, map, of, startWith, switchMap, tap } from 'rxjs
   imports: [CommonModule, RouterLink, ButtonModule, CardModule, SkeletonModule],
   templateUrl: './checkout-success.html',
   styleUrl: './checkout-success.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckoutSuccess {
   private readonly cartService = inject(CartService);

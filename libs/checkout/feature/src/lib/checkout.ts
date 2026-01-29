@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -23,6 +23,7 @@ import { StripeTestCards } from './stripe-test-cards';
   ],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Checkout {
   private readonly checkoutFacade = inject(CheckoutFacade);

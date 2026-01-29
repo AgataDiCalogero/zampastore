@@ -30,6 +30,13 @@ export interface OrdersStore {
   ): Promise<boolean>;
 }
 
+export class OutOfStockError extends Error {
+  constructor(public readonly productId?: string) {
+    super('OUT_OF_STOCK');
+    this.name = 'OutOfStockError';
+  }
+}
+
 type OrderRow = RowDataPacket & {
   id: string;
   total_cents: number;
@@ -65,6 +72,16 @@ class MysqlOrdersStore implements OrdersStore {
     try {
       await connection.beginTransaction();
       const createdAt = input.createdAt;
+
+      for (const item of input.items) {
+        const [result] = await connection.execute<ResultSetHeader>(
+          'UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?',
+          [item.qty, item.productId, item.qty],
+        );
+        if (result.affectedRows === 0) {
+          throw new OutOfStockError(item.productId);
+        }
+      }
 
       await connection.execute(
         'INSERT INTO orders (id, user_id, total_cents, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',

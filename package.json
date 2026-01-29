@@ -63,6 +63,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
     "mysql2": "^3.11.0",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
