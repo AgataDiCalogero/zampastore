@@ -46,6 +46,12 @@
   text-transform: capitalize;
 }
 
+.order-id {
+  display: inline-block;
+  max-width: 100%;
+  word-break: break-word;
+}
+
 .status-chip {
   display: inline-flex;
   align-items: center;
@@ -85,4 +91,18 @@
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   text-decoration: none;
+}
+
+:host ::ng-deep .orders-card .p-datatable-tbody > tr > td {
+  white-space: normal;
+}
+
+@media (max-width: 900px) {
+  :host ::ng-deep .orders-card .p-datatable-tbody > tr > td {
+    padding: 0.75rem 1rem;
+  }
+
+  :host ::ng-deep .orders-card .p-datatable-tbody > tr > td:last-child {
+    justify-content: flex-start;
+  }
 }

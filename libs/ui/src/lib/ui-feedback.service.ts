@@ -37,6 +37,35 @@ export class UiFeedbackService {
     });
   }
 
+  showQuantityUpdated(productName: string, qty: number): void {
+    this.messageService.add({
+      key: this.toastKey,
+      severity: 'info',
+      summary: 'Quantità aggiornata',
+      detail: `${productName} x${qty}`,
+      life: 1800,
+    });
+  }
+
+  showCartCleared(undo?: () => void): void {
+    this.messageService.add({
+      key: this.toastKey,
+      severity: 'warn',
+      summary: 'Carrello svuotato',
+      detail: 'Tutti i prodotti sono stati rimossi.',
+      life: 4000,
+      data: undo
+        ? {
+            actionLabel: 'Ripristina',
+            action: () => {
+              undo();
+              this.messageService.clear(this.toastKey);
+            },
+          }
+        : undefined,
+    });
+  }
+
   showOrderConfirmed(): void {
     this.messageService.add({
       key: this.toastKey,

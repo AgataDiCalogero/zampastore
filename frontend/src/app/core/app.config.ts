@@ -8,7 +8,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { appRoutes } from '../app.routes';
 import { providePrimeNG } from 'primeng/config';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { auth401Interceptor } from '../interceptors/auth401.interceptor';
 import { credentialsInterceptor } from '../interceptors/credentials.interceptor';
 import { AuthService } from '@org/auth/data-access';
@@ -26,5 +26,6 @@ export const appConfig: ApplicationConfig = {
     }),
     providePrimeNG({ ripple: true }),
     MessageService,
+    ConfirmationService,
   ],
 };

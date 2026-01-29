@@ -1,5 +1,5 @@
 @if (state$ | async; as state) { @if (state.status === 'ready') {
-<section class="order-detail">
+<section class="order-detail section">
   <nav class="order-breadcrumb">
     <a [routerLink]="['/ordini']">Ordini</a>
     <span>/</span>
@@ -85,7 +85,7 @@
   </p-card>
 </section>
 } @else if (state.status === 'not-found') {
-<section class="order-empty">
+<section class="order-empty section">
   <div class="empty-state">
     <i class="pi pi-inbox"></i>
     <h3>Ordine non trovato</h3>
@@ -96,7 +96,7 @@
   </div>
 </section>
 } @else if (state.status === 'error') {
-<section class="order-empty">
+<section class="order-empty section">
   <div class="empty-state">
     <i class="pi pi-exclamation-triangle"></i>
     <h3>Errore di caricamento</h3>
@@ -104,7 +104,7 @@
   </div>
 </section>
 } @else {
-<section class="order-detail">
+<section class="order-detail section">
   <p-card class="order-card" header="Dettaglio ordine">
     <div class="order-skeleton">
       <p-skeleton height="28px"></p-skeleton>

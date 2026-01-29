@@ -86,14 +86,20 @@
   </p-menubar>
 </header>
 
-@if (mobileMenuOpen()) {
-  <button
-    type="button"
-    class="mobile-nav-backdrop"
-    aria-label="Chiudi menu"
-    (click)="closeMobileMenu()"
-  ></button>
-<aside class="mobile-nav" role="dialog" aria-modal="true">
+<button
+  type="button"
+  class="mobile-nav-backdrop"
+  [class.is-open]="mobileMenuOpen()"
+  aria-label="Chiudi menu"
+  (click)="closeMobileMenu()"
+></button>
+<aside
+  class="mobile-nav"
+  [class.is-open]="mobileMenuOpen()"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-hidden]="!mobileMenuOpen()"
+>
   <div class="mobile-nav-header">
     <span>Menu</span>
     <button
@@ -118,6 +124,9 @@
               <i class="{{ link.icon }}"></i>
             }
             <span>{{ link.label }}</span>
+            @if (link.id === 'cart' && cartCount() > 0) {
+              <span class="nav-badge">{{ cartCount() }}</span>
+            }
           </a>
         } @else {
           <button
@@ -130,12 +139,14 @@
               <i class="{{ link.icon }}"></i>
             }
             <span>{{ link.label }}</span>
+            @if (link.id === 'cart' && cartCount() > 0) {
+              <span class="nav-badge">{{ cartCount() }}</span>
+            }
           </button>
         }
       }
     </nav>
   </aside>
-}
 
 <main class="app-content">
   <div class="page">

@@ -35,9 +35,15 @@
 .product-card-actions {
   display: grid;
   grid-template-columns: 1fr;
+  justify-items: center;
   align-items: stretch;
   gap: var(--space-sm);
   margin-top: auto;
+}
+
+.product-card-button {
+  width: 100%;
+  max-width: 200px;
 }
 
 :host ::ng-deep .product-card .p-button {

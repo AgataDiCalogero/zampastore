@@ -1,10 +1,10 @@
-<section class="cart-page">
+<section class="cart-page section">
   <p-card class="cart-card" header="Carrello">
-    @if (cartItems$ | async; as cartItems) { @if (cartItems.length > 0) {
+    @if (state$ | async; as state) { @if (state.status === 'ready') {
     <form class="cart-layout" [formGroup]="form">
       <div class="cart-table" formArrayName="items">
         <p-table
-          [value]="cartItems"
+          [value]="state.items"
           dataKey="product.id"
           responsiveLayout="scroll"
         >
@@ -59,17 +59,29 @@
           <span class="font-semibold"
             >Totale: {{ ((cartTotal$ | async) ?? 0) | number: '1.2-2' }} €</span
           >
+          <button
+            pButton
+            type="button"
+            class="p-button-text p-button-danger p-button-sm clear-cart-button"
+            icon="pi pi-trash"
+            (click)="clearCart()"
+            aria-label="Svuota carrello"
+          >
+          </button>
         </div>
-        <p-button
-          label="Vai al checkout"
-          icon="pi pi-arrow-right"
-          iconPos="right"
-          styleClass="checkout-cta"
-          (onClick)="confirmOrder()"
-        ></p-button>
+        <div class="cart-actions">
+          <p-button
+            label="Vai al checkout"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            styleClass="checkout-cta"
+            (onClick)="confirmOrder()"
+          ></p-button>
+        </div>
       </aside>
     </form>
-    } @else {
+    <p-confirmDialog></p-confirmDialog>
+    } @else if (state.status === 'empty') {
     <div class="cart-empty">
       <div class="empty-state">
         <i class="pi pi-shopping-bag"></i>
@@ -78,6 +90,24 @@
         <button pButton type="button" [routerLink]="['/prodotti']">
           Vai al catalogo
         </button>
+      </div>
+    </div>
+    } @else {
+    <div class="cart-skeleton">
+      <div class="cart-skeleton-table">
+        @for (row of skeletonRows; track $index) {
+        <div class="cart-skeleton-row">
+          <p-skeleton height="22px" width="50%"></p-skeleton>
+          <p-skeleton height="22px" width="80px"></p-skeleton>
+          <p-skeleton height="36px" width="120px"></p-skeleton>
+          <p-skeleton height="22px" width="80px"></p-skeleton>
+        </div>
+        }
+      </div>
+      <div class="cart-skeleton-summary">
+        <p-skeleton height="18px" width="40%"></p-skeleton>
+        <p-skeleton height="46px" width="100%"></p-skeleton>
+        <p-skeleton height="36px" width="60%"></p-skeleton>
       </div>
     </div>
     } }

@@ -1,7 +1,12 @@
 @if (state$ | async; as state) { @if (state.status === 'ready') {
-<section class="orders-page">
+<section class="orders-page section">
   <p-card header="I miei ordini" class="orders-card">
-    <p-table [value]="state.orders" dataKey="id" responsiveLayout="scroll">
+    <p-table
+      [value]="state.orders"
+      dataKey="id"
+      responsiveLayout="stack"
+      breakpoint="900px"
+    >
       <ng-template pTemplate="header">
         <tr>
           <th scope="col">Ordine</th>
@@ -13,7 +18,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-order>
         <tr>
-          <td>{{ order.id }}</td>
+          <td><span class="order-id">{{ order.id }}</span></td>
           <td>{{ order.createdAt | date: 'dd/MM/yyyy' }}</td>
           <td>{{ order.totalCents / 100 | number: '1.2-2' }} €</td>
           <td>
@@ -40,7 +45,7 @@
   </p-card>
 </section>
 } @else if (state.status === 'empty') {
-<section class="orders-empty">
+<section class="orders-empty section">
   <div class="empty-state">
     <i class="pi pi-inbox"></i>
     <h3>Non hai ancora ordini</h3>
@@ -51,7 +56,7 @@
   </div>
 </section>
 } @else if (state.status === 'error') {
-<section class="orders-empty">
+<section class="orders-empty section">
   <div class="empty-state">
     <i class="pi pi-exclamation-triangle"></i>
     <h3>Non riusciamo a caricare gli ordini</h3>
@@ -59,7 +64,7 @@
   </div>
 </section>
 } @else {
-<section class="orders-page">
+<section class="orders-page section">
   <p-card header="I miei ordini" class="orders-card">
     <div class="orders-skeleton">
       @for (row of skeletonRows; track $index) {

@@ -371,6 +371,35 @@ input[pInputText] {
   padding: var(--space-md) var(--space-lg);
 }
 
+.p-confirmdialog .p-dialog {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-2);
+}
+
+.p-confirmdialog .p-dialog-header {
+  padding: var(--space-lg) var(--space-xl) var(--space-sm);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--surface-0);
+}
+
+.p-confirmdialog .p-dialog-title {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+}
+
+.p-confirmdialog .p-dialog-content {
+  padding: var(--space-md) var(--space-xl) var(--space-xl);
+  color: var(--text-primary);
+}
+
+.p-confirmdialog .p-dialog-footer {
+  padding: 0 var(--space-xl) var(--space-xl);
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+}
+
 .toast-summary {
   font-weight: 600;
 }

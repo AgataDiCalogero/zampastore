@@ -1,5 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
@@ -7,6 +7,9 @@ import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { MENU_ITEMS } from './menu-items';
 import { AuthService } from '@org/auth/data-access';
+import { CartService } from '@org/cart/data-access';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 type NavLink = {
   id?: string;
@@ -31,9 +34,24 @@ type NavLink = {
 export class App {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly cartService = inject(CartService);
+  private readonly document = inject(DOCUMENT);
   protected readonly mobileMenuOpen = signal(false);
   protected readonly desktopLinks = computed(() => this.buildNavLinks());
   protected readonly mobileLinks = computed(() => this.buildNavLinks());
+  protected readonly cartCount = toSignal(
+    this.cartService.cartItems$.pipe(
+      map((items) => items.reduce((sum, item) => sum + item.qty, 0)),
+    ),
+    { initialValue: 0 },
+  );
+
+  constructor() {
+    effect(() => {
+      const isOpen = this.mobileMenuOpen();
+      this.document.body.classList.toggle('no-scroll', isOpen);
+    });
+  }
 
   private buildMenuItems(): MenuItem[] {
     const isAuthenticated = this.authService.isAuthenticated();

@@ -22,6 +22,7 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
+  align-items: center;
 }
 
 .cart-empty {
@@ -53,6 +54,18 @@
 .cart-empty .empty-state p {
   margin: 0 0 var(--space-lg);
   color: var(--text-secondary);
+}
+
+.cart-actions {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+:host ::ng-deep .clear-cart-button.p-button {
+  padding: 0.35rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
 }
 
 :host ::ng-deep .cart-card.p-card {
@@ -104,6 +117,25 @@
   border-color: var(--color-cta-dark);
 }
 
+.cart-skeleton {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--space-2xl);
+}
+
+.cart-skeleton-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) 1fr 1fr 1fr;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+}
+
+.cart-skeleton-summary {
+  display: grid;
+  gap: var(--space-sm);
+  align-content: start;
+}
+
 @media (max-width: 960px) {
   .cart-layout {
     grid-template-columns: 1fr;
@@ -111,5 +143,9 @@
 
   .cart-summary {
     position: static;
+  }
+
+  .cart-skeleton {
+    grid-template-columns: 1fr;
   }
 }

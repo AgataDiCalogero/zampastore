@@ -215,8 +215,10 @@
   inset: 0;
   background: rgba(8, 58, 79, 0.35);
   backdrop-filter: blur(2px);
-  z-index: 20;
-  animation: fadeIn 0.2s ease;
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
   border: none;
   padding: 0;
   width: 100%;
@@ -224,19 +226,36 @@
   cursor: pointer;
 }
 
+.mobile-nav-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .mobile-nav {
   position: fixed;
   top: var(--space-lg);
   right: var(--space-lg);
   left: var(--space-lg);
+  max-width: 520px;
+  margin: 0 auto;
   background: var(--surface-0);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   box-shadow: var(--shadow-2);
-  z-index: 30;
-  animation: slideDown 0.2s ease;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
+.mobile-nav.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
 .mobile-nav-header {
   display: flex;
   align-items: center;
@@ -247,7 +266,7 @@
 
 .mobile-nav-links {
   display: grid;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .mobile-nav-links a,
@@ -258,34 +277,56 @@
   text-decoration: none;
   color: var(--text-primary);
   font-weight: 600;
-  padding: var(--space-sm) 0;
-  border-bottom: 1px solid var(--border-color);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
 }
 
 .mobile-nav-button {
   background: none;
-  border: none;
   text-align: left;
   font: inherit;
   color: var(--text-primary);
   font-weight: 600;
-  padding: var(--space-sm) 0;
-  border-bottom: 1px solid var(--border-color);
   cursor: pointer;
 }
 
-.mobile-nav-links a:last-child {
-  border-bottom: none;
+.mobile-nav-links a::after,
+.mobile-nav-button::after {
+  content: '>';
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
-.mobile-nav-button:last-child {
-  border-bottom: none;
+.mobile-nav-links a:hover,
+.mobile-nav-links a:focus-visible,
+.mobile-nav-button:hover,
+.mobile-nav-button:focus-visible {
+  background: rgba(8, 58, 79, 0.06);
+  border-color: rgba(8, 58, 79, 0.08);
+  outline: none;
 }
 
 .mobile-nav-link--cta,
 .mobile-nav-button--cta {
   color: var(--color-primary);
   font-weight: 700;
+  background: rgba(242, 193, 75, 0.2);
+  border-color: rgba(242, 193, 75, 0.35);
+}
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--color-cta);
+  color: var(--color-cta-text);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  min-width: 24px;
+  text-align: center;
+  box-shadow: var(--shadow-1);
 }
 
 @keyframes slideDown {

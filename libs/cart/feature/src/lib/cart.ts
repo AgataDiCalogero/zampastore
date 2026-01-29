@@ -8,14 +8,25 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Subscription, debounceTime, distinctUntilChanged, take } from 'rxjs';
+import {
+  Observable,
+  Subscription,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  startWith,
+  take,
+} from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { SkeletonModule } from 'primeng/skeleton';
 import { CartItem, CartService } from '@org/cart/data-access';
 import { UiFeedbackService } from '@org/ui';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 type CartRowForm = {
   productId: FormControl<string>;
@@ -31,6 +42,8 @@ type CartRowForm = {
     InputNumberModule,
     ButtonModule,
     CardModule,
+    SkeletonModule,
+    ConfirmDialogModule,
     RouterLink,
   ],
   templateUrl: './cart.html',
@@ -41,10 +54,24 @@ export class Cart {
   private readonly router = inject(Router);
   private readonly uiFeedback = inject(UiFeedbackService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly confirmationService = inject(ConfirmationService);
   private rowSubscriptions: Subscription[] = [];
   private cartItemIds: string[] = [];
   protected readonly cartItems$ = this.cartService.cartItems$;
   protected readonly cartTotal$ = this.cartService.cartTotal$;
+  protected readonly skeletonRows = Array.from({ length: 3 });
+  protected readonly state$: Observable<
+    | { status: 'loading' }
+    | { status: 'ready'; items: CartItem[] }
+    | { status: 'empty' }
+  > = this.cartItems$.pipe(
+    map((items) =>
+      items.length > 0
+        ? ({ status: 'ready', items } as const)
+        : ({ status: 'empty' } as const),
+    ),
+    startWith({ status: 'loading' } as const),
+  );
 
   protected readonly form = new FormGroup({
     items: new FormArray<FormGroup<CartRowForm>>([]),
@@ -78,6 +105,29 @@ export class Cart {
 
   protected confirmOrder(): void {
     void this.router.navigateByUrl('/checkout');
+  }
+
+  protected clearCart(): void {
+    this.cartItems$.pipe(take(1)).subscribe((items) => {
+      if (items.length === 0) {
+        return;
+      }
+      this.confirmationService.confirm({
+        header: 'Svuotare il carrello?',
+        message: 'Rimuoveremo tutti i prodotti dal carrello.',
+        icon: 'pi pi-trash',
+        acceptLabel: 'Svuota',
+        rejectLabel: 'Annulla',
+        accept: () => {
+          this.cartService.clearCart();
+          this.uiFeedback.showCartCleared(() => {
+            items.forEach((item) =>
+              this.cartService.addToCart(item.product, item.qty),
+            );
+          });
+        },
+      });
+    });
   }
 
   private syncForm(items: CartItem[]): void {
@@ -129,6 +179,7 @@ export class Cart {
           return;
         }
         this.cartService.updateQuantity(item.product.id, qty);
+        this.uiFeedback.showQuantityUpdated(item.product.name, qty);
       });
     this.rowSubscriptions.push(sub);
 
