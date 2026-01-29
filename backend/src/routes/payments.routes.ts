@@ -1,9 +1,6 @@
 import express, { Router } from 'express';
 import Stripe from 'stripe';
-import {
-  CreateCheckoutSessionRequest,
-  CreateCheckoutSessionResponse,
-} from '@org/shared';
+import { CreateCheckoutSessionResponse } from '@org/shared';
 import {
   createOrder,
   OrderCreationError,
@@ -13,6 +10,7 @@ import { getEnv } from '../config/env';
 import { requireAuth } from '../middleware/auth.middleware';
 import { requireCsrf } from '../middleware/csrf.middleware';
 import { mapDbError } from '../utils/db-errors';
+import { parseCheckoutRequest } from '../services/checkout.validation';
 
 export const paymentsRouter = Router();
 
@@ -99,16 +97,12 @@ paymentsRouter.post(
         return;
       }
 
-      const payload = req.body as CreateCheckoutSessionRequest | undefined;
-      if (
-        !payload ||
-        !Array.isArray(payload.items) ||
-        payload.items.length === 0 ||
-        !payload.shippingAddress
-      ) {
-        res.status(400).json({ message: 'Dati checkout non validi.' });
+      const parsed = parseCheckoutRequest(req.body);
+      if (!parsed.ok) {
+        res.status(400).json({ message: parsed.message });
         return;
       }
+      const payload = parsed.data;
 
       let order: Awaited<ReturnType<typeof createOrder>> | null = null;
       try {

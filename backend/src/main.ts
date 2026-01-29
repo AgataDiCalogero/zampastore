@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import * as path from 'node:path';
 import cors from 'cors';
+import helmet from 'helmet';
 import swaggerUI from 'swagger-ui-express';
 import { openApiSpec } from './swagger';
 import { authRouter } from './routes/auth.routes';
@@ -27,6 +28,13 @@ dotenv.config();
 
 const app = express();
 const env = getEnv();
+
+app.disable('x-powered-by');
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
 
 app.use(
   cors({

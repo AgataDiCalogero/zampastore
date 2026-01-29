@@ -93,9 +93,11 @@ npx nx run frontend-e2e:e2e:ci
 
 ```sh
 npx nx format:check --base="remotes/origin/main"
-npx nx run-many -t lint test build typecheck
 ```
 
+```sh
+npx nx run-many -t lint test build typecheck
+```
 ## Formattazione
 
 ```sh

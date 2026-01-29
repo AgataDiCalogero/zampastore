@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { getOrderById, listOrders } from '../services/orders.service';
 import { requireAuth } from '../middleware/auth.middleware';
 import { mapDbError } from '../utils/db-errors';
+import { parseIdParam } from '../services/params.validation';
 
 export const ordersRouter = Router();
 
@@ -33,7 +34,13 @@ ordersRouter.get('/:id', requireAuth, async (req, res) => {
       return;
     }
 
-    const order = await getOrderById(user.id, req.params.id);
+    const parsed = parseIdParam(req.params.id);
+    if (!parsed.ok) {
+      res.status(400).json({ message: parsed.message });
+      return;
+    }
+
+    const order = await getOrderById(user.id, parsed.data);
     if (!order) {
       res.status(404).json({ message: 'Ordine non trovato.' });
       return;

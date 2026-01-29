@@ -1,80 +1,47 @@
-import { LoginRequest, RegisterRequest } from '@org/shared';
+import { z } from 'zod';
+import type { LoginRequest, RegisterRequest } from '@org/shared';
 
 type ValidationResult<T> =
   | { ok: true; data: T }
   | { ok: false; message: string };
 
-const MIN_PASSWORD_LENGTH = 6;
-const MIN_USERNAME_LENGTH = 2;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const isNonEmptyString = (value: unknown): value is string =>
-  typeof value === 'string' && value.trim().length > 0;
-
 const normalizeEmail = (email: string): string => email.trim().toLowerCase();
 
-export const parseLoginRequest = (payload: unknown): ValidationResult<LoginRequest> => {
-  if (!payload || typeof payload !== 'object') {
-    return { ok: false, message: 'Email e password sono richieste.' };
-  }
+const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email e password sono richieste.')
+    .email('Email non valida.')
+    .transform(normalizeEmail),
+  password: z
+    .string()
+    .min(6, 'La password deve avere almeno 6 caratteri.'),
+});
 
-  const { email, password } = payload as Partial<LoginRequest>;
-  if (!isNonEmptyString(email) || !isNonEmptyString(password)) {
-    return { ok: false, message: 'Email e password sono richieste.' };
-  }
+const registerSchema = z.object({
+  username: z.string().min(2, 'Il nome deve avere almeno 2 caratteri.'),
+  email: z
+    .string()
+    .min(1, 'Nome, email e password sono richiesti.')
+    .email('Email non valida.')
+    .transform(normalizeEmail),
+  password: z
+    .string()
+    .min(6, 'La password deve avere almeno 6 caratteri.'),
+});
 
-  const normalizedEmail = normalizeEmail(email);
-  if (!EMAIL_REGEX.test(normalizedEmail)) {
-    return { ok: false, message: 'Email non valida.' };
+const toResult = <T>(parsed: z.SafeParseReturnType<unknown, T>): ValidationResult<T> => {
+  if (parsed.success) {
+    return { ok: true, data: parsed.data };
   }
-
-  if (password.length < MIN_PASSWORD_LENGTH) {
-    return {
-      ok: false,
-      message: `La password deve avere almeno ${MIN_PASSWORD_LENGTH} caratteri.`,
-    };
-  }
-
-  return { ok: true, data: { email: normalizedEmail, password } };
+  const message = parsed.error.issues[0]?.message ?? 'Dati non validi.';
+  return { ok: false, message };
 };
+
+export const parseLoginRequest = (
+  payload: unknown,
+): ValidationResult<LoginRequest> => toResult(loginSchema.safeParse(payload));
 
 export const parseRegisterRequest = (
   payload: unknown,
-): ValidationResult<RegisterRequest> => {
-  if (!payload || typeof payload !== 'object') {
-    return { ok: false, message: 'Nome, email e password sono richiesti.' };
-  }
-
-  const { username, email, password } = payload as Partial<RegisterRequest>;
-  if (
-    !isNonEmptyString(username) ||
-    !isNonEmptyString(email) ||
-    !isNonEmptyString(password)
-  ) {
-    return { ok: false, message: 'Nome, email e password sono richiesti.' };
-  }
-
-  if (username.trim().length < MIN_USERNAME_LENGTH) {
-    return {
-      ok: false,
-      message: `Il nome deve avere almeno ${MIN_USERNAME_LENGTH} caratteri.`,
-    };
-  }
-
-  const normalizedEmail = normalizeEmail(email);
-  if (!EMAIL_REGEX.test(normalizedEmail)) {
-    return { ok: false, message: 'Email non valida.' };
-  }
-
-  if (password.length < MIN_PASSWORD_LENGTH) {
-    return {
-      ok: false,
-      message: `La password deve avere almeno ${MIN_PASSWORD_LENGTH} caratteri.`,
-    };
-  }
-
-  return {
-    ok: true,
-    data: { username: username.trim(), email: normalizedEmail, password },
-  };
-};
+): ValidationResult<RegisterRequest> => toResult(registerSchema.safeParse(payload));
