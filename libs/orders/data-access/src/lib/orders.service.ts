@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Order, OrderDetail } from '@org/shared';
+import { Order, OrderDetail } from '@zampa/shared';
 
 @Injectable({ providedIn: 'root' })
 export class OrdersService {

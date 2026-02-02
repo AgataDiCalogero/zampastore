@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { LoginRequest, RegisterRequest } from '@org/shared';
+import type { LoginRequest, RegisterRequest } from '@zampa/shared';
 
 type ValidationResult<T> =
   | { ok: true; data: T }
@@ -13,9 +13,7 @@ const loginSchema = z.object({
     .min(1, 'Email e password sono richieste.')
     .email('Email non valida.')
     .transform(normalizeEmail),
-  password: z
-    .string()
-    .min(6, 'La password deve avere almeno 6 caratteri.'),
+  password: z.string().min(6, 'La password deve avere almeno 6 caratteri.'),
 });
 
 const registerSchema = z.object({
@@ -25,12 +23,12 @@ const registerSchema = z.object({
     .min(1, 'Nome, email e password sono richiesti.')
     .email('Email non valida.')
     .transform(normalizeEmail),
-  password: z
-    .string()
-    .min(6, 'La password deve avere almeno 6 caratteri.'),
+  password: z.string().min(6, 'La password deve avere almeno 6 caratteri.'),
 });
 
-const toResult = <T>(parsed: z.SafeParseReturnType<unknown, T>): ValidationResult<T> => {
+const toResult = <T>(
+  parsed: z.SafeParseReturnType<unknown, T>,
+): ValidationResult<T> => {
   if (parsed.success) {
     return { ok: true, data: parsed.data };
   }
@@ -44,4 +42,5 @@ export const parseLoginRequest = (
 
 export const parseRegisterRequest = (
   payload: unknown,
-): ValidationResult<RegisterRequest> => toResult(registerSchema.safeParse(payload));
+): ValidationResult<RegisterRequest> =>
+  toResult(registerSchema.safeParse(payload));

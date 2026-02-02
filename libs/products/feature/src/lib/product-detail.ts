@@ -5,18 +5,18 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductService } from '@org/products/data-access';
+import { ProductService } from '@zampa/products/data-access';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { map, of, startWith, switchMap } from 'rxjs';
-import { Product } from '@org/shared';
+import { Product } from '@zampa/shared';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { CartService } from '@org/cart/data-access';
+import { CartService } from '@zampa/cart/data-access';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SkeletonModule } from 'primeng/skeleton';
-import { UiFeedbackService } from '@org/ui';
+import { UiFeedbackService } from '@zampa/ui';
 
 @Component({
   selector: 'app-product-detail',

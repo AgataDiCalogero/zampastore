@@ -15,7 +15,7 @@ import { providePrimeNG } from 'primeng/config';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { auth401Interceptor } from '../interceptors/auth401.interceptor';
 import { credentialsInterceptor } from '../interceptors/credentials.interceptor';
-import { AuthService } from '@org/auth/data-access';
+import { AuthService } from '@zampa/auth/data-access';
 
 export const appConfig: ApplicationConfig = {
   providers: [

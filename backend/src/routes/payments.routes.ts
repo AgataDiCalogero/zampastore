@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import Stripe from 'stripe';
-import { CreateCheckoutSessionResponse } from '@org/shared';
+import { CreateCheckoutSessionResponse } from '@zampa/shared';
 import {
   createOrder,
   OrderCreationError,

@@ -2,8 +2,8 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
-import { AuthService } from '@org/auth/data-access';
-import { UiFeedbackService } from '@org/ui';
+import { AuthService } from '@zampa/auth/data-access';
+import { UiFeedbackService } from '@zampa/ui';
 
 const AUTH_ENDPOINTS = [
   '/api/auth/login',

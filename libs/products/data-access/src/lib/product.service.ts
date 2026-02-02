@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Product } from '@org/shared';
+import { Product } from '@zampa/shared';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })

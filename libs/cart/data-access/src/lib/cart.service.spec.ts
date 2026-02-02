@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { CartService } from './cart.service';
-import { Product } from '@org/shared';
+import { Product } from '@zampa/shared';
 import { CartApiService } from './cart-api.service';
-import { AuthService } from '@org/auth/data-access';
+import { AuthService } from '@zampa/auth/data-access';
 import { of } from 'rxjs';
 import { describe, beforeEach, it, expect } from 'vitest';
 

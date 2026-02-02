@@ -7,14 +7,15 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
+import { Title, Meta } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { MENU_ITEMS } from './menu-items';
-import { AuthService } from '@org/auth/data-access';
-import { CartService } from '@org/cart/data-access';
+import { AuthService } from '@zampa/auth/data-access';
+import { CartService } from '@zampa/cart/data-access';
 
 type NavLink = {
   id?: string;
@@ -42,6 +43,8 @@ export class App {
   private readonly router = inject(Router);
   private readonly cartService = inject(CartService);
   private readonly document = inject(DOCUMENT);
+  private readonly title = inject(Title);
+  private readonly meta = inject(Meta);
   protected readonly mobileMenuOpen = signal(false);
   private readonly navLinks = computed(() => this.buildNavLinks());
   protected readonly desktopLinks = computed(() =>
@@ -54,6 +57,19 @@ export class App {
   protected readonly cartCount = this.cartService.cartCount;
 
   constructor() {
+    this.title.setTitle('ZampaStore - Cibo per cani e gatti di qualità');
+    this.meta.addTags([
+      {
+        name: 'description',
+        content:
+          'ZampaStore offre prodotti selezionati per il benessere del tuo cane e gatto. Spedizioni rapide e assistenza dedicata.',
+      },
+      {
+        name: 'keywords',
+        content: 'cibo cani, cibo gatti, zampastore, animali domestici',
+      },
+    ]);
+
     effect(() => {
       const isOpen = this.mobileMenuOpen();
       this.document.body.classList.toggle('no-scroll', isOpen);

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductService } from '@org/products/data-access';
+import { ProductService } from '@zampa/products/data-access';
 import { catchError, map, of, startWith } from 'rxjs';
-import { Product } from '@org/shared';
+import { Product } from '@zampa/shared';
 import { SkeletonModule } from 'primeng/skeleton';
-import { CartService } from '@org/cart/data-access';
-import { UiFeedbackService, ProductCardComponent } from '@org/ui';
+import { CartService } from '@zampa/cart/data-access';
+import { UiFeedbackService, ProductCardComponent } from '@zampa/ui';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({

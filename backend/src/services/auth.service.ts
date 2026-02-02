@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { AuthUser } from '@org/shared';
+import { AuthUser } from '@zampa/shared';
 import bcrypt from 'bcrypt';
 import { createSessionId, SESSION_TTL_MS } from '../utils/cookies';
 import { AuthStore, MysqlAuthStore } from './auth.store';

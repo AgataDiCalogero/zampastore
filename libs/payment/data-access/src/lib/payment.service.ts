@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import {
   CreateCheckoutSessionRequest,
   CreateCheckoutSessionResponse,
-} from '@org/shared';
+} from '@zampa/shared';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentService {

@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
-import { AuthService } from '@org/auth/data-access';
+import { AuthService } from '@zampa/auth/data-access';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';

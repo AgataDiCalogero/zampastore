@@ -5,7 +5,7 @@ import {
   AuthUser,
   LoginRequest,
   RegisterRequest,
-} from '@org/shared';
+} from '@zampa/shared';
 import { Router } from '@angular/router';
 import {
   firstValueFrom,

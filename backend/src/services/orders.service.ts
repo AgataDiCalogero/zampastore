@@ -5,7 +5,7 @@ import {
   OrderLine,
   OrderStatus,
   ShippingAddress,
-} from '@org/shared';
+} from '@zampa/shared';
 import { ordersStore, OutOfStockError } from './orders.store';
 import { productsStore, type ProductWithStock } from './products.store';
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { AuthResponse } from '@org/shared';
+import { AuthResponse } from '@zampa/shared';
 import { authService } from '../services/auth.service';
 import {
   parseLoginRequest,
@@ -18,7 +18,7 @@ import { requireCsrf } from '../middleware/csrf.middleware';
 
 export const authRouter = Router();
 
-authRouter.post('/login', async (req, res) => {
+authRouter.post('/login', async (req, res, next) => {
   const parsed = parseLoginRequest(req.body);
   if (!parsed.ok) {
     res.status(400).json({ message: parsed.message });
@@ -39,12 +39,12 @@ authRouter.post('/login', async (req, res) => {
     setCsrfCookie(res, createCsrfToken());
     const payload: AuthResponse = { user: result.user };
     res.json(payload);
-  } catch {
-    res.status(500).json({ message: 'Errore durante il login.' });
+  } catch (error) {
+    next(error);
   }
 });
 
-authRouter.post('/register', async (req, res) => {
+authRouter.post('/register', async (req, res, next) => {
   const parsed = parseRegisterRequest(req.body);
   if (!parsed.ok) {
     res.status(400).json({ message: parsed.message });
@@ -66,12 +66,12 @@ authRouter.post('/register', async (req, res) => {
     setCsrfCookie(res, createCsrfToken());
     const payload: AuthResponse = { user: result.user };
     res.status(201).json(payload);
-  } catch {
-    res.status(500).json({ message: 'Errore durante la registrazione.' });
+  } catch (error) {
+    next(error);
   }
 });
 
-authRouter.get('/me', async (req, res) => {
+authRouter.get('/me', async (req, res, next) => {
   const sessionId = getCookie(req, SESSION_COOKIE);
   if (!sessionId) {
     res.status(401).json({ message: 'Non autenticato.' });
@@ -88,12 +88,12 @@ authRouter.get('/me', async (req, res) => {
     setCsrfCookie(res, createCsrfToken());
     const payload: AuthResponse = { user };
     res.json(payload);
-  } catch {
-    res.status(500).json({ message: 'Errore durante la verifica sessione.' });
+  } catch (error) {
+    next(error);
   }
 });
 
-authRouter.post('/logout', requireCsrf, async (req, res) => {
+authRouter.post('/logout', requireCsrf, async (req, res, next) => {
   const sessionId = getCookie(req, SESSION_COOKIE);
   try {
     if (sessionId) {
@@ -102,7 +102,7 @@ authRouter.post('/logout', requireCsrf, async (req, res) => {
     clearSessionCookie(res);
     clearCsrfCookie(res);
     res.status(204).send();
-  } catch {
-    res.status(500).json({ message: 'Errore durante il logout.' });
+  } catch (error) {
+    next(error);
   }
 });

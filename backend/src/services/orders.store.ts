@@ -5,7 +5,7 @@ import type {
   OrderLine,
   OrderStatus,
   ShippingAddress,
-} from '@org/shared';
+} from '@zampa/shared';
 import { db } from '../db/client';
 import { orderItems, orders, products, shippingAddresses } from '../db/schema';
 import { and, asc, desc, eq, gte, sql } from 'drizzle-orm';

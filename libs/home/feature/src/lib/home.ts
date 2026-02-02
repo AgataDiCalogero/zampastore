@@ -5,10 +5,10 @@ import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { catchError, map, of, startWith } from 'rxjs';
-import { Product } from '@org/shared';
-import { ProductService } from '@org/products/data-access';
-import { ProductCardComponent, UiFeedbackService } from '@org/ui';
-import { CartService } from '@org/cart/data-access';
+import { Product } from '@zampa/shared';
+import { ProductService } from '@zampa/products/data-access';
+import { ProductCardComponent, UiFeedbackService } from '@zampa/ui';
+import { CartService } from '@zampa/cart/data-access';
 
 @Component({
   selector: 'app-home',

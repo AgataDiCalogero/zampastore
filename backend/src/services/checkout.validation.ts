@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { CreateCheckoutSessionRequest } from '@org/shared';
+import type { CreateCheckoutSessionRequest } from '@zampa/shared';
 
 type ValidationResult<T> =
   | { ok: true; data: T }

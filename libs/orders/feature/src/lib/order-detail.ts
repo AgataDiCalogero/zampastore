@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { OrdersService } from '@org/orders/data-access';
-import { OrderDetail as OrderDetailModel, OrderStatus } from '@org/shared';
+import { OrdersService } from '@zampa/orders/data-access';
+import { OrderDetail as OrderDetailModel, OrderStatus } from '@zampa/shared';
 import { Observable, catchError, map, of, startWith, switchMap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';

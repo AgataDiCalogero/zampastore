@@ -4,7 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { OrdersService } from './orders.service';
-import { Order, OrderDetail } from '@org/shared';
+import { Order, OrderDetail } from '@zampa/shared';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { firstValueFrom } from 'rxjs';
 

@@ -20,8 +20,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
-import { CartItem, CartService } from '@org/cart/data-access';
-import { UiFeedbackService } from '@org/ui';
+import { CartItem, CartService } from '@zampa/cart/data-access';
+import { UiFeedbackService } from '@zampa/ui';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 

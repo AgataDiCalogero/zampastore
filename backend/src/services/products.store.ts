@@ -1,5 +1,5 @@
 import { eq, inArray, sql } from 'drizzle-orm';
-import type { Product } from '@org/shared';
+import type { Product } from '@zampa/shared';
 import { db } from '../db/client';
 import { products } from '../db/schema';
 import { PRODUCTS } from '../mocks/products.data';

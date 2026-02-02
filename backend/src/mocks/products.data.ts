@@ -1,4 +1,4 @@
-import { Product } from '@org/shared';
+import { Product } from '@zampa/shared';
 
 export const PRODUCTS: Product[] = [
   {

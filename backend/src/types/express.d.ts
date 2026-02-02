@@ -1,4 +1,4 @@
-import type { AuthUser } from '@org/shared';
+import type { AuthUser } from '@zampa/shared';
 
 declare global {
   namespace Express {

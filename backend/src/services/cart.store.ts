@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import type { Product } from '@org/shared';
+import type { Product } from '@zampa/shared';
 import { db } from '../db/client';
 import { cartItems, products } from '../db/schema';
 import { and, desc, eq, sql } from 'drizzle-orm';

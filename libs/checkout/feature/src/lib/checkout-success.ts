@@ -4,10 +4,18 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
-import { CartService } from '@org/cart/data-access';
-import { OrdersService } from '@org/orders/data-access';
-import { OrderDetail } from '@org/shared';
-import { Observable, catchError, map, of, startWith, switchMap, tap } from 'rxjs';
+import { CartService } from '@zampa/cart/data-access';
+import { OrdersService } from '@zampa/orders/data-access';
+import { OrderDetail } from '@zampa/shared';
+import {
+  Observable,
+  catchError,
+  map,
+  of,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 @Component({
   selector: 'app-checkout-success',

@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { Product } from '@org/shared';
+import { Product } from '@zampa/shared';
 
 @Component({
   selector: 'app-product-card',

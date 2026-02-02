@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrdersService } from '@org/orders/data-access';
-import { Order, OrderStatus } from '@org/shared';
+import { OrdersService } from '@zampa/orders/data-access';
+import { Order, OrderStatus } from '@zampa/shared';
 import { Observable, catchError, map, of, startWith } from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';

@@ -2,9 +2,9 @@ import { Injectable, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { CartItem, CartService } from '@org/cart/data-access';
-import { PaymentService } from '@org/payment/data-access';
-import { CreateCheckoutSessionRequest, ShippingAddress } from '@org/shared';
+import { CartItem, CartService } from '@zampa/cart/data-access';
+import { PaymentService } from '@zampa/payment/data-access';
+import { CreateCheckoutSessionRequest, ShippingAddress } from '@zampa/shared';
 import { HttpErrorResponse } from '@angular/common/http';
 
 export type ShippingOption = {

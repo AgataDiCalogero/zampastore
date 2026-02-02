@@ -4,7 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
-import { AuthResponse, AuthUser, LoginRequest } from '@org/shared';
+import { AuthResponse, AuthUser, LoginRequest } from '@zampa/shared';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { AuthService } from './auth.service';
 import { firstValueFrom } from 'rxjs';
@@ -46,9 +46,11 @@ describe('AuthService', () => {
 
   it('clears auth state on refresh error', async () => {
     const user: AuthUser = { id: 'user-1', email: 'demo@zampastore.it' };
-    
+
     // Login first
-    const loginPromise = firstValueFrom(service.login({ email: user.email, password: 'password' }));
+    const loginPromise = firstValueFrom(
+      service.login({ email: user.email, password: 'password' }),
+    );
     httpMock.expectOne('/api/auth/login').flush({ user });
     await loginPromise;
 
@@ -61,7 +63,7 @@ describe('AuthService', () => {
       { status: 401, statusText: '401' },
     );
 
-    await refreshPromise.catch(e => e);
+    await refreshPromise.catch((e) => e);
     // AuthService probably handles error and returns null or similar
     expect(service.authState()).toBeNull();
   });
@@ -72,8 +74,6 @@ describe('AuthService', () => {
 
     service.handleUnauthorized('/checkout');
 
-    expect(navigateSpy).toHaveBeenCalledWith(
-      '/login?returnUrl=%2Fcheckout',
-    );
+    expect(navigateSpy).toHaveBeenCalledWith('/login?returnUrl=%2Fcheckout');
   });
 });

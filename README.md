@@ -1,191 +1,110 @@
-# ZampaStore (Nx workspace)
+# ZampaStore 🐾
 
-Monorepo Nx con:
+ZampaStore è un e-commerce moderno e scalabile dedicato al benessere di cani e gatti.
+Realizzato come **Enterprise Monorepo** con Nx, dimostra un'architettura **Full Stack** avanzata (Angular 17+ & Node.js).
 
-- `frontend` (app Angular)
-- `backend` (app Node/Express)
-- `shared` (libreria TypeScript)
+![ZampaStore Preview](https://via.placeholder.com/1200x600?text=ZampaStore+Preview)
+_(Sostituire con screenshot reale)_
 
-## Setup
+## 🚀 Tech Stack
 
-```sh
-npm install
+### Frontend
+
+- **Framework**: Angular 17+ (Signals, Standalone Components, @defer)
+- **Styling**: PrimeNG + Tailwind CSS (Utility-first)
+- **State Management**: Reactive State with Signals & RxJS
+- **Performance**: OnPush Strategy, Lazy Loading
+
+### Backend
+
+- **Runtime**: Node.js (Express)
+- **Database**: MySQL con Drizzle ORM
+- **Security**: Helmet, Rate Limiting, Zod Validation, CSRF Protection
+- **Architecture**: Service-Repository Pattern, Centralized Error Handling
+
+### Tooling
+
+- **Monorepo**: Nx
+- **Testing**: Cypress (E2E), Vitest (Unit)
+- **CI/CD**: Ready for GitHub Actions
+
+## 🛠️ Installazione
+
+1. **Clona il repository**:
+
+   ```bash
+   git clone https://github.com/tuo-user/zampastore.git
+   cd zampastore
+   ```
+
+2. **Installa le dipendenze**:
+
+   ```bash
+   npm install
+   ```
+
+   _Nota: Cypress è bloccato alla versione 13.6.0 per compatibilità Windows._
+
+3. **Configura l'ambiente**:
+   Copia `.env.example` in `.env` e configura le credenziali del database.
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Avvia il Database**:
+   Assicurati di avere un'istanza MySQL in esecuzione.
+   ```bash
+   # Push dello schema
+   npx nx run backend:db-push
+   # Seed dei dati iniziali
+   npx nx run backend:db-seed
+   ```
+
+## ▶️ Avvio Sviluppo
+
+Per avviare **Frontend** e **Backend** in parallelo:
+
+```bash
+npm run dev
 ```
 
-## Configurazione ambiente
+- **Frontend**: http://localhost:4200
+- **Backend**: http://localhost:3333/api
+- **Swagger Docs**: http://localhost:3333/api/docs
 
-1. Copia il file `.env.example` in `.env` (root repo):
+## 🔐 Credenziali di Test
 
-Windows (PowerShell):
+| Ruolo      | Email          | Password |
+| ---------- | -------------- | -------- |
+| **Utente** | user@zampa.it  | 123456   |
+| **Admin**  | admin@zampa.it | 123456   |
 
-```sh
-Copy-Item .env.example .env
+## 🧪 Testing
+
+Esegui i test Unitari:
+
+```bash
+npx nx test
 ```
 
-macOS/Linux:
+Esegui i test E2E (richiede server attivo):
 
-```sh
-cp .env.example .env
+```bash
+npm run e2e:local
 ```
 
-2. Compila le variabili in `.env`:
+## 📐 Architettura
 
-- `CLIENT_URL` e `PORT`
-- `TIDB_*` (host, user, password, database)
-- **TLS CA**: usa `TIDB_CA_PATH` (o `TIDB_CA_BASE64`)
-- Stripe (opzionale): `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET`
+Il progetto segue la struttura **Nx Enterprise Monorepo**:
 
-## Database (TiDB/MySQL)
+- **apps/frontend**: Applicazione Angular principale.
+- **apps/backend**: API REST Node.js.
+- **libs/**: Logica di business riutilizzabile, divisa in:
+  - `feature`: Componenti intelligenti e pagine.
+  - `ui`: Componenti di presentazione (dumb).
+  - `data-access`: Servizi API, State management e Tipi.
 
-Il progetto utilizza **Drizzle ORM**. Non è necessario eseguire script SQL manuali.
+---
 
-1.  **Push dello schema**:
-
-    ```sh
-    npx drizzle-kit push
-    ```
-
-    Questo comando creerà tutte le tabelle necessarie nel database configurato in `.env`.
-
-2.  **Seeding**:
-    Il backend esegue automaticamente il seeding dei prodotti all'avvio se la tabella prodotti è vuota (vedi `src/main.ts`).
-
-## Stripe (opzionale)
-
-Webhook locale (consigliato):
-
-```sh
-stripe listen --forward-to http://localhost:3333/api/payments/webhook
-```
-
-Se `stripe` non è nel PATH, usa il percorso completo al binario:
-
-```sh
-C:\\path\\to\\stripe.exe listen --forward-to http://localhost:3333/api/payments/webhook
-```
-
-L'endpoint backend è:
-
-```
-POST /api/payments/webhook
-```
-
-## Comandi principali
-
-Dev server (frontend):
-
-```sh
-npx nx serve frontend
-```
-
-Dev server (backend):
-
-```sh
-npx nx serve backend
-```
-
-Lint frontend:
-
-```sh
-npx nx lint frontend
-```
-
-Test frontend:
-
-```sh
-npx nx test frontend
-```
-
-Typecheck frontend:
-
-```sh
-npx nx typecheck frontend
-```
-
-Lint backend:
-
-```sh
-npx nx lint backend
-```
-
-Typecheck backend:
-
-```sh
-npx nx typecheck backend
-```
-
-Lint shared:
-
-```sh
-npx nx lint shared
-```
-
-Typecheck shared:
-
-```sh
-npx nx typecheck shared
-```
-
-Build frontend:
-
-```sh
-npx nx build frontend
-```
-
-Build backend:
-
-```sh
-npx nx build backend
-```
-
-Build shared:
-
-```sh
-npx nx build shared
-```
-
-E2E (Cypress):
-
-```sh
-npx nx run frontend-e2e:e2e
-```
-
-E2E (Cypress) CI:
-
-```sh
-npx nx run frontend-e2e:e2e:ci
-```
-
-API Docs (Swagger):
-
-```
-http://localhost:3333/api/docs
-```
-
-## Checklist pre-deploy (locale)
-
-```sh
-npx nx format:check --base="remotes/origin/main"
-```
-
-```sh
-npx nx run-many -t lint test build typecheck
-```
-
-Check totale (incluso E2E, senza cache):
-
-```sh
-npx nx run-many -t lint test typecheck build e2e --configuration=ci --skip-nx-cache
-```
-
-## Formattazione
-
-```sh
-npx nx format:write
-```
-
-## Note utili
-
-- Alcuni target (es. `lint`/`typecheck`) sono inferiti da Nx in base a ESLint/TS e possono non comparire in `project.json`.
-- `frontend:test` esegue un build reale prima dei test: il primo run puo essere lento, poi la cache Nx accelera i successivi.
-- Al momento i test sono presenti solo in `frontend`: `backend` e `shared` non hanno test, quindi non esiste un target `test` per loro.
+Developed with ❤️ by [Agata]

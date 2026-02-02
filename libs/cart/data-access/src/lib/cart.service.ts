@@ -6,9 +6,9 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { Product } from '@org/shared';
+import { Product } from '@zampa/shared';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AuthService } from '@org/auth/data-access';
+import { AuthService } from '@zampa/auth/data-access';
 import { CartApiService } from './cart-api.service';
 
 export type CartItem = { product: Product; qty: number };
