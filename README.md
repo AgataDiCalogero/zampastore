@@ -126,24 +126,14 @@ Build shared:
 npx nx build shared
 ```
 
-E2E (Playwright) - install browser:
-```sh
-npx playwright install
-```
-
-E2E (Playwright):
+E2E (Cypress):
 ```sh
 npx nx run frontend-e2e:e2e
 ```
 
-E2E (Playwright) CI:
+E2E (Cypress) CI:
 ```sh
 npx nx run frontend-e2e:e2e:ci
-```
-
-Report HTML Playwright:
-```sh
-dist/playwright/index.html
 ```
 
 API Docs (Swagger):

@@ -98,28 +98,26 @@
   font-weight: 600;
   letter-spacing: 0.02em;
   border: 1px solid transparent;
+  --status-color: var(--color-info);
+  background: var(--surface-0);
+  border-color: var(--status-color);
+  color: var(--status-color);
+  background: color-mix(in srgb, var(--status-color) 16%, transparent);
+  border-color: color-mix(in srgb, var(--status-color) 36%, transparent);
 }
 
 .status-warning {
-  background: rgba(242, 193, 75, 0.2);
-  border-color: rgba(242, 193, 75, 0.5);
-  color: #8a5a00;
+  --status-color: var(--color-warning);
 }
 
 .status-success {
-  background: rgba(46, 125, 50, 0.14);
-  border-color: rgba(46, 125, 50, 0.35);
-  color: #1f5a25;
+  --status-color: var(--color-success);
 }
 
 .status-info {
-  background: rgba(64, 126, 140, 0.14);
-  border-color: rgba(64, 126, 140, 0.35);
-  color: #1c4f5a;
+  --status-color: var(--color-info);
 }
 
 .status-danger {
-  background: rgba(211, 47, 47, 0.14);
-  border-color: rgba(211, 47, 47, 0.35);
-  color: #8c1f1f;
+  --status-color: var(--color-error);
 }

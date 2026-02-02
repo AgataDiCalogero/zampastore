@@ -27,7 +27,19 @@
         [routerLink]="['/']"
         aria-label="Vai alla home ZampaStore"
       >
-        <i class="pi pi-heart"></i>
+        <svg
+          class="brand-icon"
+          viewBox="0 0 64 64"
+          aria-hidden="true"
+          focusable="false"
+          fill="currentColor"
+        >
+          <circle cx="18" cy="22" r="6"></circle>
+          <circle cx="28" cy="14" r="6"></circle>
+          <circle cx="36" cy="14" r="6"></circle>
+          <circle cx="46" cy="22" r="6"></circle>
+          <ellipse cx="32" cy="40" rx="16" ry="12"></ellipse>
+        </svg>
         <span>ZampaStore</span>
       </a>
       <nav class="desktop-nav" aria-label="Navigazione principale">
@@ -74,6 +86,30 @@
           Pagamenti sicuri
         </span>
       </div>
+      @if (authLink(); as auth) {
+        @if (auth.routerLink) {
+          <a
+            class="desktop-nav-link desktop-nav-link--cta menubar-auth"
+            [routerLink]="auth.routerLink"
+          >
+            @if (auth.icon) {
+              <i class="{{ auth.icon }}"></i>
+            }
+            <span>{{ auth.label }}</span>
+          </a>
+        } @else {
+          <button
+            type="button"
+            class="desktop-nav-link desktop-nav-link--cta menubar-auth"
+            (click)="handleMobileAction(auth.command)"
+          >
+            @if (auth.icon) {
+              <i class="{{ auth.icon }}"></i>
+            }
+            <span>{{ auth.label }}</span>
+          </button>
+        }
+      }
       <button
         pButton
         type="button"

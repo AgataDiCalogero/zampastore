@@ -45,8 +45,14 @@ export class App {
   private readonly cartService = inject(CartService);
   private readonly document = inject(DOCUMENT);
   protected readonly mobileMenuOpen = signal(false);
-  protected readonly desktopLinks = computed(() => this.buildNavLinks());
-  protected readonly mobileLinks = computed(() => this.buildNavLinks());
+  private readonly navLinks = computed(() => this.buildNavLinks());
+  protected readonly desktopLinks = computed(() =>
+    this.navLinks().filter((link) => link.id !== 'auth'),
+  );
+  protected readonly mobileLinks = computed(() => this.navLinks());
+  protected readonly authLink = computed(() =>
+    this.navLinks().find((link) => link.id === 'auth'),
+  );
   protected readonly cartCount = toSignal(
     this.cartService.cartItems$.pipe(
       map((items) => items.reduce((sum, item) => sum + item.qty, 0)),

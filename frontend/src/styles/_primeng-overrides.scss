@@ -124,12 +124,6 @@ button[pButton]:disabled,
   margin-left: var(--space-sm) !important;
 }
 
-.p-button:enabled:hover {
-  background: var(--color-cta-dark);
-  border-color: var(--color-cta-dark);
-  color: var(--color-cta-text);
-}
-
 .p-button:focus-visible {
   box-shadow: var(--focus-ring);
 }

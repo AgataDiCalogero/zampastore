@@ -61,6 +61,13 @@
   font-weight: 600;
 }
 
+.brand-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
 .brand:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
@@ -139,6 +146,10 @@
   white-space: nowrap;
 }
 
+.menubar-auth {
+  white-space: nowrap;
+}
+
 .mobile-toggle {
   display: none;
   color: var(--text-inverse);
@@ -204,6 +215,10 @@
 
 @media (max-width: 980px) {
   .desktop-nav {
+    display: none;
+  }
+
+  .menubar-auth {
     display: none;
   }
 

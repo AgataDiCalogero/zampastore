@@ -1,10 +1,11 @@
+@use 'sass:meta';
 @use 'styles/fonts';
 @use 'styles/tokens';
-@import 'primeicons/primeicons.css';
-@import 'primeflex/primeflex.css';
-@import 'primeng/resources/themes/lara-light-blue/theme.css';
-@import 'primeng/resources/primeng.min.css';
-@import 'styles/primeng-overrides';
+@use 'styles/primeng-overrides';
+@include meta.load-css('primeicons/primeicons.css');
+@include meta.load-css('primeflex/primeflex.css');
+@include meta.load-css('primeng/resources/themes/lara-light-blue/theme.css');
+@include meta.load-css('primeng/resources/primeng.min.css');
 
 :root {
   color-scheme: light;

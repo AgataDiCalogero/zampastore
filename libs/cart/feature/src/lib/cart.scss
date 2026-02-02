@@ -107,13 +107,13 @@
   justify-content: space-between;
   padding: 0.9rem 1.5rem;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, #f7c65a 0%, #f0b938 100%);
+  background: linear-gradient(135deg, var(--color-cta) 0%, var(--color-cta-dark) 100%);
   border-color: var(--color-cta-dark);
   box-shadow: var(--shadow-2);
 }
 
 :host ::ng-deep .checkout-cta.p-button:enabled:hover {
-  background: linear-gradient(135deg, #f2b746 0%, #e4a72b 100%);
+  background: linear-gradient(135deg, var(--color-cta-dark) 0%, var(--color-cta) 100%);
   border-color: var(--color-cta-dark);
 }
 

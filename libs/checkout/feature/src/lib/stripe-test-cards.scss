@@ -27,8 +27,9 @@
 
 .stripe-test-tag {
   align-self: flex-start;
-  background: rgba(64, 126, 140, 0.15);
-  color: #1c4f5a;
+  background: var(--surface-0);
+  color: var(--color-info);
+  background: color-mix(in srgb, var(--color-info) 15%, transparent);
   font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -108,13 +109,16 @@
 }
 
 .tone-success {
-  border-color: rgba(46, 125, 50, 0.35);
+  border-color: var(--color-success);
+  border-color: color-mix(in srgb, var(--color-success) 40%, transparent);
 }
 
 .tone-warning {
-  border-color: rgba(242, 193, 75, 0.6);
+  border-color: var(--color-warning);
+  border-color: color-mix(in srgb, var(--color-warning) 55%, transparent);
 }
 
 .tone-danger {
-  border-color: rgba(211, 47, 47, 0.35);
+  border-color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 40%, transparent);
 }

@@ -5,15 +5,17 @@
   "sourceRoot": "apps/frontend-e2e/src",
   "targets": {
     "e2e": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/cypress:cypress",
       "options": {
-        "command": "npx playwright test --config=apps/frontend-e2e/playwright.config.ts"
-      }
-    },
-    "e2e:ci": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx playwright test --config=apps/frontend-e2e/playwright.config.ts --reporter=line"
+        "cypressConfig": "apps/frontend-e2e/cypress.config.ts",
+        "devServerTarget": "frontend:serve",
+        "testingType": "e2e"
+      },
+      "configurations": {
+        "ci": {
+          "browser": "chrome",
+          "headless": true
+        }
       }
     }
   },
