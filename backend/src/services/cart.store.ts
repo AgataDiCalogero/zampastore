@@ -1,75 +1,85 @@
 import { randomUUID } from 'node:crypto';
 import type { Product } from '@org/shared';
-import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
-import { getDbPool } from './db';
+import { db } from '../db/client';
+import { cartItems, products } from '../db/schema';
+import { and, desc, eq, sql } from 'drizzle-orm';
 
 export type CartItem = { product: Product; qty: number };
 
-type CartRow = RowDataPacket & {
-  product_id: string;
-  quantity: number;
-  name: string;
-  description: string | null;
-  price_cents: number;
-  image_url: string | null;
-};
-
-const toCartItem = (row: CartRow): CartItem => ({
-  product: {
-    id: row.product_id,
-    name: row.name,
-    description: row.description ?? undefined,
-    priceCents: row.price_cents,
-    imageUrl: row.image_url ?? undefined,
-  },
-  qty: row.quantity,
-});
-
 class MysqlCartStore {
-  private readonly pool = getDbPool();
-
   async listCart(userId: string): Promise<CartItem[]> {
-    const [rows] = await this.pool.query<CartRow[]>(
-      `SELECT ci.product_id, ci.quantity, p.name, p.description, p.price_cents, p.image_url
-       FROM cart_items ci
-       JOIN products p ON p.id = ci.product_id
-       WHERE ci.user_id = ?
-       ORDER BY ci.created_at DESC`,
-      [userId],
-    );
-    return rows.map(toCartItem);
+    const rows = await db
+      .select({
+        productId: cartItems.productId,
+        quantity: cartItems.quantity,
+        name: products.name,
+        description: products.description,
+        priceCents: products.priceCents,
+        imageUrl: products.imageUrl,
+        category: products.category,
+      })
+      .from(cartItems)
+      .innerJoin(products, eq(products.id, cartItems.productId))
+      .where(eq(cartItems.userId, userId))
+      .orderBy(desc(cartItems.createdAt));
+
+    return rows.map((row) => ({
+      product: {
+        id: row.productId,
+        name: row.name,
+        description: row.description ?? undefined,
+        priceCents: row.priceCents,
+        imageUrl: row.imageUrl ?? undefined,
+        category: row.category ?? undefined,
+      },
+      qty: row.quantity,
+    }));
   }
 
   async addItem(userId: string, productId: string, qty: number): Promise<void> {
     const now = new Date();
-    await this.pool.execute<ResultSetHeader>(
-      `INSERT INTO cart_items (id, user_id, product_id, quantity, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity), updated_at = VALUES(updated_at)`,
-      [randomUUID(), userId, productId, qty, now, now],
-    );
+    await db
+      .insert(cartItems)
+      .values({
+        id: randomUUID(),
+        userId,
+        productId,
+        quantity: qty,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onDuplicateKeyUpdate({
+        set: {
+          quantity: sql`quantity + VALUES(quantity)`,
+          updatedAt: sql`VALUES(updated_at)`,
+        },
+      });
   }
 
-  async setItem(userId: string, productId: string, qty: number): Promise<boolean> {
-    const [result] = await this.pool.execute<ResultSetHeader>(
-      'UPDATE cart_items SET quantity = ?, updated_at = ? WHERE user_id = ? AND product_id = ?',
-      [qty, new Date(), userId, productId],
-    );
+  async setItem(
+    userId: string,
+    productId: string,
+    qty: number,
+  ): Promise<boolean> {
+    const [result] = await db
+      .update(cartItems)
+      .set({ quantity: qty, updatedAt: new Date() })
+      .where(
+        and(eq(cartItems.userId, userId), eq(cartItems.productId, productId)),
+      );
     return result.affectedRows > 0;
   }
 
   async removeItem(userId: string, productId: string): Promise<void> {
-    await this.pool.execute<ResultSetHeader>(
-      'DELETE FROM cart_items WHERE user_id = ? AND product_id = ?',
-      [userId, productId],
-    );
+    await db
+      .delete(cartItems)
+      .where(
+        and(eq(cartItems.userId, userId), eq(cartItems.productId, productId)),
+      );
   }
 
   async clearCart(userId: string): Promise<void> {
-    await this.pool.execute<ResultSetHeader>(
-      'DELETE FROM cart_items WHERE user_id = ?',
-      [userId],
-    );
+    await db.delete(cartItems).where(eq(cartItems.userId, userId));
   }
 
   async mergeItems(
@@ -80,20 +90,24 @@ class MysqlCartStore {
       return;
     }
     const now = new Date();
-    const rows = items.map((item) => [
-      randomUUID(),
+    const values = items.map((item) => ({
+      id: randomUUID(),
       userId,
-      item.productId,
-      item.qty,
-      now,
-      now,
-    ]);
-    await this.pool.query<ResultSetHeader>(
-      `INSERT INTO cart_items (id, user_id, product_id, quantity, created_at, updated_at)
-       VALUES ?
-       ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity), updated_at = VALUES(updated_at)`,
-      [rows],
-    );
+      productId: item.productId,
+      quantity: item.qty,
+      createdAt: now,
+      updatedAt: now,
+    }));
+
+    await db
+      .insert(cartItems)
+      .values(values)
+      .onDuplicateKeyUpdate({
+        set: {
+          quantity: sql`quantity + VALUES(quantity)`,
+          updatedAt: sql`VALUES(updated_at)`,
+        },
+      });
   }
 }
 

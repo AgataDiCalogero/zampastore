@@ -30,7 +30,7 @@ const buildOrderLines = (
     if (product.stock < safeQty) {
       throw new OrderCreationError('out-of-stock');
     }
-    const unitPriceCents = product.price_cents;
+    const unitPriceCents = product.priceCents;
     const lineTotalCents = unitPriceCents * safeQty;
     lines.push({
       productId: product.id,
@@ -49,7 +49,7 @@ export const createOrder = async (
   shippingAddress: ShippingAddress,
 ): Promise<OrderDetail> => {
   const ids = [...new Set(items.map((item) => item.productId))];
-  const products = await productsStore.getProductsByIds(ids);
+  const products = await productsStore.getProductsWithStock(ids);
   if (products.length !== ids.length) {
     throw new OrderCreationError('invalid-products');
   }

@@ -1,82 +1,98 @@
-import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
+import { eq, inArray, sql } from 'drizzle-orm';
 import type { Product } from '@org/shared';
-import { getDbPool } from './db';
+import { db } from '../db/client';
+import { products } from '../db/schema';
 import { PRODUCTS } from '../mocks/products.data';
 
-export type ProductWithStock = RowDataPacket & {
-  id: string;
-  name: string;
-  description: string;
-  price_cents: number;
-  stock: number;
-  category: string | null;
-  image_url: string | null;
-};
-
-const toProduct = (row: ProductWithStock): Product => ({
-  id: row.id,
-  name: row.name,
-  description: row.description,
-  priceCents: row.price_cents,
-  imageUrl: row.image_url ?? undefined,
-});
+export type ProductWithStock = Product & { stock: number };
 
 class MysqlProductsStore {
-  private readonly pool = getDbPool();
-
   async ensureSeeded(): Promise<void> {
-    const [rows] = await this.pool.query<Array<RowDataPacket & { count: number }>>(
-      'SELECT COUNT(*) as count FROM products',
-    );
-    const count = rows[0]?.count ?? 0;
-    if (count > 0) {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(products);
+
+    if (result && result.count > 0) {
       return;
     }
 
     const now = new Date();
-    const rowsToInsert = PRODUCTS.map((product) => [
-      product.id,
-      product.name,
-      product.description ?? '',
-      product.priceCents,
-      20,
-      null,
-      product.imageUrl ?? null,
-      now,
-      now,
-    ]);
-    await this.pool.query<ResultSetHeader>(
-      'INSERT INTO products (id, name, description, price_cents, stock, category, image_url, created_at, updated_at) VALUES ?',
-      [rowsToInsert],
+    await db.insert(products).values(
+      PRODUCTS.map((p) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description ?? '',
+        priceCents: p.priceCents,
+        stock: 20,
+        category: null,
+        imageUrl: p.imageUrl ?? null,
+        createdAt: now,
+        updatedAt: now,
+      })),
     );
   }
 
   async listProducts(): Promise<Product[]> {
-    const [rows] = await this.pool.query<ProductWithStock[]>(
-      'SELECT id, name, description, price_cents, image_url, stock, category FROM products ORDER BY name ASC',
-    );
-    return rows.map(toProduct);
+    const rows = await db.select().from(products).orderBy(products.name);
+    return rows.map((row) => ({
+      ...row,
+      description: row.description ?? '',
+      imageUrl: row.imageUrl ?? undefined,
+      category: row.category ?? undefined,
+    }));
   }
 
   async getProductById(productId: string): Promise<Product | null> {
-    const [rows] = await this.pool.query<ProductWithStock[]>(
-      'SELECT id, name, description, price_cents, image_url, stock, category FROM products WHERE id = ? LIMIT 1',
-      [productId],
-    );
-    const row = rows[0];
-    return row ? toProduct(row) : null;
+    const [row] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, productId))
+      .limit(1);
+
+    if (!row) return null;
+
+    return {
+      ...row,
+      description: row.description ?? '',
+      imageUrl: row.imageUrl ?? undefined,
+      category: row.category ?? undefined,
+    };
   }
 
-  async getProductsByIds(productIds: string[]): Promise<ProductWithStock[]> {
+  async getProductsByIds(productIds: string[]): Promise<Product[]> {
     if (productIds.length === 0) {
       return [];
     }
-    const placeholders = productIds.map(() => '?').join(',');
-    const [rows] = await this.pool.query<ProductWithStock[]>(
-      `SELECT id, name, description, price_cents, image_url, stock, category FROM products WHERE id IN (${placeholders})`,
-      productIds,
-    );
-    return rows;
+    const rows = await db
+      .select()
+      .from(products)
+      .where(inArray(products.id, productIds));
+
+    return rows.map((row) => ({
+      ...row,
+      description: row.description ?? '',
+      imageUrl: row.imageUrl ?? undefined,
+      category: row.category ?? undefined,
+    }));
+  }
+
+  async getProductsWithStock(
+    productIds: string[],
+  ): Promise<ProductWithStock[]> {
+    if (productIds.length === 0) {
+      return [];
+    }
+    const rows = await db
+      .select()
+      .from(products)
+      .where(inArray(products.id, productIds));
+
+    return rows.map((row) => ({
+      ...row,
+      description: row.description ?? undefined,
+      imageUrl: row.imageUrl ?? undefined,
+      category: row.category ?? undefined,
+    }));
   }
 }
 

@@ -61,6 +61,20 @@
           "buildTarget": "backend:build:production"
         }
       }
+    },
+    "db-reset": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -r @swc-node/register src/db/reset.ts",
+        "cwd": "backend"
+      }
+    },
+    "db-push": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx drizzle-kit push",
+        "cwd": "."
+      }
     }
   }
 }

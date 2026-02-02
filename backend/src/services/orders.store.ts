@@ -6,8 +6,9 @@ import type {
   OrderStatus,
   ShippingAddress,
 } from '@org/shared';
-import type { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
-import { getDbPool } from './db';
+import { db } from '../db/client';
+import { orderItems, orders, products, shippingAddresses } from '../db/schema';
+import { and, asc, desc, eq, gte, sql } from 'drizzle-orm';
 
 export type CreateOrderInput = {
   id: string;
@@ -37,117 +38,82 @@ export class OutOfStockError extends Error {
   }
 }
 
-type OrderRow = RowDataPacket & {
-  id: string;
-  total_cents: number;
-  status: OrderStatus;
-  created_at: Date | string;
-};
-
-type OrderItemRow = RowDataPacket & {
-  product_id: string;
-  name: string;
-  unit_price_cents: number;
-  qty: number;
-  line_total_cents: number;
-};
-
-type ShippingRow = RowDataPacket & {
-  first_name: string;
-  last_name: string;
-  address: string;
-  city: string;
-  postal_code: string;
-  country: string;
-};
-
 const toIsoString = (value: Date | string): string =>
   value instanceof Date ? value.toISOString() : new Date(value).toISOString();
 
 class MysqlOrdersStore implements OrdersStore {
-  private readonly pool = getDbPool();
-
   async createOrder(input: CreateOrderInput): Promise<void> {
-    const connection = await this.pool.getConnection();
-    try {
-      await connection.beginTransaction();
+    await db.transaction(async (tx) => {
       const createdAt = input.createdAt;
 
       for (const item of input.items) {
-        const [result] = await connection.execute<ResultSetHeader>(
-          'UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?',
-          [item.qty, item.productId, item.qty],
-        );
+        const [result] = await tx
+          .update(products)
+          .set({ stock: sql`stock - ${item.qty}` })
+          .where(
+            and(eq(products.id, item.productId), gte(products.stock, item.qty)),
+          );
         if (result.affectedRows === 0) {
           throw new OutOfStockError(item.productId);
         }
       }
 
-      await connection.execute(
-        'INSERT INTO orders (id, user_id, total_cents, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
-        [
-          input.id,
-          input.userId,
-          input.totalCents,
-          input.status,
-          createdAt,
-          createdAt,
-        ],
-      );
+      await tx.insert(orders).values({
+        id: input.id,
+        userId: input.userId,
+        totalCents: input.totalCents,
+        status: input.status,
+        createdAt,
+        updatedAt: createdAt,
+      });
 
       if (input.items.length > 0) {
-        const rows = input.items.map((item) => [
-          `oli-${randomUUID()}`,
-          input.id,
-          item.productId,
-          item.name,
-          item.unitPriceCents,
-          item.qty,
-          item.lineTotalCents,
-          createdAt,
-        ]);
-        await connection.query(
-          'INSERT INTO order_items (id, order_id, product_id, name, unit_price_cents, qty, line_total_cents, created_at) VALUES ?',
-          [rows],
+        await tx.insert(orderItems).values(
+          input.items.map((item) => ({
+            id: `oli-${randomUUID()}`,
+            orderId: input.id,
+            productId: item.productId,
+            name: item.name,
+            unitPriceCents: item.unitPriceCents,
+            qty: item.qty,
+            lineTotalCents: item.lineTotalCents,
+            createdAt,
+          })),
         );
       }
 
       const shipping = input.shippingAddress;
-      await connection.execute(
-        'INSERT INTO shipping_addresses (order_id, first_name, last_name, address, city, postal_code, country, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [
-          input.id,
-          shipping.firstName,
-          shipping.lastName,
-          shipping.address,
-          shipping.city,
-          shipping.postalCode,
-          shipping.country,
-          createdAt,
-          createdAt,
-        ],
-      );
-
-      await connection.commit();
-    } catch (error) {
-      await connection.rollback();
-      throw error;
-    } finally {
-      connection.release();
-    }
+      await tx.insert(shippingAddresses).values({
+        orderId: input.id,
+        firstName: shipping.firstName,
+        lastName: shipping.lastName,
+        address: shipping.address,
+        city: shipping.city,
+        postalCode: shipping.postalCode,
+        country: shipping.country,
+        createdAt,
+        updatedAt: createdAt,
+      });
+    });
   }
 
   async listOrdersByUser(userId: string): Promise<Order[]> {
-    const [rows] = await this.pool.query<OrderRow[]>(
-      'SELECT id, total_cents, status, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC',
-      [userId],
-    );
+    const rows = await db
+      .select({
+        id: orders.id,
+        totalCents: orders.totalCents,
+        status: orders.status,
+        createdAt: orders.createdAt,
+      })
+      .from(orders)
+      .where(eq(orders.userId, userId))
+      .orderBy(desc(orders.createdAt));
 
     return rows.map((row) => ({
       id: row.id,
-      totalCents: row.total_cents,
-      createdAt: toIsoString(row.created_at),
-      status: row.status,
+      totalCents: row.totalCents,
+      createdAt: toIsoString(row.createdAt),
+      status: row.status as OrderStatus,
     }));
   }
 
@@ -155,47 +121,62 @@ class MysqlOrdersStore implements OrdersStore {
     userId: string,
     orderId: string,
   ): Promise<OrderDetail | null> {
-    const [orderRows] = await this.pool.query<OrderRow[]>(
-      'SELECT id, total_cents, status, created_at FROM orders WHERE id = ? AND user_id = ? LIMIT 1',
-      [orderId, userId],
-    );
-    const order = orderRows[0];
+    const [order] = await db
+      .select({
+        id: orders.id,
+        totalCents: orders.totalCents,
+        status: orders.status,
+        createdAt: orders.createdAt,
+      })
+      .from(orders)
+      .where(and(eq(orders.id, orderId), eq(orders.userId, userId)))
+      .limit(1);
+
     if (!order) {
       return null;
     }
 
-    const [itemRows] = await this.pool.query<OrderItemRow[]>(
-      'SELECT product_id, name, unit_price_cents, qty, line_total_cents FROM order_items WHERE order_id = ? ORDER BY created_at ASC',
-      [orderId],
-    );
+    const items = await db
+      .select({
+        productId: orderItems.productId,
+        name: orderItems.name,
+        unitPriceCents: orderItems.unitPriceCents,
+        qty: orderItems.qty,
+        lineTotalCents: orderItems.lineTotalCents,
+      })
+      .from(orderItems)
+      .where(eq(orderItems.orderId, orderId))
+      .orderBy(asc(orderItems.createdAt));
 
-    const [shippingRows] = await this.pool.query<ShippingRow[]>(
-      'SELECT first_name, last_name, address, city, postal_code, country FROM shipping_addresses WHERE order_id = ? LIMIT 1',
-      [orderId],
-    );
-    const shipping = shippingRows[0];
+    const [shipping] = await db
+      .select({
+        firstName: shippingAddresses.firstName,
+        lastName: shippingAddresses.lastName,
+        address: shippingAddresses.address,
+        city: shippingAddresses.city,
+        postalCode: shippingAddresses.postalCode,
+        country: shippingAddresses.country,
+      })
+      .from(shippingAddresses)
+      .where(eq(shippingAddresses.orderId, orderId))
+      .limit(1);
+
     if (!shipping) {
       return null;
     }
 
     return {
       id: order.id,
-      totalCents: order.total_cents,
-      createdAt: toIsoString(order.created_at),
-      status: order.status,
-      items: itemRows.map((item) => ({
-        productId: item.product_id,
-        name: item.name,
-        unitPriceCents: item.unit_price_cents,
-        qty: item.qty,
-        lineTotalCents: item.line_total_cents,
-      })),
+      totalCents: order.totalCents,
+      createdAt: toIsoString(order.createdAt),
+      status: order.status as OrderStatus,
+      items,
       shippingAddress: {
-        firstName: shipping.first_name,
-        lastName: shipping.last_name,
+        firstName: shipping.firstName,
+        lastName: shipping.lastName,
         address: shipping.address,
         city: shipping.city,
-        postalCode: shipping.postal_code,
+        postalCode: shipping.postalCode,
         country: shipping.country,
       },
     };
@@ -206,10 +187,10 @@ class MysqlOrdersStore implements OrdersStore {
     userId: string,
     status: OrderStatus,
   ): Promise<boolean> {
-    const [result] = await this.pool.execute<ResultSetHeader>(
-      'UPDATE orders SET status = ?, updated_at = ? WHERE id = ? AND user_id = ?',
-      [status, new Date(), orderId, userId],
-    );
+    const [result] = await db
+      .update(orders)
+      .set({ status, updatedAt: new Date() })
+      .where(and(eq(orders.id, orderId), eq(orders.userId, userId)));
     return result.affectedRows > 0;
   }
 }
