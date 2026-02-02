@@ -15,8 +15,6 @@ import { ButtonModule } from 'primeng/button';
 import { MENU_ITEMS } from './menu-items';
 import { AuthService } from '@org/auth/data-access';
 import { CartService } from '@org/cart/data-access';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
 
 type NavLink = {
   id?: string;
@@ -53,12 +51,7 @@ export class App {
   protected readonly authLink = computed(() =>
     this.navLinks().find((link) => link.id === 'auth'),
   );
-  protected readonly cartCount = toSignal(
-    this.cartService.cartItems$.pipe(
-      map((items) => items.reduce((sum, item) => sum + item.qty, 0)),
-    ),
-    { initialValue: 0 },
-  );
+  protected readonly cartCount = this.cartService.cartCount;
 
   constructor() {
     effect(() => {

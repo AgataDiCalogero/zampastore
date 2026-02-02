@@ -1,12 +1,7 @@
-import { DestroyRef, Injectable, inject, signal } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Injectable, effect, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CartItem, CartService } from '@org/cart/data-access';
 import { PaymentService } from '@org/payment/data-access';
 import { CreateCheckoutSessionRequest, ShippingAddress } from '@org/shared';
@@ -33,10 +28,9 @@ export class CheckoutFacade {
   private readonly cartService = inject(CartService);
   private readonly paymentService = inject(PaymentService);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
 
-  readonly cartItems$ = this.cartService.cartItems$;
-  readonly cartTotal$ = this.cartService.cartTotal$;
+  readonly cartItems = this.cartService.cartItems;
+  readonly cartTotal = this.cartService.cartTotal;
 
   readonly shippingOptions: ShippingOption[] = [
     {
@@ -87,14 +81,13 @@ export class CheckoutFacade {
   private cartSnapshot: CartItem[] = [];
 
   constructor() {
-    this.cartItems$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((items) => {
-        this.cartSnapshot = items;
-        if (items.length === 0) {
-          void this.router.navigateByUrl('/carrello');
-        }
-      });
+    effect(() => {
+      const items = this.cartItems();
+      this.cartSnapshot = items;
+      if (items.length === 0) {
+        void this.router.navigateByUrl('/carrello');
+      }
+    });
   }
 
   submit(): void {
@@ -137,7 +130,7 @@ export class CheckoutFacade {
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: (response) => {
-          window.location.assign(response.url);
+          globalThis.location.href = response.url;
         },
         error: (error: unknown) => {
           if (

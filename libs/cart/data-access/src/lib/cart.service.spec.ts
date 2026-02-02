@@ -3,7 +3,7 @@ import { CartService } from './cart.service';
 import { Product } from '@org/shared';
 import { CartApiService } from './cart-api.service';
 import { AuthService } from '@org/auth/data-access';
-import { of, firstValueFrom } from 'rxjs';
+import { of } from 'rxjs';
 import { describe, beforeEach, it, expect } from 'vitest';
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({
@@ -45,33 +45,30 @@ describe('CartService', () => {
     service = TestBed.inject(CartService);
   });
 
-  it('adds items and computes total', async () => {
+  it('adds items and computes total', () => {
     const product = buildProduct();
 
     service.addToCart(product, 2);
 
-    const items = await firstValueFrom(service.cartItems$);
+    const items = service.cartItems();
     expect(items).toHaveLength(1);
     expect(items[0].qty).toBe(2);
   });
 
-  it('clamps quantity and removes items', async () => {
+  it('clamps quantity and removes items', () => {
     const product = buildProduct();
 
     service.addToCart(product, 1);
     service.updateQuantity(product.id, 0);
 
-    let items = await firstValueFrom(service.cartItems$);
+    let items = service.cartItems();
     const first = items.find((item) => item.product.id === product.id);
     if (first) {
       expect(first.qty).toBe(1);
     }
     service.removeItem(product.id);
-    
-    // We need to wait for the behavior subject to update or check the value effectively.
-    // Since it's a BehaviorSubject locally in the service, it should be synchronous for these ops.
-    // However, let's re-read to be safe or access the value directly if we could (but it's private/observable).
-    items = await firstValueFrom(service.cartItems$);
+
+    items = service.cartItems();
     expect(items).toHaveLength(0);
   });
 
@@ -79,6 +76,7 @@ describe('CartService', () => {
     const product = buildProduct();
 
     service.addToCart(product, 1);
+    TestBed.flushEffects();
 
     const raw = localStorage.getItem('zs_cart');
     expect(raw).toBeTruthy();

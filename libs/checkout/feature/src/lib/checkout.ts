@@ -30,8 +30,8 @@ import { StripeTestCards } from './stripe-test-cards';
 export class Checkout {
   private readonly checkoutFacade = inject(CheckoutFacade);
 
-  protected readonly cartItems$ = this.checkoutFacade.cartItems$;
-  protected readonly cartTotal$ = this.checkoutFacade.cartTotal$;
+  protected readonly cartItems = this.checkoutFacade.cartItems;
+  protected readonly cartTotal = this.checkoutFacade.cartTotal;
   protected readonly shippingOptions = this.checkoutFacade.shippingOptions;
   protected readonly form = this.checkoutFacade.form;
   protected readonly submitting = this.checkoutFacade.submitting;

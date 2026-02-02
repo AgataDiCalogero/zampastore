@@ -1,19 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
-import { Observable, catchError, map, of, startWith } from 'rxjs';
+import { catchError, map, of, startWith } from 'rxjs';
 import { Product } from '@org/shared';
 import { ProductService } from '@org/products/data-access';
 import { ProductCardComponent, UiFeedbackService } from '@org/ui';
 import { CartService } from '@org/cart/data-access';
-
-type HomeProductsState =
-  | { status: 'loading' }
-  | { status: 'ready'; products: Product[] }
-  | { status: 'empty' }
-  | { status: 'error' };
 
 @Component({
   selector: 'app-home',
@@ -33,7 +28,7 @@ export class Home {
   private readonly cartService = inject(CartService);
   private readonly uiFeedback = inject(UiFeedbackService);
 
-  protected readonly featuredState$: Observable<HomeProductsState> =
+  protected readonly featuredState = toSignal(
     this.productService.getProducts().pipe(
       map((products) => products.slice(0, 4)),
       map((products) =>
@@ -43,7 +38,9 @@ export class Home {
       ),
       catchError(() => of({ status: 'error' } as const)),
       startWith({ status: 'loading' } as const),
-    );
+    ),
+    { requireSync: true },
+  );
 
   protected readonly skeletonItems = Array.from({ length: 4 });
 

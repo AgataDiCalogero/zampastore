@@ -104,7 +104,7 @@
       <aside class="checkout-summary">
         <div class="summary-card">
           <h3>Riepilogo</h3>
-          @if (cartItems$ | async; as cartItems) {
+          @if (cartItems(); as cartItems) {
           <ul class="summary-list">
             @for (item of cartItems; track item.product.id) {
             <li>
@@ -119,9 +119,7 @@
           }
           <div class="summary-total">
             <span>Totale</span>
-            <strong
-              >{{ ((cartTotal$ | async) ?? 0) | number: '1.2-2' }} €</strong
-            >
+            <strong>{{ cartTotal() | number: '1.2-2' }} €</strong>
           </div>
         </div>
 

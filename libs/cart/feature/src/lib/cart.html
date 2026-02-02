@@ -1,10 +1,10 @@
 <section class="cart-page section">
   <p-card class="cart-card" header="Carrello">
-    @if (state$ | async; as state) { @if (state.status === 'ready') {
+    @if (state(); as currentState) { @if (currentState.status === 'ready') {
     <form class="cart-layout" [formGroup]="form">
       <div class="cart-table" formArrayName="items">
         <p-table
-          [value]="state.items"
+          [value]="currentState.items"
           dataKey="product.id"
           responsiveLayout="scroll"
         >
@@ -12,7 +12,7 @@
             <tr>
               <th scope="col">Prodotto</th>
               <th scope="col">Prezzo</th>
-                  <th scope="col">Quantità</th>
+              <th scope="col">Quantità</th>
               <th scope="col">Totale</th>
               <th scope="col">Azioni</th>
             </tr>
@@ -33,7 +33,7 @@
                   incrementButtonIcon="pi pi-plus"
                   decrementButtonIcon="pi pi-minus"
                   [inputStyle]="{ width: '4rem' }"
-                      ariaLabel="Quantità"
+                  ariaLabel="Quantità"
                 ></p-inputNumber>
               </td>
               <td>
@@ -57,7 +57,7 @@
       <aside class="cart-summary">
         <div class="cart-summary-row">
           <span class="font-semibold"
-            >Totale: {{ ((cartTotal$ | async) ?? 0) | number: '1.2-2' }} €</span
+            >Totale: {{ cartTotal() | number: '1.2-2' }} €</span
           >
           <button
             pButton
@@ -66,8 +66,7 @@
             icon="pi pi-trash"
             (click)="clearCart()"
             aria-label="Svuota carrello"
-          >
-          </button>
+          ></button>
         </div>
         <div class="cart-actions">
           <p-button
@@ -81,11 +80,11 @@
       </aside>
     </form>
     <p-confirmDialog></p-confirmDialog>
-    } @else if (state.status === 'empty') {
+    } @else if (currentState.status === 'empty') {
     <div class="cart-empty">
       <div class="empty-state">
         <i class="pi pi-shopping-bag"></i>
-            <h3>Il carrello è vuoto</h3>
+        <h3>Il carrello è vuoto</h3>
         <p>Scegli i migliori prodotti per il tuo animale.</p>
         <button pButton type="button" [routerLink]="['/prodotti']">
           Vai al catalogo

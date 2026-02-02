@@ -1,6 +1,12 @@
-import { DestroyRef, Injectable, effect, inject } from '@angular/core';
+import {
+  DestroyRef,
+  Injectable,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { Product } from '@org/shared';
-import { BehaviorSubject, Observable, map } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '@org/auth/data-access';
 import { CartApiService } from './cart-api.service';
@@ -10,31 +16,37 @@ const STORAGE_KEY = 'zs_cart';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private readonly cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
+  readonly cartItems = signal<CartItem[]>([]);
   private readonly authService = inject(AuthService);
   private readonly cartApi = inject(CartApiService);
   private readonly destroyRef = inject(DestroyRef);
   private lastUserId: string | null = null;
   private syncing = false;
 
-  readonly cartItems$ = this.getCartItems();
-  readonly cartTotal$ = this.cartItems$.pipe(
-    map(
-      (cartItems) =>
-        cartItems.reduce(
-          (total, cartItem) =>
-            total + cartItem.product.priceCents * cartItem.qty,
-          0,
-        ) / 100,
-    ),
+  readonly cartTotal = computed(
+    () =>
+      this.cartItems().reduce(
+        (total, cartItem) => total + cartItem.product.priceCents * cartItem.qty,
+        0,
+      ) / 100,
+  );
+
+  readonly cartCount = computed(() =>
+    this.cartItems().reduce((count, item) => count + item.qty, 0),
   );
 
   constructor() {
     const stored = this.readStoredCart();
     if (stored) {
-      this.cartItemsSubject.next(stored);
+      this.cartItems.set(stored);
     }
 
+    // Effect to persist cart to localStorage whenever it changes
+    effect(() => {
+      this.persistCart(this.cartItems());
+    });
+
+    // Effect to sync with server on login/logout
     effect(() => {
       const user = this.authService.authState();
       if (user?.id && user.id !== this.lastUserId) {
@@ -47,27 +59,18 @@ export class CartService {
     });
   }
 
-  getCartItems(): Observable<CartItem[]> {
-    return this.cartItemsSubject.asObservable();
-  }
-
   addToCart(product: Product, qty: number): void {
     const normalizedQty = Math.max(1, Math.floor(qty));
-    const cartItems = this.cartItemsSubject.value;
-    const index = cartItems.findIndex(
-      (cartItem) => cartItem.product.id === product.id,
-    );
-    let next: CartItem[];
-    if (index === -1) {
-      next = [...cartItems, { product, qty: normalizedQty }];
-    } else {
-      next = cartItems.map((cartItem) =>
-        cartItem.product.id === product.id
-          ? { ...cartItem, qty: cartItem.qty + normalizedQty }
-          : cartItem,
+
+    this.cartItems.update((items) => {
+      const index = items.findIndex((item) => item.product.id === product.id);
+      if (index === -1) {
+        return [...items, { product, qty: normalizedQty }];
+      }
+      return items.map((item, i) =>
+        i === index ? { ...item, qty: item.qty + normalizedQty } : item,
       );
-    }
-    this.setItems(next);
+    });
 
     if (this.authService.isAuthenticated()) {
       this.cartApi
@@ -81,12 +84,12 @@ export class CartService {
 
   updateQuantity(productId: string, qty: number): void {
     const normalizedQty = Math.max(1, Math.floor(qty));
-    const next = this.cartItemsSubject.value.map((cartItem) =>
-      cartItem.product.id === productId
-        ? { ...cartItem, qty: normalizedQty }
-        : cartItem,
+
+    this.cartItems.update((items) =>
+      items.map((item) =>
+        item.product.id === productId ? { ...item, qty: normalizedQty } : item,
+      ),
     );
-    this.setItems(next);
 
     if (this.authService.isAuthenticated()) {
       this.cartApi
@@ -99,10 +102,9 @@ export class CartService {
   }
 
   removeItem(productId: string): void {
-    const next = this.cartItemsSubject.value.filter(
-      (cartItem) => cartItem.product.id !== productId,
+    this.cartItems.update((items) =>
+      items.filter((item) => item.product.id !== productId),
     );
-    this.setItems(next);
 
     if (this.authService.isAuthenticated()) {
       this.cartApi
@@ -115,7 +117,7 @@ export class CartService {
   }
 
   clearCart(): void {
-    this.setItems([]);
+    this.cartItems.set([]);
 
     if (this.authService.isAuthenticated()) {
       this.cartApi
@@ -160,18 +162,13 @@ export class CartService {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (items) => {
-          this.setItems(items);
+          this.cartItems.set(items);
           this.syncing = false;
         },
         error: () => {
           this.syncing = false;
         },
       });
-  }
-
-  private setItems(items: CartItem[]): void {
-    this.cartItemsSubject.next(items);
-    this.persistCart(items);
   }
 
   private readStoredCart(): CartItem[] | null {

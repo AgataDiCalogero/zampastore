@@ -1,17 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '@org/products/data-access';
-import { Observable, catchError, map, of, startWith } from 'rxjs';
+import { catchError, map, of, startWith } from 'rxjs';
 import { Product } from '@org/shared';
 import { SkeletonModule } from 'primeng/skeleton';
 import { CartService } from '@org/cart/data-access';
 import { UiFeedbackService, ProductCardComponent } from '@org/ui';
-
-type ProductListState =
-  | { status: 'loading' }
-  | { status: 'ready'; products: Product[] }
-  | { status: 'empty' }
-  | { status: 'error' };
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-product-list',
@@ -26,9 +21,8 @@ export class ProductList {
   private readonly uiFeedback = inject(UiFeedbackService);
 
   protected readonly skeletonItems = Array.from({ length: 6 });
-  readonly state$: Observable<ProductListState> = this.productService
-    .getProducts()
-    .pipe(
+  readonly state = toSignal(
+    this.productService.getProducts().pipe(
       map((products) =>
         products.length > 0
           ? ({ status: 'ready', products } as const)
@@ -36,7 +30,9 @@ export class ProductList {
       ),
       catchError(() => of({ status: 'error' } as const)),
       startWith({ status: 'loading' } as const),
-    );
+    ),
+    { requireSync: true },
+  );
 
   addToCart(product: Product): void {
     this.cartService.addToCart(product, 1);

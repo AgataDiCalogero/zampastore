@@ -7,8 +7,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { ProductService } from '@org/products/data-access';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { map, Observable, of, startWith, switchMap } from 'rxjs';
+import { map, of, startWith, switchMap } from 'rxjs';
 import { Product } from '@org/shared';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { CartService } from '@org/cart/data-access';
@@ -16,11 +17,6 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SkeletonModule } from 'primeng/skeleton';
 import { UiFeedbackService } from '@org/ui';
-
-type ProductState =
-  | { status: 'loading' }
-  | { status: 'ready'; product: Product }
-  | { status: 'not-found' };
 
 @Component({
   selector: 'app-product-detail',
@@ -48,7 +44,7 @@ export class ProductDetail {
     validators: [Validators.min(1)],
   });
 
-  protected readonly productState$: Observable<ProductState> =
+  protected readonly productState = toSignal(
     this.route.paramMap.pipe(
       map((params) => params.get('id')),
       switchMap((id) =>
@@ -60,7 +56,9 @@ export class ProductDetail {
           : ({ status: 'not-found' } as const),
       ),
       startWith({ status: 'loading' } as const),
-    );
+    ),
+    { requireSync: true },
+  );
 
   addToCart(product: Product): void {
     const safeQty = Math.max(1, Math.floor(this.qtyControl.value ?? 1));

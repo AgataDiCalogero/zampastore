@@ -1,20 +1,20 @@
-@if (productState$ | async; as state) { @if (state.status === 'ready') {
+@if (productState(); as state) { @if (state.status === 'ready') {
 <section class="product-detail">
   <p-card class="product-detail-card" [header]="state.product.name">
     <ng-template pTemplate="content">
       <div class="product-detail-grid">
         <div class="product-detail-media">
           @if (state.product.imageUrl && !imageError()) {
-            <img
-              [src]="state.product.imageUrl"
-              [alt]="state.product.name"
-              (error)="handleImageError()"
-            />
+          <img
+            [src]="state.product.imageUrl"
+            [alt]="state.product.name"
+            (error)="handleImageError()"
+          />
           } @else {
-            <div class="product-image-fallback">
-              <i class="pi pi-image"></i>
-              <span>{{ state.product.name }}</span>
-            </div>
+          <div class="product-image-fallback">
+            <i class="pi pi-image"></i>
+            <span>{{ state.product.name }}</span>
+          </div>
           }
         </div>
         <div class="product-detail-info">
@@ -22,9 +22,9 @@
             {{ state.product.priceCents / 100 | number: '1.2-2' }} €
           </p>
           @if (state.product.description) {
-            <p class="product-detail-description">
-              {{ state.product.description }}
-            </p>
+          <p class="product-detail-description">
+            {{ state.product.description }}
+          </p>
           }
 
           <div class="product-detail-qty">
@@ -49,8 +49,7 @@
             icon="pi pi-shopping-cart"
             label="Aggiungi al carrello"
             (click)="addToCart(state.product)"
-          >
-          </button>
+          ></button>
         </div>
       </div>
     </ng-template>
@@ -62,8 +61,7 @@
         icon="pi pi-arrow-left"
         label="Torna ai prodotti"
         [routerLink]="['/prodotti']"
-      >
-      </button>
+      ></button>
     </ng-template>
   </p-card>
 </section>
