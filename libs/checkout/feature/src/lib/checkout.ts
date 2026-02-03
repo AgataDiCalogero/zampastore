@@ -8,7 +8,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { CheckoutFacade } from '@zampa/checkout/data-access';
-import { StripeTestCards } from './stripe-test-cards';
 
 @Component({
   selector: 'app-checkout',
@@ -21,7 +20,6 @@ import { StripeTestCards } from './stripe-test-cards';
     InputTextModule,
     SelectModule,
     SkeletonModule,
-    StripeTestCards,
   ],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',

@@ -48,6 +48,10 @@ export class OrderDetail {
     return this.statusMeta[status];
   }
 
+  protected getShortId(id: string): string {
+    return id.substring(0, 8).toUpperCase();
+  }
+
   protected readonly state$: Observable<OrderDetailState> =
     this.route.paramMap.pipe(
       map((params) => params.get('id')),

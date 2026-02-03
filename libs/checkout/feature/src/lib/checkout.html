@@ -13,7 +13,7 @@
           />
           @if (form.controls.firstName.touched &&
           form.controls.firstName.invalid) {
-          <small class="form-error">Inserisci un nome valido.</small>
+          <small class="form-error">Richiesto</small>
           }
         </div>
 
@@ -28,11 +28,11 @@
           />
           @if (form.controls.lastName.touched && form.controls.lastName.invalid)
           {
-          <small class="form-error">Inserisci un cognome valido.</small>
+          <small class="form-error">Richiesto</small>
           }
         </div>
 
-        <div class="form-field">
+        <div class="form-field form-field-full">
           <label for="address">Indirizzo</label>
           <input
             pInputText
@@ -42,7 +42,7 @@
             formControlName="address"
           />
           @if (form.controls.address.touched && form.controls.address.invalid) {
-          <small class="form-error">Inserisci un indirizzo valido.</small>
+          <small class="form-error">Richiesto</small>
           }
         </div>
 
@@ -56,7 +56,7 @@
             formControlName="city"
           />
           @if (form.controls.city.touched && form.controls.city.invalid) {
-          <small class="form-error">Inserisci una città valida.</small>
+          <small class="form-error">Richiesto</small>
           }
         </div>
 
@@ -71,7 +71,7 @@
           />
           @if (form.controls.postalCode.touched &&
           form.controls.postalCode.invalid) {
-          <small class="form-error">Inserisci un CAP valido.</small>
+          <small class="form-error">Richiesto</small>
           }
         </div>
 
@@ -86,7 +86,7 @@
           />
         </div>
 
-        <div class="form-field">
+        <div class="form-field form-field-full">
           <label for="shippingMethod">Spedizione</label>
           <p-select
             inputId="shippingMethod"
@@ -95,6 +95,7 @@
             optionLabel="label"
             optionValue="value"
             appendTo="body"
+            styleClass="w-full"
             panelStyleClass="checkout-select-panel"
           ></p-select>
           <small class="text-muted">Prezzo calcolato al checkout.</small>
@@ -128,7 +129,7 @@
         }
 
         <button pButton type="submit" [disabled]="form.invalid || submitting()">
-          Paga con Stripe (test)
+          Paga con Stripe
         </button>
         <button
           pButton
@@ -138,15 +139,6 @@
         >
           Torna al carrello
         </button>
-        @defer (on idle) {
-        <app-stripe-test-cards></app-stripe-test-cards>
-        } @placeholder {
-        <div class="summary-card">
-          <p-skeleton height="18px"></p-skeleton>
-          <p-skeleton height="18px"></p-skeleton>
-          <p-skeleton height="18px"></p-skeleton>
-        </div>
-        }
       </aside>
     </form>
   </p-card>

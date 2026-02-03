@@ -8,8 +8,8 @@
   <p-card class="order-card" header="Dettaglio ordine">
     <div class="order-meta">
       <div>
-        <span class="label">Ordine</span>
-        <span class="value">{{ state.order.id }}</span>
+        <span class="label">Riferimento</span>
+        <span class="value">#{{ getShortId(state.order.id) }}</span>
       </div>
       <div>
         <span class="label">Data</span>

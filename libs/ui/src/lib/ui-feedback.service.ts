@@ -9,6 +9,7 @@ export class UiFeedbackService {
   private readonly toastKey = 'app';
 
   showAdd(productName: string): void {
+    this.messageService.clear(this.toastKey); // Prevent stacking
     this.messageService.add({
       key: this.toastKey,
       severity: 'success',

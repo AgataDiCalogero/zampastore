@@ -2,6 +2,12 @@ import { MenuItem } from 'primeng/api';
 
 export const MENU_ITEMS: MenuItem[] = [
   {
+    id: 'home',
+    label: 'Home',
+    icon: 'pi pi-home',
+    routerLink: '/',
+  },
+  {
     id: 'catalog',
     label: 'Catalogo',
     icon: 'pi pi-box',

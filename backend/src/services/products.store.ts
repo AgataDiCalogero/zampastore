@@ -38,6 +38,7 @@ class MysqlProductsStore {
       ...row,
       description: row.description ?? '',
       imageUrl: row.imageUrl ?? undefined,
+      images: row.images ?? undefined,
       category: row.category ?? undefined,
     }));
   }
@@ -55,6 +56,7 @@ class MysqlProductsStore {
       ...row,
       description: row.description ?? '',
       imageUrl: row.imageUrl ?? undefined,
+      images: row.images ?? undefined,
       category: row.category ?? undefined,
     };
   }
@@ -68,12 +70,7 @@ class MysqlProductsStore {
       .from(products)
       .where(inArray(products.id, productIds));
 
-    return rows.map((row) => ({
-      ...row,
-      description: row.description ?? '',
-      imageUrl: row.imageUrl ?? undefined,
-      category: row.category ?? undefined,
-    }));
+    return rows.map((row) => this.mapRowToProduct(row));
   }
 
   async getProductsWithStock(
@@ -88,11 +85,19 @@ class MysqlProductsStore {
       .where(inArray(products.id, productIds));
 
     return rows.map((row) => ({
-      ...row,
-      description: row.description ?? undefined,
-      imageUrl: row.imageUrl ?? undefined,
-      category: row.category ?? undefined,
+      ...this.mapRowToProduct(row),
+      stock: row.stock,
     }));
+  }
+
+  private mapRowToProduct(row: typeof products.$inferSelect): Product {
+    return {
+      ...row,
+      description: row.description ?? '',
+      imageUrl: row.imageUrl ?? undefined,
+      images: row.images ?? undefined,
+      category: row.category ?? undefined,
+    };
   }
 }
 

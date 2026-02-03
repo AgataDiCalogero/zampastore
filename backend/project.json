@@ -75,6 +75,20 @@
         "command": "npx drizzle-kit push",
         "cwd": "."
       }
+    },
+    "db-migrate-images": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -r @swc-node/register src/db/migrate-images.ts",
+        "cwd": "backend"
+      }
+    },
+    "db-add-images-col": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node -r @swc-node/register src/db/add-images-column.ts",
+        "cwd": "backend"
+      }
     }
   }
 }

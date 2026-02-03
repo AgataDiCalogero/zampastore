@@ -48,6 +48,11 @@ export class Orders {
   protected statusFor(status: OrderStatus) {
     return this.statusMeta[status];
   }
+
+  protected getShortId(id: string): string {
+    return id.substring(0, 8).toUpperCase();
+  }
+
   readonly state$: Observable<OrdersState> = this.ordersService
     .getOrders()
     .pipe(

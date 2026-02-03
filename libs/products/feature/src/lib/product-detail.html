@@ -3,17 +3,31 @@
   <p-card class="product-detail-card" [header]="state.product.name">
     <ng-template pTemplate="content">
       <div class="product-detail-grid">
-        <div class="product-detail-media">
-          @if (state.product.imageUrl && !imageError()) {
-          <img
-            [src]="state.product.imageUrl"
-            [alt]="state.product.name"
-            (error)="handleImageError()"
-          />
-          } @else {
-          <div class="product-image-fallback">
-            <i class="pi pi-image"></i>
-            <span>{{ state.product.name }}</span>
+        <div class="product-slider-wrapper">
+          <div class="product-slider" (scroll)="onScroll($event)">
+            @for (img of images(); track $index) {
+            <div class="product-slide">
+              <img [src]="img" [alt]="state.product.name" />
+            </div>
+            } @empty {
+            <div class="product-slide">
+              <div class="product-image-fallback">
+                <i class="pi pi-image"></i>
+                <span>No image</span>
+              </div>
+            </div>
+            }
+          </div>
+
+          <!-- Dots only show if > 1 image -->
+          @if (images().length > 1) {
+          <div class="slider-dots">
+            @for (img of images(); track $index) {
+            <div
+              class="slider-dot"
+              [class.active]="activeSlide() === $index"
+            ></div>
+            }
           </div>
           }
         </div>

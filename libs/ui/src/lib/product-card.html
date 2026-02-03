@@ -1,23 +1,36 @@
 <p-card class="product-card" [header]="product.name">
   <ng-template pTemplate="content">
-    <div class="product-card-media">
-      @if (product.imageUrl && !imageError()) {
-        <img
-          [src]="product.imageUrl"
-          [alt]="product.name"
-          loading="lazy"
-          decoding="async"
-          (error)="handleImageError()"
-        />
-      } @else {
-        <div class="product-image-fallback">
-          <i class="pi pi-image"></i>
-          <span>{{ product.name }}</span>
-        </div>
+    <div
+      class="product-card-media"
+      [class.has-secondary]="secondaryImage && !secondaryImageError()"
+    >
+      @if (mainImage && !imageError()) {
+      <img
+        [src]="mainImage"
+        [alt]="product.name"
+        class="primary-image"
+        loading="lazy"
+        decoding="async"
+        (error)="handleImageError()"
+      />
+      @if (secondaryImage && !secondaryImageError()) {
+      <img
+        [src]="secondaryImage"
+        [alt]="product.name"
+        class="secondary-image"
+        loading="lazy"
+        decoding="async"
+        (error)="handleSecondaryImageError()"
+      />
+      } } @else {
+      <div class="product-image-fallback">
+        <i class="pi pi-image"></i>
+        <span>{{ product.name }}</span>
+      </div>
       }
     </div>
     @if (product.description) {
-      <p class="product-card-description">{{ product.description }}</p>
+    <p class="product-card-description">{{ product.description }}</p>
     }
     <p class="product-card-price">
       {{ product.priceCents / 100 | number: '1.2-2' }} €
@@ -33,8 +46,7 @@
         icon="pi pi-eye"
         label="Dettagli"
         [routerLink]="['/prodotti', product.id]"
-      >
-      </button>
+      ></button>
       <button
         pButton
         type="button"
@@ -42,8 +54,7 @@
         icon="pi pi-shopping-cart"
         label="Aggiungi"
         (click)="handleAddToCart()"
-      >
-      </button>
+      ></button>
     </div>
   </ng-template>
 </p-card>

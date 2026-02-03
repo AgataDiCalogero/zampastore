@@ -43,32 +43,33 @@
         <span>ZampaStore</span>
       </a>
       <nav class="desktop-nav" aria-label="Navigazione principale">
-        @for (link of desktopLinks(); track link.label) {
-          @if (link.routerLink) {
-            <a
-              class="desktop-nav-link"
-              [class.desktop-nav-link--cta]="link.id === 'auth'"
-              [routerLink]="link.routerLink"
-            >
-              @if (link.icon) {
-                <i class="{{ link.icon }}"></i>
-              }
-              <span>{{ link.label }}</span>
-            </a>
-          } @else {
-            <button
-              type="button"
-              class="desktop-nav-link"
-              [class.desktop-nav-link--cta]="link.id === 'auth'"
-              (click)="handleMobileAction(link.command)"
-            >
-              @if (link.icon) {
-                <i class="{{ link.icon }}"></i>
-              }
-              <span>{{ link.label }}</span>
-            </button>
+        @for (link of desktopLinks(); track link.label) { @if (link.routerLink)
+        {
+        <a
+          class="desktop-nav-link"
+          [class.desktop-nav-link--cta]="link.id === 'auth'"
+          [routerLink]="link.routerLink"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: link.routerLink === '/' }"
+        >
+          @if (link.icon) {
+          <i class="{{ link.icon }}"></i>
           }
-        }
+          <span>{{ link.label }}</span>
+        </a>
+        } @else {
+        <button
+          type="button"
+          class="desktop-nav-link"
+          [class.desktop-nav-link--cta]="link.id === 'auth'"
+          (click)="handleMobileAction(link.command)"
+        >
+          @if (link.icon) {
+          <i class="{{ link.icon }}"></i>
+          }
+          <span>{{ link.label }}</span>
+        </button>
+        } }
       </nav>
     </ng-template>
     <ng-template pTemplate="end">
@@ -86,30 +87,28 @@
           Pagamenti sicuri
         </span>
       </div>
-      @if (authLink(); as auth) {
-        @if (auth.routerLink) {
-          <a
-            class="desktop-nav-link desktop-nav-link--cta menubar-auth"
-            [routerLink]="auth.routerLink"
-          >
-            @if (auth.icon) {
-              <i class="{{ auth.icon }}"></i>
-            }
-            <span>{{ auth.label }}</span>
-          </a>
-        } @else {
-          <button
-            type="button"
-            class="desktop-nav-link desktop-nav-link--cta menubar-auth"
-            (click)="handleMobileAction(auth.command)"
-          >
-            @if (auth.icon) {
-              <i class="{{ auth.icon }}"></i>
-            }
-            <span>{{ auth.label }}</span>
-          </button>
+      @if (authLink(); as auth) { @if (auth.routerLink) {
+      <a
+        class="desktop-nav-link desktop-nav-link--cta menubar-auth"
+        [routerLink]="auth.routerLink"
+      >
+        @if (auth.icon) {
+        <i class="{{ auth.icon }}"></i>
         }
-      }
+        <span>{{ auth.label }}</span>
+      </a>
+      } @else {
+      <button
+        type="button"
+        class="desktop-nav-link desktop-nav-link--cta menubar-auth"
+        (click)="handleMobileAction(auth.command)"
+      >
+        @if (auth.icon) {
+        <i class="{{ auth.icon }}"></i>
+        }
+        <span>{{ auth.label }}</span>
+      </button>
+      } }
       <button
         pButton
         type="button"
@@ -146,43 +145,43 @@
       (click)="closeMobileMenu()"
     ></button>
   </div>
-    <nav class="mobile-nav-links" aria-label="Navigazione mobile">
-      @for (link of mobileLinks(); track link.label) {
-        @if (link.routerLink) {
-          <a
-            class="mobile-nav-link"
-            [class.mobile-nav-link--cta]="link.id === 'auth'"
-            [routerLink]="link.routerLink"
-            (click)="closeMobileMenu()"
-          >
-            @if (link.icon) {
-              <i class="{{ link.icon }}"></i>
-            }
-            <span>{{ link.label }}</span>
-            @if (link.id === 'cart' && cartCount() > 0) {
-              <span class="nav-badge">{{ cartCount() }}</span>
-            }
-          </a>
-        } @else {
-          <button
-            type="button"
-            class="mobile-nav-button"
-            [class.mobile-nav-button--cta]="link.id === 'auth'"
-            [attr.aria-label]="link.label"
-            (click)="handleMobileAction(link.command)"
-          >
-            @if (link.icon) {
-              <i class="{{ link.icon }}"></i>
-            }
-            <span>{{ link.label }}</span>
-            @if (link.id === 'cart' && cartCount() > 0) {
-              <span class="nav-badge">{{ cartCount() }}</span>
-            }
-          </button>
-        }
+  <nav class="mobile-nav-links" aria-label="Navigazione mobile">
+    @for (link of mobileLinks(); track link.label) { @if (link.routerLink) {
+    <a
+      class="mobile-nav-link"
+      [class.mobile-nav-link--cta]="link.id === 'auth'"
+      [routerLink]="link.routerLink"
+      routerLinkActive="is-active"
+      [routerLinkActiveOptions]="{ exact: link.routerLink === '/' }"
+      (click)="closeMobileMenu()"
+    >
+      @if (link.icon) {
+      <i class="{{ link.icon }}"></i>
       }
-    </nav>
-  </dialog>
+      <span>{{ link.label }}</span>
+      @if (link.id === 'cart' && cartCount() > 0) {
+      <span class="nav-badge">{{ cartCount() }}</span>
+      }
+    </a>
+    } @else {
+    <button
+      type="button"
+      class="mobile-nav-button"
+      [class.mobile-nav-button--cta]="link.id === 'auth'"
+      [attr.aria-label]="link.label"
+      (click)="handleMobileAction(link.command)"
+    >
+      @if (link.icon) {
+      <i class="{{ link.icon }}"></i>
+      }
+      <span>{{ link.label }}</span>
+      @if (link.id === 'cart' && cartCount() > 0) {
+      <span class="nav-badge">{{ cartCount() }}</span>
+      }
+    </button>
+    } }
+  </nav>
+</dialog>
 
 <main class="app-content">
   <div class="page">

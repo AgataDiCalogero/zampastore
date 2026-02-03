@@ -94,6 +94,14 @@ Esegui i test E2E (richiede server attivo):
 npm run e2e:local
 ```
 
+### 🏁 Check Finale (Mega Check)
+
+Per verificare che tutto sia perfetto prima di un commit (Lint, Test, Typecheck, Build, E2E):
+
+```bash
+npx nx run-many -t lint test typecheck build e2e --configuration=ci --skip-nx-cache
+```
+
 ## 📐 Architettura
 
 Il progetto segue la struttura **Nx Enterprise Monorepo**:

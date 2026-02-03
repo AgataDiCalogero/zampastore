@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   signal,
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '@zampa/products/data-access';
@@ -39,6 +40,25 @@ export class ProductDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly uiFeedback = inject(UiFeedbackService);
   protected readonly imageError = signal(false);
+  protected readonly activeSlide = signal(0);
+
+  // Computed list of images for the gallery
+  protected readonly images = computed(() => {
+    const state = this.productState();
+    if (state.status !== 'ready') return [];
+
+    // Support new images array or fallback to legacy imageUrl
+    let imgs: string[] = [];
+    if (state.product.images && state.product.images.length > 0) {
+      imgs = state.product.images;
+    } else if (state.product.imageUrl) {
+      imgs = [state.product.imageUrl];
+    }
+
+    // Filter duplicates just in case
+    return [...new Set(imgs)];
+  });
+
   protected readonly qtyControl = new FormControl<number>(1, {
     nonNullable: true,
     validators: [Validators.min(1)],
@@ -59,6 +79,14 @@ export class ProductDetail {
     ),
     { requireSync: true },
   );
+
+  onScroll(event: Event) {
+    // Simple logic to update active dot based on scroll position
+    const element = event.target as HTMLElement;
+    const slideWidth = element.scrollWidth / this.images().length;
+    const currentIndex = Math.round(element.scrollLeft / slideWidth);
+    this.activeSlide.set(currentIndex);
+  }
 
   addToCart(product: Product): void {
     const safeQty = Math.max(1, Math.floor(this.qtyControl.value ?? 1));

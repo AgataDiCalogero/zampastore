@@ -11,18 +11,24 @@ import {
 import { sql } from 'drizzle-orm';
 
 // Users
-export const users = mysqlTable('users', {
-  id: varchar('id', { length: 64 }).primaryKey(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  name: varchar('name', { length: 255 }).notNull(),
-  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
-  createdAt: datetime('created_at')
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: datetime('updated_at')
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`),
-});
+export const users = mysqlTable(
+  'users',
+  {
+    id: varchar('id', { length: 64 }).primaryKey(),
+    email: varchar('email', { length: 255 }).notNull(),
+    name: varchar('name', { length: 255 }).notNull(),
+    passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+    createdAt: datetime('created_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: datetime('updated_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    emailUniq: uniqueIndex('users_email_unique').on(table.email),
+  }),
+);
 
 // Sessions
 export const sessions = mysqlTable(
@@ -56,6 +62,7 @@ export const products = mysqlTable(
     stock: int('stock').notNull().default(0),
     category: varchar('category', { length: 120 }),
     imageUrl: varchar('image_url', { length: 500 }),
+    images: json('images').$type<string[]>(),
     createdAt: datetime('created_at')
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),

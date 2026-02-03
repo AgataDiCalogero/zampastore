@@ -19,7 +19,9 @@
       </ng-template>
       <ng-template pTemplate="body" let-order>
         <tr>
-          <td><span class="order-id">{{ order.id }}</span></td>
+          <td>
+            <span class="order-id">#{{ getShortId(order.id) }}</span>
+          </td>
           <td>{{ order.createdAt | date: 'dd/MM/yyyy' }}</td>
           <td>{{ order.totalCents / 100 | number: '1.2-2' }} €</td>
           <td>
