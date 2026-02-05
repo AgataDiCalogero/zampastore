@@ -5,6 +5,13 @@
   "sourceRoot": "apps/frontend-e2e/src",
   "targets": {
     "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "concurrently --kill-others --success first \"nx run backend:serve\" \"npx wait-on http-get://localhost:3333/api/health && nx run frontend:serve\" \"npx wait-on http-get://localhost:3333/api/health http-get://localhost:4200 && nx run frontend-e2e:cypress --configuration=ci --skipServe --watch=false\""
+      },
+      "configurations": {}
+    },
+    "cypress": {
       "executor": "@nx/cypress:cypress",
       "options": {
         "cypressConfig": "apps/frontend-e2e/cypress.config.ts",
@@ -13,8 +20,7 @@
       },
       "configurations": {
         "ci": {
-          "browser": "chrome",
-          "headless": true
+          "browser": "chrome"
         }
       }
     }

@@ -162,6 +162,11 @@
 .mobile-toggle {
   display: none;
   color: var(--text-inverse);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-inverse) !important;
+  }
 }
 
 .app-footer {

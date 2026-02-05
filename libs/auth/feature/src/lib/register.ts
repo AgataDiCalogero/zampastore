@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -59,29 +64,34 @@ export class Register {
     { validators: Register.passwordMatchValidator },
   );
 
-  protected submitting = false;
-  protected errorMessage: string | null = null;
+  protected readonly submitting = signal(false);
+  protected readonly errorMessage = signal<string | null>(null);
 
   protected submit(): void {
+    if (this.submitting()) {
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.errorMessage = null;
-    this.submitting = true;
+    this.errorMessage.set(null);
+    this.submitting.set(true);
+
     const { username, email, password } = this.form.getRawValue();
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
 
     this.authService
       .register({ username, email, password })
-      .pipe(finalize(() => (this.submitting = false)))
+      .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: () => {
           void this.router.navigateByUrl(returnUrl);
         },
         error: (error: unknown) => {
-          this.errorMessage = this.getErrorMessage(error);
+          this.errorMessage.set(this.getErrorMessage(error));
         },
       });
   }

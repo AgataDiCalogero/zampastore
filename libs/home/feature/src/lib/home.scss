@@ -180,6 +180,22 @@
 
 /* Responsive Styles */
 @media (max-width: 960px) {
+  /* Hero Section Mobile */
+  .home-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: var(--space-xl);
+  }
+
+  .hero-content {
+    align-items: center;
+  }
+
+  .hero-actions {
+    justify-content: center;
+    width: 100%;
+  }
+
   .features-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-md);
@@ -204,6 +220,18 @@
 }
 
 @media (max-width: 640px) {
+  /* Featured Products Header Mobile */
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .section-link {
+    align-self: flex-start;
+    margin-top: var(--space-xs);
+  }
+
   .features-grid {
     grid-template-columns: 1fr;
     max-width: 100%; /* Allow full width */

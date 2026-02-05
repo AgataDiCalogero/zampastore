@@ -3,30 +3,56 @@
   <p-card class="product-detail-card" [header]="state.product.name">
     <ng-template pTemplate="content">
       <div class="product-detail-grid">
-        <div class="product-slider-wrapper">
-          <div class="product-slider" (scroll)="onScroll($event)">
-            @for (img of images(); track $index) {
-            <div class="product-slide">
-              <img [src]="img" [alt]="state.product.name" />
-            </div>
-            } @empty {
-            <div class="product-slide">
+        <div class="product-gallery">
+          <!-- Main Image with Navigation Arrows -->
+          <div class="gallery-main">
+            @if (images().length > 1) {
+            <button
+              class="gallery-arrow gallery-prev"
+              (click)="prevImage()"
+              aria-label="Immagine precedente"
+            >
+              <i class="pi pi-chevron-left"></i>
+            </button>
+            }
+
+            <div class="gallery-image-wrapper">
+              @if (images().length > 0) {
+              <img
+                [src]="images()[selectedImageIndex()]"
+                [alt]="state.product.name"
+              />
+              } @else {
               <div class="product-image-fallback">
                 <i class="pi pi-image"></i>
                 <span>No image</span>
               </div>
+              }
             </div>
+
+            @if (images().length > 1) {
+            <button
+              class="gallery-arrow gallery-next"
+              (click)="nextImage()"
+              aria-label="Immagine successiva"
+            >
+              <i class="pi pi-chevron-right"></i>
+            </button>
             }
           </div>
 
-          <!-- Dots only show if > 1 image -->
+          <!-- Thumbnails -->
           @if (images().length > 1) {
-          <div class="slider-dots">
+          <div class="gallery-thumbnails">
             @for (img of images(); track $index) {
-            <div
-              class="slider-dot"
-              [class.active]="activeSlide() === $index"
-            ></div>
+            <button
+              class="gallery-thumb"
+              [class.active]="selectedImageIndex() === $index"
+              (click)="selectImage($index)"
+              [attr.aria-label]="'Miniatura ' + ($index + 1)"
+            >
+              <img [src]="img" [alt]="'Miniatura ' + ($index + 1)" />
+            </button>
             }
           </div>
           }

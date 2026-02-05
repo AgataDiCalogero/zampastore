@@ -8,13 +8,18 @@
       <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
         <div class="form-field">
           <label for="email">Email</label>
-          <input
-            pInputText
-            id="email"
-            type="email"
-            autocomplete="email"
-            formControlName="email"
-          />
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-envelope"></i>
+            <input
+              pInputText
+              id="email"
+              type="email"
+              autocomplete="email"
+              formControlName="email"
+              placeholder="latua@email.com"
+              class="w-full"
+            />
+          </span>
           @if (form.controls.email.touched && form.controls.email.invalid) {
           <small class="form-error">Inserisci una email valida.</small>
           }
@@ -27,9 +32,11 @@
             formControlName="password"
             [toggleMask]="true"
             [feedback]="false"
+            placeholder="••••••••"
+            styleClass="w-full"
+            inputStyleClass="w-full"
           ></p-password>
-          @if (
-            form.controls.password.touched && form.controls.password.invalid
+          @if ( form.controls.password.touched && form.controls.password.invalid
           ) {
           <small class="form-error"
             >La password deve avere almeno 6 caratteri.</small
@@ -37,18 +44,22 @@
           }
         </div>
 
-        @if (errorMessage) {
-        <div class="form-error" role="alert">{{ errorMessage }}</div>
+        @if (errorMessage()) {
+        <div class="form-error-banner" role="alert">
+          <i class="pi pi-exclamation-circle"></i>
+          <span>{{ errorMessage() }}</span>
+        </div>
         }
 
-        <div class="form-actions">
+        <div class="form-actions can-stack">
           <button
             pButton
             type="submit"
-            [disabled]="form.invalid || submitting"
-          >
-            Accedi
-          </button>
+            [disabled]="form.invalid || submitting()"
+            [loading]="submitting()"
+            label="Accedi"
+            class="w-full"
+          ></button>
         </div>
       </form>
       <div class="auth-demo text-muted">

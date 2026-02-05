@@ -30,4 +30,56 @@ describe('ProductDetail', () => {
     const fixture = TestBed.createComponent(ProductDetail);
     expect(fixture.componentInstance).toBeTruthy();
   });
+
+  it('should select image by index', () => {
+    const fixture = TestBed.createComponent(ProductDetail);
+    const component = fixture.componentInstance;
+    component.selectImage(2);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((component as any).selectedImageIndex()).toBe(2);
+  });
+
+  it('should go to next image', () => {
+    const fixture = TestBed.createComponent(ProductDetail);
+    const component = fixture.componentInstance;
+
+    // Mock images
+    Object.defineProperty(component, 'images', {
+      value: () => ['img1', 'img2', 'img3'],
+    });
+
+    component.selectImage(0);
+    component.nextImage();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((component as any).selectedImageIndex()).toBe(1);
+
+    component.nextImage();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((component as any).selectedImageIndex()).toBe(2);
+
+    component.nextImage();
+    // loop back to start
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((component as any).selectedImageIndex()).toBe(0);
+  });
+
+  it('should go to previous image', () => {
+    const fixture = TestBed.createComponent(ProductDetail);
+    const component = fixture.componentInstance;
+
+    // Mock images
+    Object.defineProperty(component, 'images', {
+      value: () => ['img1', 'img2', 'img3'],
+    });
+
+    component.selectImage(0);
+    component.prevImage();
+    // loop back to end
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((component as any).selectedImageIndex()).toBe(2);
+
+    component.prevImage();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((component as any).selectedImageIndex()).toBe(1);
+  });
 });

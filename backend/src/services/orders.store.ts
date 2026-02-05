@@ -140,11 +140,13 @@ class MysqlOrdersStore implements OrdersStore {
       .select({
         productId: orderItems.productId,
         name: orderItems.name,
+        imageUrl: products.imageUrl,
         unitPriceCents: orderItems.unitPriceCents,
         qty: orderItems.qty,
         lineTotalCents: orderItems.lineTotalCents,
       })
       .from(orderItems)
+      .leftJoin(products, eq(orderItems.productId, products.id))
       .where(eq(orderItems.orderId, orderId))
       .orderBy(asc(orderItems.createdAt));
 
@@ -170,7 +172,10 @@ class MysqlOrdersStore implements OrdersStore {
       totalCents: order.totalCents,
       createdAt: toIsoString(order.createdAt),
       status: order.status as OrderStatus,
-      items,
+      items: items.map((item) => ({
+        ...item,
+        imageUrl: item.imageUrl ?? undefined,
+      })),
       shippingAddress: {
         firstName: shipping.firstName,
         lastName: shipping.lastName,

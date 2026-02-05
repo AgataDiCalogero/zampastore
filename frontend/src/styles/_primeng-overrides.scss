@@ -290,16 +290,6 @@ input[pInputText] {
 
 .p-inputnumber .p-inputnumber-button {
   border-radius: var(--radius-sm);
-}
-
-.p-inputtext:enabled:focus,
-.p-inputnumber-input:enabled:focus {
-  border-color: var(--color-accent);
-  box-shadow: var(--focus-ring);
-  background: var(--surface-0);
-}
-
-.p-inputnumber .p-inputnumber-button {
   background: var(--surface-0);
   border-color: var(--border-color);
   color: var(--text-primary);
@@ -308,10 +298,6 @@ input[pInputText] {
 .p-inputnumber .p-inputnumber-button:enabled:hover {
   background: var(--surface-50);
   border-color: var(--border-color);
-}
-
-.p-button .p-button-label {
-  white-space: nowrap;
 }
 
 .p-button.p-button-sm {
@@ -383,8 +369,21 @@ input[pInputText] {
 }
 
 .p-confirmdialog .p-dialog-content {
-  padding: var(--space-md) var(--space-xl) var(--space-xl);
+  padding: 0 var(--space-xl) var(--space-xl);
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.p-confirmdialog .p-confirm-dialog-icon {
+  font-size: 2rem;
+  color: var(--color-cta-dark); /* Gold/Warning color */
+}
+
+.p-confirmdialog .p-confirm-dialog-message {
+  line-height: 1.5;
+  font-size: 1.05rem;
 }
 
 .p-confirmdialog .p-dialog-footer {
@@ -392,6 +391,12 @@ input[pInputText] {
   display: flex;
   gap: var(--space-sm);
   justify-content: flex-end;
+  background: transparent;
+  border: none;
+}
+
+.p-confirmdialog .p-dialog-footer button {
+  min-width: 100px;
 }
 
 .toast-summary {

@@ -8,32 +8,54 @@ export type ProductWithStock = Product & { stock: number };
 
 class MysqlProductsStore {
   async ensureSeeded(): Promise<void> {
-    const [result] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(products);
-
-    if (result && result.count > 0) {
-      return;
-    }
-
-    const now = new Date();
-    await db.insert(products).values(
-      PRODUCTS.map((p) => ({
-        id: p.id,
-        name: p.name,
-        description: p.description ?? '',
-        priceCents: p.priceCents,
-        stock: 20,
-        category: null,
-        imageUrl: p.imageUrl ?? null,
-        createdAt: now,
-        updatedAt: now,
-      })),
-    );
+    await this.seedProducts();
   }
 
-  async listProducts(): Promise<Product[]> {
-    const rows = await db.select().from(products).orderBy(products.name);
+  async forceSeed(): Promise<void> {
+    await this.seedProducts();
+  }
+
+  private async seedProducts(): Promise<void> {
+    const now = new Date();
+    // Use upsert to update existing or insert new
+    await db
+      .insert(products)
+      .values(
+        PRODUCTS.map((p) => ({
+          id: p.id,
+          name: p.name,
+          description: p.description ?? '',
+          priceCents: p.priceCents,
+          stock: 20,
+          category: p.category ?? null,
+          imageUrl: p.imageUrl ?? null,
+          images: p.images ?? null,
+          createdAt: now,
+          updatedAt: now,
+        })),
+      )
+      .onDuplicateKeyUpdate({
+        set: {
+          name: sql`VALUES(name)`,
+          description: sql`VALUES(description)`,
+          priceCents: sql`VALUES(price_cents)`,
+          category: sql`VALUES(category)`,
+          imageUrl: sql`VALUES(image_url)`,
+          images: sql`VALUES(images)`,
+          updatedAt: now,
+        },
+      });
+  }
+
+  async listProducts(category?: string): Promise<Product[]> {
+    let query = db.select().from(products).orderBy(products.name);
+
+    if (category) {
+      // @ts-expect-error - dizzale dynamic query building
+      query = query.where(eq(products.category, category));
+    }
+
+    const rows = await query;
     return rows.map((row) => ({
       ...row,
       description: row.description ?? '',

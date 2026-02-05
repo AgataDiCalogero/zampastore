@@ -169,3 +169,42 @@ h6 {
     padding: 0 var(--page-gutter);
   }
 }
+
+/* Global PrimeNG Overrides */
+.p-toast .p-toast-message .p-toast-icon-close,
+.p-toast .p-toast-icon-close,
+.p-toast button.p-toast-icon-close,
+.p-toast button[class*='close'],
+.p-toast .p-toast-detail + button,
+.p-toast-icon-close-icon {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Global Button Utilities */
+.p-button.btn-gold {
+  background: var(--color-cta);
+  border-color: var(--color-cta);
+  color: var(--color-cta-text);
+  font-weight: 700;
+
+  &:hover {
+    background: var(--color-cta-dark) !important;
+    border-color: var(--color-cta-dark) !important;
+    color: var(--color-cta-text) !important;
+  }
+}
+
+.p-button.btn-back {
+  color: var(--text-secondary);
+  font-weight: 600;
+
+  &:hover {
+    background: var(--surface-100);
+    color: var(--text-primary);
+  }
+}

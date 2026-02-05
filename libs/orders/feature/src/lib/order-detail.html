@@ -3,22 +3,22 @@
   <nav class="order-breadcrumb">
     <a [routerLink]="['/ordini']">Ordini</a>
     <span>/</span>
-    <span>{{ state.order.id }}</span>
+    <span>#{{ getShortId(state.order.id) }}</span>
   </nav>
   <p-card class="order-card" header="Dettaglio ordine">
-    <div class="order-meta">
-      <div>
-        <span class="label">Riferimento</span>
-        <span class="value">#{{ getShortId(state.order.id) }}</span>
+    <div class="order-header-grid">
+      <div class="meta-item">
+        <span class="meta-label">Riferimento</span>
+        <span class="meta-value">#{{ getShortId(state.order.id) }}</span>
       </div>
-      <div>
-        <span class="label">Data</span>
-        <span class="value">
+      <div class="meta-item">
+        <span class="meta-label">Data</span>
+        <span class="meta-value">
           {{ state.order.createdAt | date: 'dd/MM/yyyy' }}
         </span>
       </div>
-      <div>
-        <span class="label">Stato</span>
+      <div class="meta-item">
+        <span class="meta-label">Stato</span>
         <span
           class="status-chip"
           [class]="'status-chip status-' + statusFor(state.order.status).tone"
@@ -26,9 +26,9 @@
           {{ statusFor(state.order.status).label }}
         </span>
       </div>
-      <div>
-        <span class="label">Totale</span>
-        <span class="value">
+      <div class="meta-item meta-total">
+        <span class="meta-label">Totale</span>
+        <span class="meta-value">
           {{ state.order.totalCents / 100 | number: '1.2-2' }} €
         </span>
       </div>
@@ -50,28 +50,68 @@
 
     <h4>Prodotti</h4>
     @defer (on viewport) {
-    <p-table
-      [value]="state.order.items"
-      dataKey="productId"
-      responsiveLayout="scroll"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th scope="col">Prodotto</th>
-          <th scope="col">Prezzo</th>
-          <th scope="col">Qtà</th>
-          <th scope="col">Totale</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-item>
-        <tr>
-          <td>{{ item.name }}</td>
-          <td>{{ item.unitPriceCents / 100 | number: '1.2-2' }} €</td>
-          <td>{{ item.qty }}</td>
-          <td>{{ item.lineTotalCents / 100 | number: '1.2-2' }} €</td>
-        </tr>
-      </ng-template>
-    </p-table>
+    <!-- Desktop Table -->
+    <div class="desktop-view">
+      <p-table
+        [value]="state.order.items"
+        dataKey="productId"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th scope="col">Prodotto</th>
+            <th scope="col">Prezzo</th>
+            <th scope="col">Qtà</th>
+            <th scope="col">Totale</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td>
+              <div class="flex align-items-center gap-3">
+                @if (item.imageUrl) {
+                <img
+                  [src]="item.imageUrl"
+                  [alt]="item.name"
+                  width="40"
+                  class="shadow-1 border-round"
+                />
+                }
+                <span>{{ item.name }}</span>
+              </div>
+            </td>
+            <td>{{ item.unitPriceCents / 100 | number: '1.2-2' }} €</td>
+            <td>{{ item.qty }}</td>
+            <td>{{ item.lineTotalCents / 100 | number: '1.2-2' }} €</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Mobile List -->
+    <div class="mobile-view">
+      @for (item of state.order.items; track item.productId) {
+      <div class="product-card-mobile">
+        @if (item.imageUrl) {
+        <div class="product-image">
+          <img [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
+        </div>
+        }
+        <div class="product-details">
+          <span class="product-name">{{ item.name }}</span>
+          <div class="product-meta">
+            <span class="product-qty">Qtà: {{ item.qty }}</span>
+            <span class="product-price">
+              {{ item.unitPriceCents / 100 | number: '1.2-2' }} €
+            </span>
+          </div>
+        </div>
+        <div class="product-total">
+          {{ item.lineTotalCents / 100 | number: '1.2-2' }} €
+        </div>
+      </div>
+      }
+    </div>
     } @placeholder {
     <div class="order-skeleton">
       <p-skeleton height="28px"></p-skeleton>
@@ -84,9 +124,10 @@
       <button
         pButton
         type="button"
-        class="p-button-text"
+        class="p-button-text btn-back"
         [routerLink]="['/ordini']"
       >
+        <i class="pi pi-arrow-left mr-2"></i>
         Torna agli ordini
       </button>
     </div>

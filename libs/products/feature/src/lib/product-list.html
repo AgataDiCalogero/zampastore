@@ -1,6 +1,25 @@
 @if (state(); as state) { @if (state.status === 'ready') { @defer (on viewport)
 {
 <section class="product-list">
+  <div class="filter-bar">
+    <button
+      class="filter-chip"
+      [class.active]="!selectedCategory()"
+      (click)="setCategory(undefined)"
+    >
+      Tutti
+    </button>
+    @for (cat of categories; track cat) {
+    <button
+      class="filter-chip"
+      [class.active]="selectedCategory() === cat"
+      (click)="setCategory(cat)"
+    >
+      {{ cat }}
+    </button>
+    }
+  </div>
+
   <div class="product-grid">
     @for (product of state.products; track product.id) {
     <app-product-card

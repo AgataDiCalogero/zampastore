@@ -41,6 +41,7 @@ export class ProductDetail {
   private readonly uiFeedback = inject(UiFeedbackService);
   protected readonly imageError = signal(false);
   protected readonly activeSlide = signal(0);
+  protected readonly selectedImageIndex = signal(0);
 
   // Computed list of images for the gallery
   protected readonly images = computed(() => {
@@ -97,5 +98,25 @@ export class ProductDetail {
 
   protected handleImageError(): void {
     this.imageError.set(true);
+  }
+
+  selectImage(index: number): void {
+    this.selectedImageIndex.set(index);
+  }
+
+  prevImage(): void {
+    const current = this.selectedImageIndex();
+    const total = this.images().length;
+    if (total > 0) {
+      this.selectedImageIndex.set((current - 1 + total) % total);
+    }
+  }
+
+  nextImage(): void {
+    const current = this.selectedImageIndex();
+    const total = this.images().length;
+    if (total > 0) {
+      this.selectedImageIndex.set((current + 1) % total);
+    }
   }
 }

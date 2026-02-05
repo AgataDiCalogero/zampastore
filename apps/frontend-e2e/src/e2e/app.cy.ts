@@ -43,20 +43,21 @@ describe('ZampaStore e2e', () => {
     cy.visit('/carrello');
     cy.contains('button', 'Vai al checkout').should('be.visible').click();
 
+    cy.get('#email').type('maria.rossi@example.test');
     cy.get('#firstName').type('Maria');
     cy.get('#lastName').type('Rossi');
     cy.get('#address').type('Via Roma 10');
     cy.get('#city').type('Torino');
     cy.get('#postalCode').type('10100');
-    cy.get('#country').type('Italia');
 
     cy.intercept('POST', '**/api/payments/checkout-session', (req) => {
       req.headers['x-e2e-test'] = 'true';
       req.continue();
     }).as('checkoutSession');
 
-    cy.contains('button', 'Paga con Stripe (test)').click();
-    cy.url().should('include', '/ordine-confermato');
+    cy.contains('button', 'Paga con Stripe').should('be.enabled').click();
+    cy.wait('@checkoutSession');
+    cy.url({ timeout: 10000 }).should('include', '/ordine-confermato');
     cy.contains('h2', 'Ordine confermato').should('be.visible');
 
     cy.contains('button', 'I miei ordini').click();

@@ -7,8 +7,9 @@ import { Observable } from 'rxjs';
 export class ProductService {
   private readonly http = inject(HttpClient);
 
-  getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>('/api/products');
+  getProducts(category?: string): Observable<Product[]> {
+    const params: Record<string, string> = category ? { category } : {};
+    return this.http.get<Product[]>('/api/products', { params });
   }
 
   getProductById(id: string): Observable<Product> {

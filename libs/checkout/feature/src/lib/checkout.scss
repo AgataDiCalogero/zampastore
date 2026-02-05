@@ -1,87 +1,85 @@
-.checkout-page {
-  display: block;
+::ng-deep .checkout-card .p-card-body {
+  padding: var(--space-xl);
 }
 
 .checkout-layout {
   display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   gap: var(--space-2xl);
+  align-items: start;
 }
 
+@media (max-width: 960px) {
+  .checkout-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+}
+
+.checkout-grid {
+  display: contents; /* Allows children to participate in the main grid */
+}
 .checkout-form {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 2 Columns */
-  gap: var(--space-lg);
-  max-width: 100%; /* Use full width available in the column */
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
 }
 
-/* Make address and shipping full width */
-.form-field-full {
-  grid-column: 1 / -1;
+@media (max-width: 640px) {
+  .checkout-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sections */
+.checkout-section {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  background: var(--surface-0);
+}
+
+.checkout-section legend {
+  font-weight: 600;
+  padding: 0 var(--space-sm);
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
 }
 
-.form-field input,
-.form-field p-select {
-  width: 100%;
+.form-field-full {
+  grid-column: 1 / -1;
 }
 
-:host ::ng-deep .checkout-select-panel .p-select-item {
-  padding: 0.75rem 1rem;
+.form-field label {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
 }
 
-.checkout-form .text-muted {
-  position: relative;
-  z-index: 0;
-  margin-top: 0.25rem;
-  display: block;
-}
-
-.checkout-summary {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  align-items: flex-start;
-}
-
-.summary-card {
-  width: 100%;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: var(--space-lg);
-  background: var(--surface-0);
-  box-shadow: var(--shadow-1);
-}
-
-.summary-card h3 {
-  margin: 0 0 var(--space-md);
-}
-
-.summary-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-md);
-  display: grid;
-  gap: var(--space-sm);
-}
-
-.summary-list li {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  color: var(--text-primary);
-}
-
-.summary-total {
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid var(--border-color);
-  padding-top: var(--space-md);
+.form-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  margin-top: 2px;
 }
 
 .text-muted {
@@ -89,8 +87,75 @@
   font-size: var(--font-size-sm);
 }
 
+.shipping-option {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Summary */
+.checkout-summary {
+  position: sticky;
+  top: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
 @media (max-width: 960px) {
-  .checkout-layout {
-    grid-template-columns: 1fr;
+  .checkout-summary {
+    position: static;
+    order: -1; /* Show summary first on mobile? Or kept at bottom? standard is bottom often, but let's see. Kept normal flow for now */
   }
+}
+
+.summary-card {
+  background: var(--surface-50);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.summary-card h3 {
+  margin-top: 0;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--font-size-lg);
+}
+
+.summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-lg) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.summary-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-xs) 0;
+  border-bottom: 1px dashed var(--border-color);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.summary-list li:last-child {
+  border-bottom: none;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: var(--font-size-xl);
+  color: var(--text-primary); /* Fixed variable name */
+  border-top: 2px solid var(--border-color);
+  padding-top: var(--space-md);
+}
+
+.checkout-select-panel .p-element {
+  font-size: 0.9rem;
 }

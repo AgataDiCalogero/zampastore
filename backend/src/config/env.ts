@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 
 type TidbEnv = {
   host: string;
@@ -6,8 +7,9 @@ type TidbEnv = {
   user: string;
   password: string;
   database: string;
-  ca: Buffer;
+  ca: Buffer | null;
   poolSize: number;
+  sslMode: 'require' | 'disable';
 };
 
 export type AppEnv = {
@@ -50,7 +52,55 @@ const parseNumber = (key: string, fallback?: number): number => {
   return value;
 };
 
-const loadCa = (): Buffer => {
+const looksLikeWindowsAbsPath = (value: string): boolean =>
+  /^[a-zA-Z]:[\\/]/.test(value);
+
+const toWslPath = (value: string): string => {
+  const driveLetter = value[0]?.toLowerCase();
+  const rest = value.slice(2).replace(/\\/g, '/');
+  const normalizedRest = rest.startsWith('/') ? rest : `/${rest}`;
+  return `/mnt/${driveLetter}${normalizedRest}`;
+};
+
+const resolveCaPathCandidates = (value: string): string[] => {
+  const trimmed = value.trim();
+  const candidates = new Set<string>();
+
+  candidates.add(trimmed);
+
+  if (!path.isAbsolute(trimmed)) {
+    candidates.add(path.resolve(process.cwd(), trimmed));
+  }
+
+  if (process.platform !== 'win32' && looksLikeWindowsAbsPath(trimmed)) {
+    candidates.add(toWslPath(trimmed));
+  }
+
+  if (process.platform !== 'win32' && trimmed.includes('\\')) {
+    candidates.add(trimmed.replace(/\\/g, '/'));
+  }
+
+  return Array.from(candidates);
+};
+
+const parseSslMode = (): 'require' | 'disable' => {
+  const raw = optional('TIDB_SSL_MODE');
+  if (!raw) {
+    return 'require';
+  }
+  const normalized = raw.trim().toLowerCase();
+  if (normalized === 'disable' || normalized === 'require') {
+    return normalized;
+  }
+  throw new Error(
+    `Invalid value for TIDB_SSL_MODE: ${raw}. Use 'require' or 'disable'.`,
+  );
+};
+
+const loadCa = (sslMode: 'require' | 'disable'): Buffer | null => {
+  if (sslMode === 'disable') {
+    return null;
+  }
   const base64 = optional('TIDB_CA_BASE64');
   if (base64) {
     try {
@@ -62,17 +112,25 @@ const loadCa = (): Buffer => {
 
   const caPath = optional('TIDB_CA_PATH');
   if (caPath) {
-    try {
-      return fs.readFileSync(caPath);
-    } catch {
-      throw new Error(`Unable to read CA file at path: ${caPath}`);
+    const candidates = resolveCaPathCandidates(caPath);
+    for (const candidate of candidates) {
+      try {
+        return fs.readFileSync(candidate);
+      } catch {
+        // Try next candidate.
+      }
     }
+    throw new Error(
+      `Unable to read CA file. Tried: ${candidates.join(', ')}`,
+    );
   }
 
   throw new Error(
     'Missing TLS CA for TiDB. Provide TIDB_CA_BASE64 or TIDB_CA_PATH.',
   );
 };
+
+const sslMode = parseSslMode();
 
 const env: AppEnv = {
   port: parseNumber('PORT', 3333),
@@ -86,8 +144,9 @@ const env: AppEnv = {
     user: required('TIDB_USER'),
     password: required('TIDB_PASSWORD'),
     database: required('TIDB_DATABASE'),
-    ca: loadCa(),
+    ca: loadCa(sslMode),
     poolSize: parseNumber('TIDB_POOL_SIZE', 10),
+    sslMode,
   },
 };
 

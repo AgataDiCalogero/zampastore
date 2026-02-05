@@ -14,16 +14,16 @@ export const MENU_ITEMS: MenuItem[] = [
     routerLink: '/prodotti',
   },
   {
-    id: 'cart',
-    label: 'Carrello',
-    icon: 'pi pi-shopping-cart',
-    routerLink: '/carrello',
-  },
-  {
     id: 'orders',
     label: 'I miei ordini',
     icon: 'pi pi-receipt',
     routerLink: '/ordini',
+  },
+  {
+    id: 'cart',
+    label: 'Carrello',
+    icon: 'pi pi-shopping-cart',
+    routerLink: '/carrello',
   },
   {
     id: 'auth',

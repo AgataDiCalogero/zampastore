@@ -6,8 +6,10 @@
     "backend:serve": "nx run backend:serve",
     "frontend:serve": "nx run frontend:serve",
     "dev": "concurrently \"npm run backend:serve\" \"npm run frontend:serve\"",
-    "e2e": "concurrently --kill-others --success first \"npm run backend:serve\" \"npx wait-on http://localhost:3333/api/health && npx nx run frontend-e2e:e2e --watch=false\"",
-    "e2e:local": "npx nx run frontend-e2e:e2e --watch=false"
+    "check": "nx run-many -t lint test typecheck build e2e --configuration=ci --skip-nx-cache",
+    "e2e": "nx run frontend-e2e:e2e --configuration=ci --watch=false",
+    "e2e:local": "nx run frontend-e2e:e2e --watch=false",
+    "e2e:cypress": "nx run frontend-e2e:cypress --watch=false"
   },
   "private": true,
   "devDependencies": {

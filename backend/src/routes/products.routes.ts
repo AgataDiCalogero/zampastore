@@ -4,9 +4,18 @@ import { parseIdParam } from '../services/params.validation';
 
 export const productsRouter = Router();
 
-productsRouter.get('/', async (_req, res) => {
-  const products = await productsStore.listProducts();
+productsRouter.get('/', async (req, res) => {
+  const category =
+    typeof req.query['category'] === 'string'
+      ? req.query['category']
+      : undefined;
+  const products = await productsStore.listProducts(category);
   res.json(products);
+});
+
+productsRouter.post('/seed', async (_req, res) => {
+  await productsStore.forceSeed();
+  res.json({ message: 'Products seeded successfully' });
 });
 
 productsRouter.get('/:id', async (req, res) => {

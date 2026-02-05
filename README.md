@@ -1,7 +1,7 @@
 # ZampaStore 🐾
 
 ZampaStore è un e-commerce moderno e scalabile dedicato al benessere di cani e gatti.
-Realizzato come **Enterprise Monorepo** con Nx, dimostra un'architettura **Full Stack** avanzata (Angular 17+ & Node.js).
+Realizzato come **Enterprise Monorepo** con Nx, dimostra un'architettura **Full Stack** avanzata (Angular 21+ & Node.js).
 
 ![ZampaStore Preview](https://via.placeholder.com/1200x600?text=ZampaStore+Preview)
 _(Sostituire con screenshot reale)_
@@ -10,8 +10,8 @@ _(Sostituire con screenshot reale)_
 
 ### Frontend
 
-- **Framework**: Angular 17+ (Signals, Standalone Components, @defer)
-- **Styling**: PrimeNG + Tailwind CSS (Utility-first)
+- **Framework**: Angular 21+ (Signals, Standalone Components, @defer)
+- **Styling**: PrimeNG + PrimeFlex
 - **State Management**: Reactive State with Signals & RxJS
 - **Performance**: OnPush Strategy, Lazy Loading
 
@@ -57,9 +57,8 @@ _(Sostituire con screenshot reale)_
    ```bash
    # Push dello schema
    npx nx run backend:db-push
-   # Seed dei dati iniziali
-   npx nx run backend:db-seed
    ```
+   Al primo avvio il backend esegue il seed dei prodotti automaticamente.
 
 ## ▶️ Avvio Sviluppo
 
@@ -82,16 +81,20 @@ npm run dev
 
 ## 🧪 Testing
 
-Esegui i test Unitari:
+Esegui i test Unitari (tutti i progetti che espongono `test`):
 
 ```bash
-npx nx test
+npx nx run-many -t test
 ```
 
-Esegui i test E2E (richiede server attivo):
+Esegui i test E2E (avvia frontend+backend via Nx e attende l'API):
 
 ```bash
 npm run e2e:local
+```
+Se vuoi eseguire solo Cypress (con server avviati manualmente):
+```bash
+npm run e2e:cypress
 ```
 
 ### 🏁 Check Finale (Mega Check)
@@ -99,15 +102,16 @@ npm run e2e:local
 Per verificare che tutto sia perfetto prima di un commit (Lint, Test, Typecheck, Build, E2E):
 
 ```bash
-npx nx run-many -t lint test typecheck build e2e --configuration=ci --skip-nx-cache
+npm run check
 ```
 
 ## 📐 Architettura
 
 Il progetto segue la struttura **Nx Enterprise Monorepo**:
 
-- **apps/frontend**: Applicazione Angular principale.
-- **apps/backend**: API REST Node.js.
+- **frontend/**: Applicazione Angular principale.
+- **backend/**: API REST Node.js.
+- **apps/frontend-e2e**: Test E2E con Cypress.
 - **libs/**: Logica di business riutilizzabile, divisa in:
   - `feature`: Componenti intelligenti e pagine.
   - `ui`: Componenti di presentazione (dumb).

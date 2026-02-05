@@ -8,15 +8,18 @@
       <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
         <div class="form-field">
           <label for="username">Nome</label>
-          <input
-            pInputText
-            id="username"
-            type="text"
-            autocomplete="name"
-            formControlName="username"
-          />
-          @if (
-            form.controls.username.touched && form.controls.username.invalid
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-user"></i>
+            <input
+              pInputText
+              id="username"
+              type="text"
+              autocomplete="name"
+              formControlName="username"
+              class="w-full"
+            />
+          </span>
+          @if ( form.controls.username.touched && form.controls.username.invalid
           ) {
           <small class="form-error">Inserisci almeno 2 caratteri.</small>
           }
@@ -24,13 +27,17 @@
 
         <div class="form-field">
           <label for="email">Email</label>
-          <input
-            pInputText
-            id="email"
-            type="email"
-            autocomplete="email"
-            formControlName="email"
-          />
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-envelope"></i>
+            <input
+              pInputText
+              id="email"
+              type="email"
+              autocomplete="email"
+              formControlName="email"
+              class="w-full"
+            />
+          </span>
           @if (form.controls.email.touched && form.controls.email.invalid) {
           <small class="form-error">Inserisci una email valida.</small>
           }
@@ -42,10 +49,15 @@
             inputId="password"
             formControlName="password"
             [toggleMask]="true"
-            [feedback]="false"
+            [feedback]="true"
+            [weakLabel]="'Debole'"
+            [mediumLabel]="'Media'"
+            [strongLabel]="'Forte'"
+            placeholder="Minimo 6 caratteri"
+            styleClass="w-full"
+            inputStyleClass="w-full"
           ></p-password>
-          @if (
-            form.controls.password.touched && form.controls.password.invalid
+          @if ( form.controls.password.touched && form.controls.password.invalid
           ) {
           <small class="form-error"
             >La password deve avere almeno 6 caratteri.</small
@@ -60,20 +72,31 @@
             formControlName="confirmPassword"
             [toggleMask]="true"
             [feedback]="false"
+            placeholder="Ripeti password"
+            styleClass="w-full"
+            inputStyleClass="w-full"
           ></p-password>
           @if (form.touched && form.errors?.['passwordMismatch']) {
           <small class="form-error">Le password non coincidono.</small>
           }
         </div>
 
-        @if (errorMessage) {
-        <div class="form-error" role="alert">{{ errorMessage }}</div>
+        @if (errorMessage()) {
+        <div class="form-error-banner" role="alert">
+          <i class="pi pi-exclamation-circle"></i>
+          <span>{{ errorMessage() }}</span>
+        </div>
         }
 
-        <div class="form-actions">
-          <button pButton type="submit" [disabled]="form.invalid || submitting">
-            Crea account
-          </button>
+        <div class="form-actions can-stack">
+          <button
+            pButton
+            type="submit"
+            [disabled]="form.invalid || submitting()"
+            [loading]="submitting()"
+            label="Crea account"
+            class="w-full"
+          ></button>
         </div>
       </form>
     </p-card>

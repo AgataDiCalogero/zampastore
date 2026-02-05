@@ -13,30 +13,53 @@
   align-items: start;
 }
 
+@media (max-width: 900px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-side {
+    order: -1;
+    order: 1;
+  }
+}
+
 .auth-card {
   width: 100%;
 }
 
+::ng-deep .auth-card .p-card-body {
+  padding: var(--space-xl);
+}
+
 .auth-form {
   display: grid;
-  gap: var(--space-md);
+  gap: var(--space-lg);
 }
 
 .form-field {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-xs);
+}
+
+.form-field label {
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .form-actions {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--space-sm);
   align-items: center;
+  margin-top: var(--space-sm);
 }
 
 .auth-intro {
-  margin: 0 0 var(--space-md);
+  margin: 0 0 var(--space-xl);
   color: var(--text-secondary);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
 }
 
 .auth-side {
@@ -45,18 +68,40 @@
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-shadow: var(--shadow-1);
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-md);
-  align-content: start;
+  align-items: flex-start;
+}
+
+.auth-side h2 {
+  font-size: var(--font-size-xl);
+  margin: 0;
+  color: var(--text-primary);
 }
 
 .form-error {
-  color: var(--color-error);
+  color: var(--color-danger);
   font-size: var(--font-size-sm);
 }
 
-@media (max-width: 900px) {
-  .auth-shell {
-    grid-template-columns: 1fr;
-  }
+.form-error-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background-color: #fee2e2; /* Red-100 */
+  color: #b91c1c; /* Red-700 */
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+/* PrimeNG Overrides */
+:host ::ng-deep .p-password input {
+  width: 100%;
+}
+
+:host ::ng-deep .p-input-icon-left > i {
+  top: 50%;
+  margin-top: -0.5rem;
 }

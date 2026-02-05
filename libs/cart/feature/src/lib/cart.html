@@ -2,56 +2,112 @@
   <p-card class="cart-card" header="Carrello">
     @if (state(); as currentState) { @if (currentState.status === 'ready') {
     <form class="cart-layout" [formGroup]="form">
-      <div class="cart-table" formArrayName="items">
-        <p-table
-          [value]="currentState.items"
-          dataKey="product.id"
-          responsiveLayout="scroll"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th scope="col">Prodotto</th>
-              <th scope="col">Prezzo</th>
-              <th scope="col">Quantità</th>
-              <th scope="col">Totale</th>
-              <th scope="col">Azioni</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-cartItem let-rowIndex="rowIndex">
-            <tr [formGroupName]="rowIndex">
-              <td>{{ cartItem.product.name }}</td>
-              <td>
-                {{ cartItem.product.priceCents / 100 | number: '1.2-2' }} €
-              </td>
-              <td>
+      <div class="cart-items-container">
+        <!-- Desktop Table -->
+        <div class="desktop-cart">
+          <p-table
+            [value]="currentState.items"
+            dataKey="product.id"
+            responsiveLayout="scroll"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th scope="col">Prodotto</th>
+                <th scope="col">Prezzo</th>
+                <th scope="col">Quantità</th>
+                <th scope="col">Totale</th>
+                <th scope="col">Azioni</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-cartItem let-rowIndex="rowIndex">
+              <tr [formGroup]="itemsArray.controls[rowIndex]">
+                <td>{{ cartItem.product.name }}</td>
+                <td>
+                  {{ cartItem.product.priceCents / 100 | number: '1.2-2' }} €
+                </td>
+                <td>
+                  <p-inputNumber
+                    formControlName="quantity"
+                    [showButtons]="true"
+                    buttonLayout="horizontal"
+                    [minFractionDigits]="0"
+                    [maxFractionDigits]="0"
+                    incrementButtonIcon="pi pi-plus"
+                    decrementButtonIcon="pi pi-minus"
+                    [inputStyle]="{ width: '3rem' }"
+                    ariaLabel="Quantità"
+                  ></p-inputNumber>
+                </td>
+                <td>
+                  {{ (cartItem.product.priceCents * cartItem.qty) / 100 |
+                  number: '1.2-2' }} €
+                </td>
+                <td>
+                  <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [text]="true"
+                    ariaLabel="Rimuovi"
+                    (onClick)="removeItem(cartItem.product.id)"
+                  ></p-button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+
+        <!-- Mobile List -->
+        <div class="mobile-cart">
+          @for (cartItem of currentState.items; track cartItem.product.id; let i
+          = $index) {
+          <div class="product-card-mobile" [formGroup]="itemsArray.controls[i]">
+            @if (cartItem.product.imageUrl) {
+            <div class="product-image">
+              <img
+                [src]="cartItem.product.imageUrl"
+                [alt]="cartItem.product.name"
+                loading="lazy"
+              />
+            </div>
+            }
+            <div class="product-details">
+              <div class="details-header">
+                <span class="product-name">{{ cartItem.product.name }}</span>
+                <button
+                  pButton
+                  icon="pi pi-trash"
+                  class="p-button-danger p-button-text p-button-rounded remove-btn"
+                  aria-label="Rimuovi"
+                  (click)="removeItem(cartItem.product.id)"
+                ></button>
+              </div>
+
+              <div class="details-body">
+                <span class="unit-price">
+                  {{ cartItem.product.priceCents / 100 | number: '1.2-2' }} €
+                </span>
                 <p-inputNumber
                   formControlName="quantity"
                   [showButtons]="true"
                   buttonLayout="horizontal"
-                  [minFractionDigits]="0"
-                  [maxFractionDigits]="0"
                   incrementButtonIcon="pi pi-plus"
                   decrementButtonIcon="pi pi-minus"
-                  [inputStyle]="{ width: '4rem' }"
-                  ariaLabel="Quantità"
+                  [inputStyle]="{ width: '2.5rem', 'text-align': 'center', 'padding': '0' }"
+                  class="compact-input"
                 ></p-inputNumber>
-              </td>
-              <td>
-                {{ (cartItem.product.priceCents * cartItem.qty) / 100 | number:
-                '1.2-2' }} €
-              </td>
-              <td>
-                <p-button
-                  icon="pi pi-trash"
-                  severity="danger"
-                  [text]="true"
-                  ariaLabel="Rimuovi"
-                  (onClick)="removeItem(cartItem.product.id)"
-                ></p-button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+              </div>
+
+              <div class="details-footer">
+                <span class="total-label">Totale:</span>
+                <span class="total-price">
+                  {{ (cartItem.product.priceCents * cartItem.qty) / 100 |
+                  number: '1.2-2' }} €
+                </span>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
       </div>
 
       <aside class="cart-summary">

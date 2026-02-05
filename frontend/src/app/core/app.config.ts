@@ -6,6 +6,7 @@ import {
 import {
   PreloadAllModules,
   provideRouter,
+  withInMemoryScrolling,
   withPreloading,
 } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -19,7 +20,14 @@ import { AuthService } from '@zampa/auth/data-access';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(appRoutes, withPreloading(PreloadAllModules)),
+    provideRouter(
+      appRoutes,
+      withPreloading(PreloadAllModules),
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'top',
+        anchorScrolling: 'enabled',
+      }),
+    ),
     provideAnimations(),
     provideHttpClient(
       withInterceptors([credentialsInterceptor, auth401Interceptor]),

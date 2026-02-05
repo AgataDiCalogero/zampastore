@@ -1,145 +1,192 @@
 <section class="checkout-page section">
   <p-card class="checkout-card" header="Checkout">
     <form class="checkout-layout" [formGroup]="form" (ngSubmit)="submit()">
-      <div class="checkout-form">
-        <div class="form-field">
-          <label for="firstName">Nome</label>
-          <input
-            pInputText
-            id="firstName"
-            type="text"
-            autocomplete="given-name"
-            formControlName="firstName"
-          />
-          @if (form.controls.firstName.touched &&
-          form.controls.firstName.invalid) {
-          <small class="form-error">Richiesto</small>
-          }
+      <div class="checkout-grid">
+        <div class="checkout-main">
+          <!-- Section: Contact -->
+          <fieldset class="checkout-section">
+            <legend>Contatti</legend>
+            <div class="form-field form-field-full">
+              <label for="email">Email</label>
+              <input
+                pInputText
+                id="email"
+                type="email"
+                autocomplete="email"
+                formControlName="email"
+                placeholder="es. nome@esempio.com"
+              />
+              @if (form.controls.email.touched && form.controls.email.invalid) {
+              <small class="form-error">Inserisci un'email valida</small>
+              }
+            </div>
+          </fieldset>
+
+          <!-- Section: Shipping Address -->
+          <fieldset class="checkout-section">
+            <legend>Indirizzo di spedizione</legend>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="firstName">Nome</label>
+                <input
+                  pInputText
+                  id="firstName"
+                  type="text"
+                  autocomplete="given-name"
+                  formControlName="firstName"
+                />
+                @if (form.controls.firstName.touched &&
+                form.controls.firstName.invalid) {
+                <small class="form-error">Richiesto</small>
+                }
+              </div>
+
+              <div class="form-field">
+                <label for="lastName">Cognome</label>
+                <input
+                  pInputText
+                  id="lastName"
+                  type="text"
+                  autocomplete="family-name"
+                  formControlName="lastName"
+                />
+                @if (form.controls.lastName.touched &&
+                form.controls.lastName.invalid) {
+                <small class="form-error">Richiesto</small>
+                }
+              </div>
+            </div>
+
+            <div class="form-field form-field-full">
+              <label for="address">Indirizzo</label>
+              <input
+                pInputText
+                id="address"
+                type="text"
+                autocomplete="address-line1"
+                formControlName="address"
+                placeholder="Via e numero civico"
+              />
+              @if (form.controls.address.touched &&
+              form.controls.address.invalid) {
+              <small class="form-error">Indirizzo troppo breve</small>
+              }
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label for="postalCode">CAP</label>
+                <input
+                  pInputText
+                  id="postalCode"
+                  type="text"
+                  autocomplete="postal-code"
+                  formControlName="postalCode"
+                  placeholder="00000"
+                  maxlength="5"
+                />
+                @if (form.controls.postalCode.touched &&
+                form.controls.postalCode.invalid) {
+                <small class="form-error">5 cifre richieste</small>
+                }
+              </div>
+
+              <div class="form-field">
+                <label for="city">Città</label>
+                <input
+                  pInputText
+                  id="city"
+                  type="text"
+                  autocomplete="address-level2"
+                  formControlName="city"
+                />
+                @if (form.controls.city.touched && form.controls.city.invalid) {
+                <small class="form-error">Richiesto</small>
+                }
+              </div>
+            </div>
+
+            <div class="form-field form-field-full">
+              <label for="country">Paese</label>
+              <input
+                pInputText
+                id="country"
+                type="text"
+                autocomplete="country-name"
+                formControlName="country"
+                readonly
+              />
+            </div>
+          </fieldset>
+
+          <!-- Section: Shipping Method -->
+          <fieldset class="checkout-section">
+            <legend>Metodo di spedizione</legend>
+            <div class="form-field form-field-full">
+              <p-select
+                inputId="shippingMethod"
+                formControlName="shippingMethod"
+                [options]="shippingOptions"
+                optionLabel="label"
+                optionValue="value"
+                appendTo="body"
+                styleClass="w-full"
+              >
+                <ng-template let-item pTemplate="item">
+                  <div class="shipping-option">
+                    <span class="font-bold">{{ item.label }}</span>
+                    <span class="text-sm text-muted">{{ item.subtitle }}</span>
+                  </div>
+                </ng-template>
+              </p-select>
+            </div>
+          </fieldset>
         </div>
 
-        <div class="form-field">
-          <label for="lastName">Cognome</label>
-          <input
-            pInputText
-            id="lastName"
-            type="text"
-            autocomplete="family-name"
-            formControlName="lastName"
-          />
-          @if (form.controls.lastName.touched && form.controls.lastName.invalid)
-          {
-          <small class="form-error">Richiesto</small>
-          }
-        </div>
-
-        <div class="form-field form-field-full">
-          <label for="address">Indirizzo</label>
-          <input
-            pInputText
-            id="address"
-            type="text"
-            autocomplete="address-line1"
-            formControlName="address"
-          />
-          @if (form.controls.address.touched && form.controls.address.invalid) {
-          <small class="form-error">Richiesto</small>
-          }
-        </div>
-
-        <div class="form-field">
-          <label for="city">Città</label>
-          <input
-            pInputText
-            id="city"
-            type="text"
-            autocomplete="address-level2"
-            formControlName="city"
-          />
-          @if (form.controls.city.touched && form.controls.city.invalid) {
-          <small class="form-error">Richiesto</small>
-          }
-        </div>
-
-        <div class="form-field">
-          <label for="postalCode">CAP</label>
-          <input
-            pInputText
-            id="postalCode"
-            type="text"
-            autocomplete="postal-code"
-            formControlName="postalCode"
-          />
-          @if (form.controls.postalCode.touched &&
-          form.controls.postalCode.invalid) {
-          <small class="form-error">Richiesto</small>
-          }
-        </div>
-
-        <div class="form-field">
-          <label for="country">Paese</label>
-          <input
-            pInputText
-            id="country"
-            type="text"
-            autocomplete="country-name"
-            formControlName="country"
-          />
-        </div>
-
-        <div class="form-field form-field-full">
-          <label for="shippingMethod">Spedizione</label>
-          <p-select
-            inputId="shippingMethod"
-            formControlName="shippingMethod"
-            [options]="shippingOptions"
-            optionLabel="label"
-            optionValue="value"
-            appendTo="body"
-            styleClass="w-full"
-            panelStyleClass="checkout-select-panel"
-          ></p-select>
-          <small class="text-muted">Prezzo calcolato al checkout.</small>
-        </div>
-      </div>
-
-      <aside class="checkout-summary">
-        <div class="summary-card">
-          <h3>Riepilogo</h3>
-          @if (cartItems(); as cartItems) {
-          <ul class="summary-list">
-            @for (item of cartItems; track item.product.id) {
-            <li>
-              <span>{{ item.product.name }} x {{ item.qty }}</span>
-              <span>
-                {{ (item.product.priceCents * item.qty) / 100 | number: '1.2-2'
-                }} €
-              </span>
-            </li>
+        <aside class="checkout-summary">
+          <div class="summary-card">
+            <h3>Riepilogo</h3>
+            <!-- Summary content stays same -->
+            @if (cartItems(); as cartItems) {
+            <ul class="summary-list">
+              @for (item of cartItems; track item.product.id) {
+              <li>
+                <span>{{ item.product.name }} x {{ item.qty }}</span>
+                <span>
+                  {{ (item.product.priceCents * item.qty) / 100 | number:
+                  '1.2-2' }} €
+                </span>
+              </li>
+              }
+            </ul>
             }
-          </ul>
-          }
-          <div class="summary-total">
-            <span>Totale</span>
-            <strong>{{ cartTotal() | number: '1.2-2' }} €</strong>
+            <div class="summary-total">
+              <span>Totale</span>
+              <strong>{{ cartTotal() | number: '1.2-2' }} €</strong>
+            </div>
           </div>
-        </div>
 
-        @if (errorMessage()) {
-        <div class="form-error" role="alert">{{ errorMessage() }}</div>
-        }
+          @if (errorMessage()) {
+          <div class="form-error" role="alert" style="margin-top: 1rem">
+            {{ errorMessage() }}
+          </div>
+          }
 
-        <button pButton type="submit" [disabled]="form.invalid || submitting()">
-          Paga con Stripe
-        </button>
-        <button
-          pButton
-          type="button"
-          class="p-button-secondary"
-          [routerLink]="['/carrello']"
-        >
-          Torna al carrello
-        </button>
-      </aside>
+          <button
+            pButton
+            type="submit"
+            [disabled]="form.invalid || submitting()"
+            label="Paga con Stripe"
+          ></button>
+          <button
+            pButton
+            type="button"
+            class="p-button-secondary p-button-outlined"
+            [routerLink]="['/carrello']"
+            label="Torna al carrello"
+          ></button>
+        </aside>
+      </div>
     </form>
   </p-card>
 </section>

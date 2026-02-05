@@ -9,15 +9,18 @@ export const getDbPool = (): mysql.Pool => {
   }
 
   const env = getEnv();
+  const ssl =
+    env.tidb.sslMode === 'disable' || !env.tidb.ca
+      ? undefined
+      : { ca: env.tidb.ca };
+
   pool = mysql.createPool({
     host: env.tidb.host,
     port: env.tidb.port,
     user: env.tidb.user,
     password: env.tidb.password,
     database: env.tidb.database,
-    ssl: {
-      ca: env.tidb.ca,
-    },
+    ...(ssl ? { ssl } : {}),
     waitForConnections: true,
     connectionLimit: env.tidb.poolSize,
     enableKeepAlive: true,

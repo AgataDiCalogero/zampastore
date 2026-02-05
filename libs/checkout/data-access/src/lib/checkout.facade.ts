@@ -14,6 +14,7 @@ export type ShippingOption = {
 };
 
 type CheckoutForm = {
+  email: FormControl<string>;
   firstName: FormControl<string>;
   lastName: FormControl<string>;
   address: FormControl<string>;
@@ -46,6 +47,10 @@ export class CheckoutFacade {
   ];
 
   readonly form = new FormGroup<CheckoutForm>({
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
     firstName: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(2)],
@@ -56,7 +61,7 @@ export class CheckoutFacade {
     }),
     address: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(4)],
+      validators: [Validators.required, Validators.minLength(5)],
     }),
     city: new FormControl('', {
       nonNullable: true,
@@ -64,7 +69,7 @@ export class CheckoutFacade {
     }),
     postalCode: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(4)],
+      validators: [Validators.required, Validators.pattern(/^\d{5}$/)],
     }),
     country: new FormControl('Italia', {
       nonNullable: true,
@@ -79,8 +84,25 @@ export class CheckoutFacade {
   readonly submitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
   private cartSnapshot: CartItem[] = [];
+  private readonly STORAGE_KEY = 'checkout_form_state';
 
   constructor() {
+    // Restore state
+    const savedState = localStorage.getItem(this.STORAGE_KEY);
+    if (savedState) {
+      try {
+        const value = JSON.parse(savedState);
+        this.form.patchValue(value);
+      } catch (e) {
+        console.error('Failed to restore checkout state', e);
+      }
+    }
+
+    // Save state on change
+    this.form.valueChanges.subscribe((value) => {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(value));
+    });
+
     effect(() => {
       const items = this.cartItems();
       this.cartSnapshot = items;
@@ -88,6 +110,13 @@ export class CheckoutFacade {
         void this.router.navigateByUrl('/carrello');
       }
     });
+  }
+
+  async checkStockAvailability(): Promise<boolean> {
+    // Simulation: In a real app, this would call an API /api/stock/check
+    // For this refactor, we simulate a check that always passes unless specific condition
+    // or we could add a check agains the product list if we had stock info there.
+    return new Promise((resolve) => setTimeout(() => resolve(true), 800));
   }
 
   submit(): void {
@@ -108,15 +137,29 @@ export class CheckoutFacade {
     this.errorMessage.set(null);
     this.submitting.set(true);
 
-    const address = this.form.getRawValue();
+    // Stock Check Step
+    this.checkStockAvailability().then((isAvailable) => {
+      if (!isAvailable) {
+        this.errorMessage.set('Alcuni prodotti non sono più disponibili.');
+        this.submitting.set(false);
+        return;
+      }
+
+      this.proceedToPayment();
+    });
+  }
+
+  private proceedToPayment(): void {
+    const raw = this.form.getRawValue();
     const shippingAddress: ShippingAddress = {
-      firstName: address.firstName.trim(),
-      lastName: address.lastName.trim(),
-      address: address.address.trim(),
-      city: address.city.trim(),
-      postalCode: address.postalCode.trim(),
-      country: address.country.trim(),
+      firstName: raw.firstName.trim(),
+      lastName: raw.lastName.trim(),
+      address: raw.address.trim(),
+      city: raw.city.trim(),
+      postalCode: raw.postalCode.trim(),
+      country: raw.country.trim(),
     };
+
     const payload: CreateCheckoutSessionRequest = {
       items: this.cartSnapshot.map((item) => ({
         productId: item.product.id,
@@ -130,6 +173,7 @@ export class CheckoutFacade {
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: (response) => {
+          localStorage.removeItem(this.STORAGE_KEY);
           globalThis.location.href = response.url;
         },
         error: (error: unknown) => {
@@ -141,7 +185,7 @@ export class CheckoutFacade {
             return;
           }
           this.errorMessage.set(
-            'Non è stato possibile avviare il pagamento. Riprova.',
+            'Impossibile procedere al pagamento. Riprova più tardi.',
           );
         },
       });
