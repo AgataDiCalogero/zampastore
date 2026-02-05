@@ -111,8 +111,13 @@ app.use('/api/orders', ordersRouter);
 app.use('/api/payments', checkoutLimiter, paymentsRouter);
 app.use(errorHandler);
 
-const port = env.port;
-const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
-});
-server.on('error', console.error);
+// Local development support
+if (!process.env['VERCEL']) {
+  const port = env.port;
+  const server = app.listen(port, () => {
+    console.log(`Listening at http://localhost:${port}/api`);
+  });
+  server.on('error', console.error);
+}
+
+export default app;

@@ -6,20 +6,18 @@
     >
       @if (mainImage && !imageError()) {
       <img
-        [src]="mainImage"
+        [ngSrc]="mainImage"
         [alt]="product.name"
         class="primary-image"
-        loading="lazy"
-        decoding="async"
+        fill
         (error)="handleImageError()"
       />
       @if (secondaryImage && !secondaryImageError()) {
       <img
-        [src]="secondaryImage"
+        [ngSrc]="secondaryImage"
         [alt]="product.name"
         class="secondary-image"
-        loading="lazy"
-        decoding="async"
+        fill
         (error)="handleSecondaryImageError()"
       />
       } } @else {

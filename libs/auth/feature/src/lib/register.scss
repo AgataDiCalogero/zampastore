@@ -80,9 +80,32 @@
   color: var(--text-primary);
 }
 
+/* .form-error moved to bottom with input overrides */
+
+/* .form-error-banner moved to bottom */
+
+/* PrimeNG Overrides */
+:host ::ng-deep .p-password input {
+  width: 100%;
+  padding-right: 2.5rem; /* Space for toggle icon */
+}
+
 .form-error {
-  color: var(--color-danger);
-  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+:host ::ng-deep .p-input-icon-left > i {
+  top: 50%;
+  margin-top: -0.5rem;
+  left: 0.75rem;
+}
+
+:host ::ng-deep .p-input-icon-left > input {
+  padding-left: 2.5rem;
 }
 
 .form-error-banner {
@@ -90,18 +113,8 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-md);
-  background-color: #fee2e2; /* Red-100 */
-  color: #b91c1c; /* Red-700 */
+  background-color: #fee2e2;
+  color: var(--color-error);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
-}
-
-/* PrimeNG Overrides */
-:host ::ng-deep .p-password input {
-  width: 100%;
-}
-
-:host ::ng-deep .p-input-icon-left > i {
-  top: 50%;
-  margin-top: -0.5rem;
 }

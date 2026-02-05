@@ -8,9 +8,10 @@
 
 .filter-bar {
   display: flex;
+  align-items: center;
   gap: var(--space-sm);
   overflow-x: auto;
-  padding-bottom: var(--space-md);
+  padding: var(--space-sm) 0; /* Symmetric padding for true centering */
   margin-bottom: var(--space-lg);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Hide scrollbar Firefox */
@@ -54,8 +55,8 @@
   grid-auto-rows: 1fr;
 
   @media (max-width: 640px) {
-    /* Mobile: 135px guarantees 2 columns on 320px screens (135*2 + 12 gap = 282 < 320) */
-    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+    /* Mobile: 1 column as requested */
+    grid-template-columns: 1fr;
     gap: var(--space-md);
   }
 }

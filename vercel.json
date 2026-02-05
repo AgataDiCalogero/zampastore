@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/apps/backend/src/main.ts"
+    }
+  ],
+  "functions": {
+    "apps/backend/src/main.ts": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
+  "buildCommand": "npx nx build frontend --configuration=production",
+  "outputDirectory": "dist/apps/frontend"
+}

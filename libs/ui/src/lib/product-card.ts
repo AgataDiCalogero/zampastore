@@ -6,7 +6,7 @@ import {
   Output,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -15,7 +15,13 @@ import { Product } from '@zampa/shared';
 @Component({
   selector: 'app-product-card',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardModule, ButtonModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    CardModule,
+    ButtonModule,
+    NgOptimizedImage,
+  ],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

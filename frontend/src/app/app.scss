@@ -159,6 +159,12 @@
   white-space: nowrap;
 }
 
+.desktop-auth-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
 .mobile-toggle {
   display: none;
   color: var(--text-inverse);
@@ -394,19 +400,107 @@
   outline: none;
 }
 
-.mobile-nav-link--cta,
-.mobile-nav-button--cta {
-  margin-top: auto;
-  color: #5d4000;
-  font-weight: 700;
-  background: linear-gradient(135deg, #ffd54f 0%, #ffca28 100%);
-  border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.35);
+/* Mobile Guest Header */
+.mobile-guest-header {
+  width: 100%;
 }
 
-.mobile-nav-link--cta:hover,
-.mobile-nav-button--cta:hover {
-  background: linear-gradient(135deg, #ffca28 0%, #ffb300 100%);
+.welcome-text {
+  margin-bottom: var(--space-md);
+}
+
+.welcome-text strong {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.welcome-text p {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.mobile-auth-actions-single {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.btn-mobile-auth-primary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 1rem;
+  background: var(--color-cta);
+  color: var(--color-cta-text);
+  border: 1px solid var(--color-cta-dark);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: translateY(1px);
+    background: var(--color-cta-dark);
+  }
+}
+
+.auth-fallback {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+
+  a {
+    color: #ffffff;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+/* Remove old styles */
+.mobile-auth-actions,
+.btn-mobile-auth {
+  display: none !important;
+}
+
+/* Mobile User Header */
+.mobile-user-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.greeting {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.btn-logout-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.mobile-nav-link--cta,
+.mobile-nav-button--cta {
+  display: none !important; /* Hide old separate buttons if any remain */
 }
 
 .nav-badge {

@@ -45,12 +45,21 @@ export class App {
   private readonly document = inject(DOCUMENT);
   private readonly title = inject(Title);
   private readonly meta = inject(Meta);
+  protected readonly user = this.authService.authState;
   protected readonly mobileMenuOpen = signal(false);
   private readonly navLinks = computed(() => this.buildNavLinks());
+
+  // Desktop links: exclude auth (handled separately in template)
   protected readonly desktopLinks = computed(() =>
     this.navLinks().filter((link) => link.id !== 'auth'),
   );
-  protected readonly mobileLinks = computed(() => this.navLinks());
+
+  // Mobile links: exclude auth (handled in dynamic header)
+  protected readonly mobileLinks = computed(() =>
+    this.navLinks().filter((link) => link.id !== 'auth'),
+  );
+
+  // Auth link for desktop only (if needed for migration, otherwise unused)
   protected readonly authLink = computed(() =>
     this.navLinks().find((link) => link.id === 'auth'),
   );
@@ -134,7 +143,7 @@ export class App {
     this.closeMobileMenu();
   }
 
-  private performLogout(): void {
+  protected performLogout(): void {
     this.authService.logout().subscribe({
       next: () => {
         void this.router.navigateByUrl('/');

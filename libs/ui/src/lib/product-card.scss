@@ -78,19 +78,12 @@
   z-index: 5;
 }
 
-:host
-  ::ng-deep
-  .product-card.p-card:hover
-  .product-card-media.has-secondary
-  .secondary-image {
+/* Hover effect scoped to the image container only */
+.product-card-media.has-secondary:hover .secondary-image {
   opacity: 1;
 }
 
-:host
-  ::ng-deep
-  .product-card.p-card:hover
-  .product-card-media.has-secondary
-  .primary-image {
+.product-card-media.has-secondary:hover .primary-image {
   opacity: 0;
 }
 

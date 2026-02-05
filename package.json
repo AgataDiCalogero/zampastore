@@ -5,6 +5,7 @@
   "scripts": {
     "backend:serve": "nx run backend:serve",
     "frontend:serve": "nx run frontend:serve",
+    "start:all": "concurrently -n \"API,Piattaforma\" -c \"blue,magenta\" \"nx run backend:serve\" \"wait-on tcp:localhost:3333 && nx run frontend:serve\"",
     "dev": "concurrently \"npm run backend:serve\" \"npm run frontend:serve\"",
     "check": "nx run-many -t lint test typecheck build e2e --configuration=ci --skip-nx-cache",
     "e2e": "nx run frontend-e2e:e2e --configuration=ci --watch=false",

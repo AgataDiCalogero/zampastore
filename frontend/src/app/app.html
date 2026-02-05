@@ -87,28 +87,28 @@
           Pagamenti sicuri
         </span>
       </div>
-      @if (authLink(); as auth) { @if (auth.routerLink) {
-      <a
-        class="desktop-nav-link desktop-nav-link--cta menubar-auth"
-        [routerLink]="auth.routerLink"
-      >
-        @if (auth.icon) {
-        <i class="{{ auth.icon }}"></i>
-        }
-        <span>{{ auth.label }}</span>
-      </a>
-      } @else {
+      @if (user()) {
+      <!-- User State: Logout -->
       <button
         type="button"
         class="desktop-nav-link desktop-nav-link--cta menubar-auth"
-        (click)="handleMobileAction(auth.command)"
+        (click)="handleMobileAction(performLogout.bind(this))"
       >
-        @if (auth.icon) {
-        <i class="{{ auth.icon }}"></i>
-        }
-        <span>{{ auth.label }}</span>
+        <i class="pi pi-sign-out"></i>
+        <span>Esci</span>
       </button>
-      } }
+      } @else {
+      <!-- Guest State: Login + Register -->
+      <div class="desktop-auth-group">
+        <a
+          class="desktop-nav-link desktop-nav-link--cta menubar-auth"
+          routerLink="/login"
+        >
+          <i class="pi pi-user"></i>
+          <span>Accedi</span>
+        </a>
+      </div>
+      }
       <button
         pButton
         type="button"
@@ -135,11 +135,44 @@
   [attr.aria-hidden]="!mobileMenuOpen()"
 >
   <div class="mobile-nav-header">
-    <span>Menu</span>
+    @if (user(); as u) {
+    <div class="mobile-user-header">
+      <span class="greeting">Ciao, {{ u.name || 'Utente' }}!</span>
+      <button
+        type="button"
+        class="btn-logout-link"
+        (click)="handleMobileAction(performLogout.bind(this))"
+      >
+        Esci
+      </button>
+    </div>
+    } @else {
+    <div class="mobile-guest-header amazon-style">
+      <div class="welcome-text">
+        <strong>Ciao, Accedi</strong>
+        <p>Account e liste</p>
+      </div>
+      <div class="mobile-auth-actions-single">
+        <a
+          class="btn-mobile-auth-primary"
+          routerLink="/login"
+          (click)="closeMobileMenu()"
+        >
+          Accedi al tuo account
+        </a>
+        <div class="auth-fallback">
+          <span>Nuovo cliente?</span>
+          <a routerLink="/registrazione" (click)="closeMobileMenu()"
+            >Inizia qui.</a
+          >
+        </div>
+      </div>
+    </div>
+    }
     <button
       pButton
       type="button"
-      class="p-button-text"
+      class="p-button-text close-btn"
       icon="pi pi-times"
       aria-label="Chiudi menu"
       (click)="closeMobileMenu()"

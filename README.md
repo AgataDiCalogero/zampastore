@@ -1,122 +1,144 @@
-# ZampaStore 🐾
+🐾 Zampastore - E-commerce Full Stack Moderno
 
-ZampaStore è un e-commerce moderno e scalabile dedicato al benessere di cani e gatti.
-Realizzato come **Enterprise Monorepo** con Nx, dimostra un'architettura **Full Stack** avanzata (Angular 21+ & Node.js).
+Progetto Finale Master Full Stack Development - Start2Impact University
 
-![ZampaStore Preview](https://via.placeholder.com/1200x600?text=ZampaStore+Preview)
-_(Sostituire con screenshot reale)_
+Un'architettura Enterprise-grade per un e-commerce scalabile, costruito con le best practices del 2024/2025.
+Deployment: Full Serverless su Vercel con Database TiDB Cloud.
 
-## 🚀 Tech Stack
+🌟 Visione del Progetto
 
-### Frontend
+Zampastore è una simulazione di un ambiente di produzione reale. L'obiettivo è stato abbandonare l'architettura monolitica classica a favore di un approccio Monorepo modulare con Nx, separando chiaramente le responsabilità tra feature, UI e logica di business.
 
-- **Framework**: Angular 21+ (Signals, Standalone Components, @defer)
-- **Styling**: PrimeNG + PrimeFlex
-- **State Management**: Reactive State with Signals & RxJS
-- **Performance**: OnPush Strategy, Lazy Loading
+Key Features
 
-### Backend
+Architettura a Librerie: Il codice è organizzato in librerie verticali riutilizzabili (libs/auth, libs/products, libs/cart) per garantire manutenibilità e scalabilità.
 
-- **Runtime**: Node.js (Express)
-- **Database**: MySQL con Drizzle ORM
-- **Security**: Helmet, Rate Limiting, Zod Validation, CSRF Protection
-- **Architecture**: Service-Repository Pattern, Centralized Error Handling
+Angular Moderno: Utilizzo intensivo di Standalone Components, Signals per la gestione reattiva dello stato (senza overhead di Zone.js) e il nuovo Control Flow (@if, @for).
 
-### Tooling
+Backend Serverless: API RESTful in Node.js/Express ottimizzate per l'esecuzione in ambiente Serverless su Vercel, garantendo costi ridotti e scaling automatico.
 
-- **Monorepo**: Nx
-- **Testing**: Cypress (E2E), Vitest (Unit)
-- **CI/CD**: Ready for GitHub Actions
+Database Distribuito: Persistenza dati affidata a TiDB (MySQL compatible), un database NewSQL cloud-native per performance elevate.
 
-## 🛠️ Installazione
+Sicurezza & Qualità: Autenticazione JWT (HttpOnly Cookies), protezione CSRF, Rate Limiting e validazione rigida dei dati con Zod.
 
-1. **Clona il repository**:
+🛠️ Tech Stack
 
-   ```bash
-   git clone https://github.com/tuo-user/zampastore.git
-   cd zampastore
-   ```
+Frontend (apps/frontend)
 
-2. **Installa le dipendenze**:
+Framework: Angular 17+
 
-   ```bash
-   npm install
-   ```
+Styling: Tailwind CSS + PrimeNG (per componenti UI complessi).
 
-   _Nota: Cypress è bloccato alla versione 13.6.0 per compatibilità Windows._
+State Management: Angular Signals (nativo).
 
-3. **Configura l'ambiente**:
-   Copia `.env.example` in `.env` e configura le credenziali del database.
+Architecture: Pattern Smart (Feature) vs Dumb (UI) Components.
 
-   ```bash
-   cp .env.example .env
-   ```
+Backend (apps/backend)
 
-4. **Avvia il Database**:
-   Assicurati di avere un'istanza MySQL in esecuzione.
-   ```bash
-   # Push dello schema
-   npx nx run backend:db-push
-   ```
-   Al primo avvio il backend esegue il seed dei prodotti automaticamente.
+Runtime: Node.js (adattato per Vercel Serverless Functions).
 
-## ▶️ Avvio Sviluppo
+Framework: Express.js.
 
-Per avviare **Frontend** e **Backend** in parallelo:
+Database: TiDB Cloud (Protocollo MySQL).
+
+ORM: Drizzle ORM (Type-safe SQL).
+
+Tooling & DevOps
+
+Monorepo: Nx Workspace.
+
+Testing: Cypress (E2E).
+
+CI/CD: GitHub Actions & Vercel.
+
+🚀 Guida all'Installazione
+
+Prerequisiti
+
+Node.js (v20 o superiore)
+
+Account TiDB Cloud (o un database MySQL locale per lo sviluppo offline).
+
+1. Clona la repository
+
+git clone https://github.com/agatadicalogero/zampastore.git
+cd zampastore
+
+2. Installazione Dipendenze
+
+npm install
+
+3. Configurazione Variabili d'Ambiente
+
+Crea un file .env nella root del progetto (non committarlo mai!):
+
+# URL di connessione a TiDB (o MySQL locale)
+
+# Esempio TiDB: mysql://user:password@gateway.tidb.cloud:4000/zampastore?ssl={"minVersion":"TLSv1.2"}
+
+DATABASE_URL="la_tua_stringa_di_connessione"
+
+# Chiave segreta per la firma dei token JWT
+
+JWT_SECRET="una_stringa_molto_lunga_e_segreta"
+
+# Porta per il server locale (default 3000)
+
+PORT=3000
+
+4. Setup Database
+
+Esegui le migrazioni Drizzle per creare le tabelle nel database e popolarlo con dati di test:
+
+# Esegue le migrazioni
+
+npx nx run backend:db-migrate
+
+# Popola il DB con prodotti e utenti di prova
+
+npx nx run backend:db-seed
+
+5. Avvio Sviluppo Locale
+
+Lancia frontend e backend in parallelo con un unico comando:
 
 ```bash
-npm run dev
+npm run start:all
 ```
 
-- **Frontend**: http://localhost:4200
-- **Backend**: http://localhost:3333/api
-- **Swagger Docs**: http://localhost:3333/api/docs
+Questo avvierà:
 
-## 🔐 Credenziali di Test
+- Backend API: http://localhost:3000
+- Frontend: http://localhost:4200 (attende che il backend sia pronto)
 
-| Ruolo      | Email          | Password |
-| ---------- | -------------- | -------- |
-| **Utente** | user@zampa.it  | 123456   |
-| **Admin**  | admin@zampa.it | 123456   |
+🧪 Testing
 
-## 🧪 Testing
+Il progetto include una suite di test End-to-End con Cypress per verificare i flussi critici (es. acquisto, login).
 
-Esegui i test Unitari (tutti i progetti che espongono `test`):
+# Esegui i test E2E in modalità headless
 
-```bash
-npx nx run-many -t test
-```
+npx nx e2e frontend-e2e
 
-Esegui i test E2E (avvia frontend+backend via Nx e attende l'API):
+📂 Struttura del Codice (Nx Monorepo)
 
-```bash
-npm run e2e:local
-```
-Se vuoi eseguire solo Cypress (con server avviati manualmente):
-```bash
-npm run e2e:cypress
-```
+zampastore/
+├── apps/
+│ ├── frontend/ # SPA Angular
+│ └── backend/ # API Express (Serverless entry point)
+├── libs/
+│ ├── auth/ # Login, Register, Guards, Interceptors
+│ ├── cart/ # Logica del carrello e gestione stato
+│ ├── products/ # Catalogo prodotti e dettagli
+│ ├── orders/ # Gestione ordini utente
+│ └── ui/ # Componenti riutilizzabili (Card, Bottoni)
+└── tools/ # Configurazioni Nx
 
-### 🏁 Check Finale (Mega Check)
+👩💻 Autore
 
-Per verificare che tutto sia perfetto prima di un commit (Lint, Test, Typecheck, Build, E2E):
+Agata Di Calogero
 
-```bash
-npm run check
-```
+Full Stack Developer
 
-## 📐 Architettura
+LinkedIn | GitHub
 
-Il progetto segue la struttura **Nx Enterprise Monorepo**:
-
-- **frontend/**: Applicazione Angular principale.
-- **backend/**: API REST Node.js.
-- **apps/frontend-e2e**: Test E2E con Cypress.
-- **libs/**: Logica di business riutilizzabile, divisa in:
-  - `feature`: Componenti intelligenti e pagine.
-  - `ui`: Componenti di presentazione (dumb).
-  - `data-access`: Servizi API, State management e Tipi.
-
----
-
-Developed with ❤️ by [Agata]
+Progetto sviluppato come tesi finale per il Master in Full Stack Development - Start2Impact University.

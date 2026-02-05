@@ -16,7 +16,11 @@
   --primary-color-text: var(--text-inverse);
   --primary-dark-color: var(--color-primary-dark);
   --primary-light-color: var(--color-primary-light);
+  --primary-light-color: var(--color-primary-light);
   --primary-hover-color: var(--color-primary-light);
+
+  --color-error: #ba1a1a; /* Rich red for errors */
+  --color-danger: var(--color-error);
 
   --surface-0: #f7f4f0;
   --surface-50: #f1ede8;
@@ -83,7 +87,7 @@ h6 {
 
 .page {
   min-height: calc(100vh - 4rem);
-  padding: var(--space-3xl) 0 var(--space-4xl);
+  padding: var(--space-xl) 0 var(--space-4xl); /* Reduced top padding */
   background: var(--surface-base);
 }
 
@@ -206,5 +210,85 @@ h6 {
   &:hover {
     background: var(--surface-100);
     color: var(--text-primary);
+  }
+}
+/* Global Confirmation Dialog Overrides */
+.p-confirm-dialog-mask {
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4) !important;
+}
+
+.p-dialog {
+  border-radius: 24px !important;
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.25) !important;
+  border: none !important;
+  overflow: hidden;
+  font-family: var(--font-sans);
+}
+
+.p-dialog .p-dialog-header {
+  background: var(--surface-0);
+  border-bottom: none;
+  padding: 1.5rem 1.5rem 0.5rem;
+
+  .p-dialog-title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+  }
+}
+
+.p-dialog .p-dialog-content {
+  background: var(--surface-0);
+  padding: 0 1.5rem 1.5rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+
+  i.pi {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+
+    &.pi-exclamation-triangle {
+      color: #eab308; /* Amber for warnings */
+    }
+  }
+}
+
+.p-dialog .p-dialog-footer {
+  background: var(--surface-0);
+  border-top: none;
+  padding: 1rem 1.5rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+
+  button {
+    border-radius: 999px;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+
+    &.p-confirm-dialog-reject {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid transparent;
+
+      &:hover {
+        background: var(--surface-100);
+        color: var(--text-primary);
+      }
+    }
+
+    &.p-confirm-dialog-accept {
+      background: var(--color-cta);
+      border: 1px solid var(--color-cta-dark);
+      color: var(--color-cta-text);
+
+      &:hover {
+        background: var(--color-cta-dark);
+      }
+    }
   }
 }
