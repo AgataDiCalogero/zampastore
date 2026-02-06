@@ -1,58 +1,69 @@
 @if (state$ | async; as state) { @if (state.status === 'ready') {
 <section class="orders-page section">
-  <p-card header="I miei ordini" class="orders-card">
-    @defer (on viewport) {
-    <p-table
-      [value]="state.orders"
-      dataKey="id"
-      responsiveLayout="stack"
-      breakpoint="900px"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th scope="col">Ordine</th>
-          <th scope="col">Data</th>
-          <th scope="col">Totale</th>
-          <th scope="col">Stato</th>
-          <th scope="col">Azioni</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-order>
-        <tr>
-          <td>
-            <span class="order-id">#{{ getShortId(order.id) }}</span>
-          </td>
-          <td>{{ order.createdAt | date: 'dd/MM/yyyy' }}</td>
-          <td>{{ order.totalCents / 100 | number: '1.2-2' }} €</td>
-          <td>
-            <span
-              class="status-chip"
-              [class]="'status-chip status-' + statusFor(order.status).tone"
-            >
-              {{ statusFor(order.status).label }}
-            </span>
-          </td>
-          <td>
-            <button
-              pButton
-              type="button"
-              class="p-button-secondary orders-detail-button"
-              [routerLink]="['/ordini', order.id]"
-            >
-              Dettagli
-            </button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-    } @placeholder {
-    <div class="orders-skeleton">
-      @for (row of skeletonRows; track $index) {
-      <p-skeleton height="32px"></p-skeleton>
+  <div class="orders-container">
+    <div class="orders-header">
+      <h2 class="page-title">I miei ordini</h2>
+      <button
+        pButton
+        icon="pi pi-refresh"
+        class="p-button-text p-button-rounded"
+        (click)="refresh()"
+      ></button>
+    </div>
+
+    @if (state.orders.length === 0) {
+    <div class="orders-empty">
+      <div class="empty-state">
+        <div class="empty-icon-wrapper">
+          <i class="pi pi-shopping-bag"></i>
+        </div>
+        <h3>Nessun ordine</h3>
+        <p>Non hai ancora effettuato ordini.</p>
+        <button
+          pButton
+          type="button"
+          label="Inizia lo shopping"
+          class="p-button-primary"
+          [routerLink]="['/catalogo']"
+        ></button>
+      </div>
+    </div>
+    } @else {
+    <div class="orders-list">
+      @for (order of state.orders; track order.id) {
+      <div class="order-strip">
+        <!-- Left: ID & Date -->
+        <div class="order-main-info">
+          <span class="order-id">#{{ getShortId(order.id) }}</span>
+          <span class="order-date"
+            >{{ order.createdAt | date: 'dd MMM yyyy' }}</span
+          >
+        </div>
+
+        <!-- Middle: Status -->
+        <div class="order-status-wrapper">
+          <span
+            class="status-badge"
+            [class]="'status-' + statusFor(order.status).tone"
+          >
+            {{ statusFor(order.status).label }}
+          </span>
+        </div>
+
+        <!-- Right: Total & Action -->
+        <div class="order-summary-action">
+          <span class="order-total"
+            >{{ order.totalCents / 100 | number: '1.2-2' }} €</span
+          >
+          <a [routerLink]="['/ordini', order.id]" class="detail-link">
+            Dettagli <i class="pi pi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
       }
     </div>
     }
-  </p-card>
+  </div>
 </section>
 } @else if (state.status === 'empty') {
 <section class="orders-empty section">

@@ -13,7 +13,7 @@ export type ShippingOption = {
   subtitle: string;
 };
 
-type CheckoutForm = {
+export type CheckoutForm = {
   email: FormControl<string>;
   firstName: FormControl<string>;
   lastName: FormControl<string>;
@@ -87,7 +87,6 @@ export class CheckoutFacade {
   private readonly STORAGE_KEY = 'checkout_form_state';
 
   constructor() {
-    // Restore state
     const savedState = localStorage.getItem(this.STORAGE_KEY);
     if (savedState) {
       try {
@@ -103,6 +102,51 @@ export class CheckoutFacade {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(value));
     });
 
+    // Pre-fill from Auth (via CartService to respect module boundaries)
+    effect(() => {
+      const user = this.cartService.authUser();
+      if (user) {
+        // We use 'any' or a specific shape because patches expects values, not Controls
+        const patches: Record<string, string> = {};
+
+        // Parse name parts
+        const fullName = (user.name ?? '').trim();
+        const [firstName, ...lastParts] = fullName
+          ? fullName.split(/\s+/)
+          : [''];
+        const lastName = lastParts.join(' ');
+
+        // Smart Merge: Only fill if field is PRISTINE (untouched) and EMPTY
+        // This ensures we never overwrite user edits or deliberate deletions.
+
+        const controls = this.form.controls;
+
+        if (controls.email.pristine && !controls.email.value && user.email) {
+          patches['email'] = user.email;
+        }
+
+        if (
+          controls.firstName.pristine &&
+          !controls.firstName.value &&
+          firstName
+        ) {
+          patches['firstName'] = firstName;
+        }
+
+        if (
+          controls.lastName.pristine &&
+          !controls.lastName.value &&
+          lastName
+        ) {
+          patches['lastName'] = lastName;
+        }
+
+        if (Object.keys(patches).length > 0) {
+          this.form.patchValue(patches);
+        }
+      }
+    });
+
     effect(() => {
       const items = this.cartItems();
       this.cartSnapshot = items;
@@ -113,9 +157,6 @@ export class CheckoutFacade {
   }
 
   async checkStockAvailability(): Promise<boolean> {
-    // Simulation: In a real app, this would call an API /api/stock/check
-    // For this refactor, we simulate a check that always passes unless specific condition
-    // or we could add a check agains the product list if we had stock info there.
     return new Promise((resolve) => setTimeout(() => resolve(true), 800));
   }
 
@@ -137,7 +178,6 @@ export class CheckoutFacade {
     this.errorMessage.set(null);
     this.submitting.set(true);
 
-    // Stock Check Step
     this.checkStockAvailability().then((isAvailable) => {
       if (!isAvailable) {
         this.errorMessage.set('Alcuni prodotti non sono più disponibili.');

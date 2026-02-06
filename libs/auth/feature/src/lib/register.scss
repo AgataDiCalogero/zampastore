@@ -6,7 +6,7 @@
 }
 
 .auth-shell {
-  width: min(960px, 100%);
+  width: min(var(--container-max), 100%);
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   gap: var(--space-2xl);
@@ -113,7 +113,7 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-md);
-  background-color: #fee2e2;
+  background-color: var(--color-danger-bg);
   color: var(--color-error);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);

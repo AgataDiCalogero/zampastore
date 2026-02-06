@@ -132,10 +132,10 @@
 
 /* Luxury Card Styling */
 :host ::ng-deep .product-detail-card.p-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08); /* Premium soft shadow */
+  box-shadow: var(--shadow-2); /* Premium soft shadow */
 }
 
 :host ::ng-deep .product-detail-card .p-card-body {
@@ -159,7 +159,7 @@
   padding: var(--space-lg);
   min-height: 280px;
   max-height: 360px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--surface-border);
 }
 
 .gallery-image-wrapper {
@@ -183,13 +183,13 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--mask-bg);
   border: none;
   border-radius: 50%;
   width: 44px;
   height: 44px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-1);
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -198,8 +198,8 @@
   z-index: 2;
 
   &:hover {
-    background: white;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    background: var(--surface-0);
+    box-shadow: var(--shadow-2);
     transform: translateY(-50%) scale(1.05);
   }
 
@@ -220,7 +220,6 @@
   right: var(--space-sm);
 }
 
-/* Thumbnails */
 .gallery-thumbnails {
   display: flex;
   gap: var(--space-sm);
@@ -245,12 +244,12 @@
   &:hover {
     border-color: var(--color-primary-light);
     transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-1);
   }
 
   &.active {
     border-color: var(--color-primary);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-2);
   }
 
   img {

@@ -21,6 +21,23 @@
 
   --color-error: #ba1a1a; /* Rich red for errors */
   --color-danger: var(--color-error);
+  --color-success: #166534;
+  --color-success-bg: #dcfce7;
+  --color-warning: #854d0e;
+  --color-warning-bg: #fef9c3;
+  --color-info: #075985;
+  --color-info-bg: #e0f2fe;
+  --color-danger-bg: #fee2e2;
+
+  /* Semantic Status Colors (Traffic Light) */
+  --bg-success: #ecfdf5;
+  --color-success: #15803d;
+  --bg-warning: #fefce8;
+  --color-warning: #a16207;
+  --bg-danger: #fef2f2;
+  --color-danger: #b91c1c;
+  --bg-info: #eff6ff;
+  --color-info: #1d4ed8;
 
   --surface-0: #f7f4f0;
   --surface-50: #f1ede8;
@@ -57,6 +74,11 @@
   --content-border-radius: var(--radius-md);
   --focus-ring: 0 0 0 2px var(--color-accent);
   --mask-bg: rgba(8, 58, 79, 0.2);
+
+  /* Component Tokens */
+  --product-card-min-width: 14rem;
+  --product-card-aspect-ratio: 4/3;
+  --product-card-obj-fit: contain;
 }
 
 body {
@@ -139,6 +161,13 @@ h6 {
 .form-field {
   display: grid;
   gap: var(--space-sm);
+  position: relative;
+
+  /* Ensure errors have breathing room */
+  .form-error {
+    margin-top: 4px;
+    margin-bottom: 2px;
+  }
 }
 
 .form-field label {
@@ -290,5 +319,56 @@ h6 {
         background: var(--color-cta-dark);
       }
     }
+  }
+}
+
+/* Premium Password Panel & Traffic Light Validation */
+:host ::ng-deep .p-password-panel {
+  background: var(--surface-0) !important;
+  border: 1px solid var(--surface-border) !important;
+  box-shadow: var(--shadow-2) !important;
+  border-radius: var(--radius-md) !important;
+  padding: var(--space-md) !important;
+  min-width: 100%; /* Prevent squashing */
+  margin-top: 4px; /* Space from input */
+
+  /* Meter Bar Background */
+  .p-password-meter {
+    background: var(--surface-200) !important;
+    height: 6px !important;
+    border-radius: 4px !important;
+    margin-bottom: var(--space-sm) !important;
+
+    /* Active Strength Colors (Traffic Light) */
+    .p-password-strength {
+      border-radius: 4px !important;
+      transition:
+        width 0.3s ease,
+        background 0.3s ease;
+
+      &.weak {
+        background: var(--color-danger) !important;
+        box-shadow: 0 0 8px
+          color-mix(in srgb, var(--color-danger), transparent 50%);
+      }
+      &.medium {
+        background: var(--color-warning) !important;
+        box-shadow: 0 0 8px
+          color-mix(in srgb, var(--color-warning), transparent 50%);
+      }
+      &.strong {
+        background: var(--color-success) !important;
+        box-shadow: 0 0 8px
+          color-mix(in srgb, var(--color-success), transparent 50%);
+      }
+    }
+  }
+
+  /* Info Text (Debole/Media/Forte) */
+  .p-password-info {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: capitalize;
   }
 }

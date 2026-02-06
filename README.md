@@ -1,144 +1,136 @@
-🐾 Zampastore - E-commerce Full Stack Moderno
+# ZampaStore
 
-Progetto Finale Master Full Stack Development - Start2Impact University
+![CI](https://github.com/agatadicalogero/zampastore/actions/workflows/ci.yml/badge.svg)
 
-Un'architettura Enterprise-grade per un e-commerce scalabile, costruito con le best practices del 2024/2025.
-Deployment: Full Serverless su Vercel con Database TiDB Cloud.
+Zampastore is a full-stack e-commerce solution architected as an Rx-based Monorepo. The system simulates a real-world, scalable architecture designed for high performance and maintainability, strictly separating Feature, UI, and Data Access layers.
 
-🌟 Visione del Progetto
+## 🚀 Overview
 
-Zampastore è una simulazione di un ambiente di produzione reale. L'obiettivo è stato abbandonare l'architettura monolitica classica a favore di un approccio Monorepo modulare con Nx, separando chiaramente le responsabilità tra feature, UI e logica di business.
+- **Architecture**: Nx Monorepo with strict module boundaries.
+- **Frontend**: Angular 18+ (Standalone Components, Signals), PrimeNG, Tailwind CSS.
+- **Backend**: Express.js (Serverless-ready), OpenAPI.
+- **Data**: Drizzle ORM, TiDB / MySQL persistence.
+- **Security**: HttpOnly Sessions, CSRF Protection, Zod Validation.
 
-Key Features
+## 🏗️ Architecture
 
-Architettura a Librerie: Il codice è organizzato in librerie verticali riutilizzabili (libs/auth, libs/products, libs/cart) per garantire manutenibilità e scalabilità.
+The project follows a Domain-Driven Design approach:
 
-Angular Moderno: Utilizzo intensivo di Standalone Components, Signals per la gestione reattiva dello stato (senza overhead di Zone.js) e il nuovo Control Flow (@if, @for).
+```mermaid
+flowchart LR
+  U[User Agent] --> F[Angular Frontend]
+  F -->|REST / OpenAPI| B[Express Backend]
+  B --> D[(TiDB / MySQL)]
+  F -.-> S[Shared Contracts]
+  B -.-> S
+```
 
-Backend Serverless: API RESTful in Node.js/Express ottimizzate per l'esecuzione in ambiente Serverless su Vercel, garantendo costi ridotti e scaling automatico.
+### Directory Structure
 
-Database Distribuito: Persistenza dati affidata a TiDB (MySQL compatible), un database NewSQL cloud-native per performance elevate.
+```text
+zampastore/
+├── apps/               # Application Entry Points
+│   ├── backend/        # API Gateway & Logic
+│   └── frontend/       # Angular SPA
+├── libs/               # Domain Libraries
+│   ├── auth/           # Authentication Domain
+│   ├── cart/           # Shopping Cart Domain
+│   ├── checkout/       # Order Placement Domain
+│   ├── orders/         # Order Management Domain
+│   ├── products/       # Catalogue Domain
+│   └── ui/             # Shared Design System
+└── shared/             # Cross-tier Interfaces (DTOs)
+```
 
-Sicurezza & Qualità: Autenticazione JWT (HttpOnly Cookies), protezione CSRF, Rate Limiting e validazione rigida dei dati con Zod.
+## 🛠️ Quick Start
 
-🛠️ Tech Stack
+Follow these steps to set up the environment locally.
 
-Frontend (apps/frontend)
+**1. Install Dependencies**
 
-Framework: Angular 17+
-
-Styling: Tailwind CSS + PrimeNG (per componenti UI complessi).
-
-State Management: Angular Signals (nativo).
-
-Architecture: Pattern Smart (Feature) vs Dumb (UI) Components.
-
-Backend (apps/backend)
-
-Runtime: Node.js (adattato per Vercel Serverless Functions).
-
-Framework: Express.js.
-
-Database: TiDB Cloud (Protocollo MySQL).
-
-ORM: Drizzle ORM (Type-safe SQL).
-
-Tooling & DevOps
-
-Monorepo: Nx Workspace.
-
-Testing: Cypress (E2E).
-
-CI/CD: GitHub Actions & Vercel.
-
-🚀 Guida all'Installazione
-
-Prerequisiti
-
-Node.js (v20 o superiore)
-
-Account TiDB Cloud (o un database MySQL locale per lo sviluppo offline).
-
-1. Clona la repository
-
-git clone https://github.com/agatadicalogero/zampastore.git
-cd zampastore
-
-2. Installazione Dipendenze
-
+```bash
 npm install
+```
 
-3. Configurazione Variabili d'Ambiente
+**2. Configure Environment**
 
-Crea un file .env nella root del progetto (non committarlo mai!):
+```bash
+cp .env.example .env
+```
 
-# URL di connessione a TiDB (o MySQL locale)
+_Note: Populate `.env` with your database credentials._
 
-# Esempio TiDB: mysql://user:password@gateway.tidb.cloud:4000/zampastore?ssl={"minVersion":"TLSv1.2"}
+**3. Initialize Database**
 
-DATABASE_URL="la_tua_stringa_di_connessione"
+```bash
+npx nx run backend:db-push
+```
 
-# Chiave segreta per la firma dei token JWT
-
-JWT_SECRET="una_stringa_molto_lunga_e_segreta"
-
-# Porta per il server locale (default 3000)
-
-PORT=3000
-
-4. Setup Database
-
-Esegui le migrazioni Drizzle per creare le tabelle nel database e popolarlo con dati di test:
-
-# Esegue le migrazioni
-
-npx nx run backend:db-migrate
-
-# Popola il DB con prodotti e utenti di prova
-
-npx nx run backend:db-seed
-
-5. Avvio Sviluppo Locale
-
-Lancia frontend e backend in parallelo con un unico comando:
+**4. Start Application**
 
 ```bash
 npm run start:all
 ```
 
-Questo avvierà:
+## ⚙️ Configuration (.env)
 
-- Backend API: http://localhost:3000
-- Frontend: http://localhost:4200 (attende che il backend sia pronto)
+Ensure your `.env` file is configured correctly.
 
-🧪 Testing
+```dotenv
+# Application
+CLIENT_URL=http://localhost:4200
+PORT=3333
 
-Il progetto include una suite di test End-to-End con Cypress per verificare i flussi critici (es. acquisto, login).
+# Database (TiDB / MySQL)
+TIDB_HOST=127.0.0.1
+TIDB_PORT=4000
+TIDB_USER=root
+TIDB_PASSWORD=password
+TIDB_DATABASE=zampastore
+TIDB_SSL_MODE=disable
+```
 
-# Esegui i test E2E in modalità headless
+## 📜 Commands
 
-npx nx e2e frontend-e2e
+**Start All Services**
 
-📂 Struttura del Codice (Nx Monorepo)
+```bash
+npm run start:all
+```
 
-zampastore/
-├── apps/
-│ ├── frontend/ # SPA Angular
-│ └── backend/ # API Express (Serverless entry point)
-├── libs/
-│ ├── auth/ # Login, Register, Guards, Interceptors
-│ ├── cart/ # Logica del carrello e gestione stato
-│ ├── products/ # Catalogo prodotti e dettagli
-│ ├── orders/ # Gestione ordini utente
-│ └── ui/ # Componenti riutilizzabili (Card, Bottoni)
-└── tools/ # Configurazioni Nx
+**Start Frontend Only**
 
-👩💻 Autore
+```bash
+npm run frontend:serve
+```
 
-Agata Di Calogero
+**Start Backend Only**
 
-Full Stack Developer
+```bash
+npm run backend:serve
+```
 
-LinkedIn | GitHub
+**Run Full Check (Lint, Test, Build)**
 
-Progetto sviluppato come tesi finale per il Master in Full Stack Development - Start2Impact University.
+```bash
+npm run check
+```
+
+**Reset Database**
+
+```bash
+npx nx run backend:db-reset
+```
+
+## 🔗 Endpoints
+
+| Service | URL |
+|BC|---|
+| **Frontend** | [http://localhost:4200](http://localhost:4200) |
+| **API** | [http://localhost:3333/api](http://localhost:3333/api) |
+| **Swagger** | [http://localhost:3333/api/docs](http://localhost:3333/api/docs) |
+
+---
+
+**Author**: Agata Di Calogero
+_Developed for Master in Full Stack Development - Start2Impact University_

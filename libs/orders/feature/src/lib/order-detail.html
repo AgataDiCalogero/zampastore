@@ -34,18 +34,46 @@
       </div>
     </div>
 
-    <h4>Spedizione</h4>
-    <div class="shipping-box">
-      <div>
-        {{ state.order.shippingAddress.firstName }} {{
-        state.order.shippingAddress.lastName }}
+    <div class="shipping-layout">
+      <!-- Sender Column -->
+      <div class="shipping-section">
+        <h4>Mittente</h4>
+        <div class="shipping-box sender-box">
+          <div class="shipping-icon">
+            <i class="pi pi-box"></i>
+          </div>
+          <div class="shipping-details">
+            <div class="shipping-name">ZampaStore</div>
+            <div class="shipping-addr">Via Roma 1</div>
+            <div class="shipping-city">20100 Milano (MI)</div>
+            <div class="shipping-country">Italia</div>
+          </div>
+        </div>
       </div>
-      <div>{{ state.order.shippingAddress.address }}</div>
-      <div>
-        {{ state.order.shippingAddress.postalCode }} {{
-        state.order.shippingAddress.city }}
+
+      <!-- Receiver Column -->
+      <div class="shipping-section">
+        <h4>Destinatario</h4>
+        <div class="shipping-box receiver-box">
+          <div class="shipping-icon">
+            <i class="pi pi-map-marker"></i>
+          </div>
+          <div class="shipping-details">
+            <div class="shipping-name">
+              {{ state.order.shippingAddress.firstName }} {{
+              state.order.shippingAddress.lastName }}
+            </div>
+            <div class="shipping-addr">
+              {{ state.order.shippingAddress.address }}
+            </div>
+            <div class="shipping-city">
+              {{ state.order.shippingAddress.postalCode }} {{
+              state.order.shippingAddress.city }} ({{
+              state.order.shippingAddress.country }})
+            </div>
+          </div>
+        </div>
       </div>
-      <div>{{ state.order.shippingAddress.country }}</div>
     </div>
 
     <h4>Prodotti</h4>

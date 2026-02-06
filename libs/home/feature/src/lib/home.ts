@@ -30,7 +30,7 @@ export class Home {
 
   protected readonly featuredState = toSignal(
     this.productService.getProducts().pipe(
-      map((products) => products.slice(0, 3)),
+      map((products) => products.slice(0, 4)),
       map((products) =>
         products.length > 0
           ? ({ status: 'ready', products } as const)
@@ -42,7 +42,7 @@ export class Home {
     { requireSync: true },
   );
 
-  protected readonly skeletonItems = Array.from({ length: 3 });
+  protected readonly skeletonItems = Array.from({ length: 4 });
 
   protected addToCart(product: Product): void {
     this.cartService.addToCart(product, 1);

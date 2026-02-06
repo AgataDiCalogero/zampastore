@@ -22,6 +22,7 @@ export class CartService {
   private readonly destroyRef = inject(DestroyRef);
   private lastUserId: string | null = null;
   private syncing = false;
+  readonly authUser = this.authService.authState;
 
   readonly cartTotal = computed(
     () =>

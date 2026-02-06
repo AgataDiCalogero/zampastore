@@ -34,6 +34,7 @@
                   type="text"
                   autocomplete="given-name"
                   formControlName="firstName"
+                  placeholder="es. Mario"
                 />
                 @if (form.controls.firstName.touched &&
                 form.controls.firstName.invalid) {
@@ -49,6 +50,7 @@
                   type="text"
                   autocomplete="family-name"
                   formControlName="lastName"
+                  placeholder="es. Rossi"
                 />
                 @if (form.controls.lastName.touched &&
                 form.controls.lastName.invalid) {
@@ -99,6 +101,7 @@
                   type="text"
                   autocomplete="address-level2"
                   formControlName="city"
+                  placeholder="es. Milano"
                 />
                 @if (form.controls.city.touched && form.controls.city.invalid) {
                 <small class="form-error">Richiesto</small>
