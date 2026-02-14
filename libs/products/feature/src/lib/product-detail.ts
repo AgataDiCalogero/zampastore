@@ -5,7 +5,7 @@ import {
   signal,
   computed,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ProductService } from '@zampa/products/data-access';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { map, of, startWith, switchMap } from 'rxjs';
@@ -29,6 +29,7 @@ import { UiFeedbackService } from '@zampa/ui';
     InputNumberModule,
     ReactiveFormsModule,
     SkeletonModule,
+    NgOptimizedImage,
   ],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',

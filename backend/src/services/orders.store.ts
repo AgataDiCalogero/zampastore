@@ -44,6 +44,9 @@ const toIsoString = (value: Date | string): string =>
 class MysqlOrdersStore implements OrdersStore {
   async createOrder(input: CreateOrderInput): Promise<void> {
     await db.transaction(async (tx) => {
+      // Sort items by productId to prevent deadlocks (deterministic locking order)
+      input.items.sort((a, b) => a.productId.localeCompare(b.productId));
+
       const createdAt = input.createdAt;
 
       for (const item of input.items) {

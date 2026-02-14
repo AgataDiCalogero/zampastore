@@ -51,6 +51,7 @@ export const appRoutes: Route[] = [
     path: 'ordine-confermato',
     loadComponent: () =>
       import('@zampa/checkout/feature').then((m) => m.CheckoutSuccess),
+    canActivate: [authGuard],
   },
   {
     path: '**',

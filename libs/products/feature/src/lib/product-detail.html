@@ -18,10 +18,16 @@
 
             <div class="gallery-image-wrapper">
               @if (images().length > 0) {
-              <img
-                [src]="images()[selectedImageIndex()]"
-                [alt]="state.product.name"
-              />
+              <div class="main-image-wrapper">
+                <img
+                  [ngSrc]="images()[selectedImageIndex()]"
+                  [alt]="state.product.name"
+                  class="main-image"
+                  fill
+                  priority
+                  (error)="handleImageError()"
+                />
+              </div>
               } @else {
               <div class="product-image-fallback">
                 <i class="pi pi-image"></i>

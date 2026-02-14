@@ -10,7 +10,7 @@
     "e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "concurrently --names \"api,web,e2e\" --kill-others --kill-others-on-fail --success command-e2e \"nx run backend:serve\" \"npx wait-on --log --timeout 300000 --httpTimeout 10000 --interval 1000 tcp:localhost:3333 && nx run frontend:serve\" \"npx wait-on --log --timeout 300000 --httpTimeout 10000 --interval 1000 tcp:localhost:3333 http-get://localhost:4200 && API_HEALTH_TIMEOUT_MS=300000 nx run frontend-e2e:cypress --configuration=ci --skipServe --watch=false\""
+        "command": "concurrently --names \"api,web,e2e\" --kill-others --kill-others-on-fail --success command-e2e \"nx run backend:serve\" \"npx wait-on --log --timeout 300000 --httpTimeout 10000 --interval 1000 tcp:localhost:3333 && nx run frontend:serve\" \"npx wait-on --log --timeout 300000 --httpTimeout 10000 --interval 1000 tcp:localhost:3333 http-get://localhost:4200 && npx -y cross-env API_HEALTH_TIMEOUT_MS=300000 nx run frontend-e2e:cypress --configuration=ci --skipServe --watch=false\""
       },
       "configurations": {}
     },

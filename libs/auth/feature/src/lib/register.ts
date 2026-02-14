@@ -15,6 +15,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '@zampa/auth/data-access';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -85,7 +86,10 @@ export class Register {
 
     this.authService
       .register({ username, email, password })
-      .pipe(finalize(() => this.submitting.set(false)))
+      .pipe(
+        finalize(() => this.submitting.set(false)),
+        takeUntilDestroyed(),
+      )
       .subscribe({
         next: () => {
           void this.router.navigateByUrl(returnUrl);

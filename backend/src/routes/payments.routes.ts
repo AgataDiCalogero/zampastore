@@ -31,10 +31,7 @@ const stripe =
   stripeKey && stripeKey.startsWith('sk_') && !isPlaceholderKey(stripeKey)
     ? new Stripe(stripeKey)
     : null;
-const stripeStrict =
-  process.env.STRIPE_STRICT === 'true' || process.env.NODE_ENV === 'production';
-const shouldFallbackOnStripeError =
-  !stripeStrict || !stripeKey || isPlaceholderKey(stripeKey);
+
 const clientUrl = env.clientUrl;
 
 type CreatedOrder = Awaited<ReturnType<typeof createOrder>>;
@@ -184,14 +181,7 @@ const handleStripeCheckout = async (
 ): Promise<void> => {
   // 1. Production Security Check
   if (!stripe) {
-    if (process.env.NODE_ENV === 'production') {
-      res.status(500).json({ message: 'Payment system configuration error' });
-      return;
-    }
-
-    // Fallback ONLY in Development
-    console.warn('⚠️ Stripe key missing. Faking success in DEV mode only.');
-    await markOrderPaidOr500(res, user.id, order.id, successUrl);
+    res.status(500).json({ message: 'Payment system configuration error' });
     return;
   }
 
@@ -221,11 +211,8 @@ const handleStripeCheckout = async (
 
     sendOrderPaidResponse(res, order.id, session.url);
   } catch (error) {
-    // In production we do NOT fallback if Stripe fails
-    if (process.env.NODE_ENV !== 'production' && shouldFallbackOnStripeError) {
-      await markOrderPaidOr500(res, user.id, order.id, successUrl);
-      return;
-    }
+    // We do NOT fallback if Stripe fails
+
     console.error('Stripe session error', error);
     res
       .status(500)

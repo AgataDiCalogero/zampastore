@@ -166,7 +166,7 @@ export class Cart {
     });
 
     group.controls.quantity.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
+      .pipe(debounceTime(800), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((qty) => {
         if (group.controls.quantity.invalid) {
           return;

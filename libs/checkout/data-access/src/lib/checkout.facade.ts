@@ -6,6 +6,7 @@ import {
   computed,
   PLATFORM_ID,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -123,17 +124,19 @@ export class CheckoutFacade {
       }
 
       // Save state on change
-      this.form.valueChanges.subscribe((value) => {
+      this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(value));
       });
     }
 
     // Update shipping cost when method changes
-    this.form.controls.shippingMethod.valueChanges.subscribe((value) => {
-      const option = this.shippingOptions.find((opt) => opt.value === value);
-      this.shippingCost.set(option?.cost ?? 0);
-      this.selectedShippingMethod.set(option);
-    });
+    this.form.controls.shippingMethod.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((value) => {
+        const option = this.shippingOptions.find((opt) => opt.value === value);
+        this.shippingCost.set(option?.cost ?? 0);
+        this.selectedShippingMethod.set(option);
+      });
 
     // Pre-fill from Auth (via CartService to respect module boundaries)
     effect(() => {
@@ -190,10 +193,6 @@ export class CheckoutFacade {
     });
   }
 
-  async checkStockAvailability(): Promise<boolean> {
-    return new Promise((resolve) => setTimeout(() => resolve(true), 800));
-  }
-
   submit(): void {
     if (this.submitting()) {
       return;
@@ -211,16 +210,7 @@ export class CheckoutFacade {
 
     this.errorMessage.set(null);
     this.submitting.set(true);
-
-    this.checkStockAvailability().then((isAvailable) => {
-      if (!isAvailable) {
-        this.errorMessage.set('Alcuni prodotti non sono più disponibili.');
-        this.submitting.set(false);
-        return;
-      }
-
-      this.proceedToPayment();
-    });
+    this.proceedToPayment();
   }
 
   private proceedToPayment(): void {

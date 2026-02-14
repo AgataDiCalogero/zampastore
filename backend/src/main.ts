@@ -1,7 +1,3 @@
-/**
- * Minimal backend to get started.
- */
-
 import 'dotenv/config';
 import express from 'express';
 import * as path from 'node:path';
@@ -16,7 +12,6 @@ import { cartRouter } from './routes/cart.routes';
 import { ordersRouter } from './routes/orders.routes';
 import { paymentsRouter } from './routes/payments.routes';
 import { dbPing } from './services/db';
-import { authService } from './services/auth.service';
 import { getEnv } from './config/env';
 import { errorHandler } from './middleware/error.middleware';
 import {
@@ -98,19 +93,9 @@ if (!isProduction) {
   })();
 }
 
-const SESSION_CLEANUP_INTERVAL_MS = 1000 * 60 * 10;
-const runSessionCleanup = async (): Promise<void> => {
-  try {
-    const removed = await authService.cleanupExpiredSessions();
-    if (removed > 0) {
-      console.log(`Cleaned ${removed} expired sessions.`);
-    }
-  } catch (error) {
-    console.error('Session cleanup failed.', error);
-  }
-};
-runSessionCleanup();
-setInterval(runSessionCleanup, SESSION_CLEANUP_INTERVAL_MS).unref?.();
+// Session cleanup should be handled by an external Cron job (e.g. Vercel Cron)
+// to avoid keeping the process alive or issues in serverless environments.
+// const runSessionCleanup = async () => { ... }
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 

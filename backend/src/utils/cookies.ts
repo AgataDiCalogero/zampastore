@@ -5,6 +5,7 @@ export const SESSION_COOKIE = 'zs_session';
 export const CSRF_COOKIE = 'zs_csrf';
 export const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
 const isProd = process.env.NODE_ENV === 'production';
+const isSecure = process.env.COOKIE_SECURE === 'true' || isProd;
 
 export const createSessionId = (): string => randomUUID();
 export const createCsrfToken = (): string => randomUUID();
@@ -30,7 +31,7 @@ export const setSessionCookie = (res: Response, sessionId: string): void => {
   res.cookie(SESSION_COOKIE, sessionId, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: isProd,
+    secure: isSecure,
     maxAge: SESSION_TTL_MS,
     path: '/',
   });
@@ -40,7 +41,7 @@ export const clearSessionCookie = (res: Response): void => {
   res.cookie(SESSION_COOKIE, '', {
     httpOnly: true,
     sameSite: 'lax',
-    secure: isProd,
+    secure: isSecure,
     maxAge: 0,
     path: '/',
   });
@@ -50,7 +51,7 @@ export const setCsrfCookie = (res: Response, token: string): void => {
   res.cookie(CSRF_COOKIE, token, {
     httpOnly: false,
     sameSite: 'lax',
-    secure: isProd,
+    secure: isSecure,
     maxAge: SESSION_TTL_MS,
     path: '/',
   });
@@ -60,7 +61,7 @@ export const clearCsrfCookie = (res: Response): void => {
   res.cookie(CSRF_COOKIE, '', {
     httpOnly: false,
     sameSite: 'lax',
-    secure: isProd,
+    secure: isSecure,
     maxAge: 0,
     path: '/',
   });

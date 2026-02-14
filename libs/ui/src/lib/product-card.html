@@ -44,6 +44,7 @@
         icon="pi pi-eye"
         label="Dettagli"
         [routerLink]="['/prodotti', product.id]"
+        [attr.aria-label]="'Vedi dettagli di ' + product.name"
       ></button>
       <button
         pButton
@@ -52,6 +53,7 @@
         icon="pi pi-shopping-cart"
         label="Aggiungi"
         (click)="handleAddToCart()"
+        [attr.aria-label]="'Aggiungi ' + product.name + ' al carrello'"
       ></button>
     </div>
   </ng-template>

@@ -48,20 +48,17 @@ class MysqlProductsStore {
   }
 
   async listProducts(category?: string): Promise<Product[]> {
-    let query = db.select().from(products).orderBy(products.name);
-
-    if (category) {
-      // @ts-expect-error - dizzale dynamic query building
-      query = query.where(eq(products.category, category));
-    }
+    const query = category
+      ? db
+          .select()
+          .from(products)
+          .where(eq(products.category, category))
+          .orderBy(products.name)
+      : db.select().from(products).orderBy(products.name);
 
     const rows = await query;
     return rows.map((row) => ({
-      ...row,
-      description: row.description ?? '',
-      imageUrl: row.imageUrl ?? undefined,
-      images: row.images ?? undefined,
-      category: row.category ?? undefined,
+      ...this.mapRowToProduct(row), // Reusing private helper to reduce code
     }));
   }
 
