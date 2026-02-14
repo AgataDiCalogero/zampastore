@@ -87,25 +87,53 @@
 /* PrimeNG Overrides */
 :host ::ng-deep .p-password input {
   width: 100%;
-  padding-right: 2.5rem; /* Space for toggle icon */
+  padding-right: var(--space-input-icon-offset); /* Space for toggle icon */
 }
 
 .form-error {
   color: var(--color-error);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   display: block;
-  margin-top: 0.25rem;
+  margin-top: var(--space-sm); /* Increased spacing */
+}
+
+/* Password Meter Styling */
+:host ::ng-deep .p-password-meter {
+  margin-top: var(--space-sm);
+  background: var(--surface-200);
+  height: 6px;
+  border-radius: var(--radius-sm);
+}
+
+:host ::ng-deep .p-password-strength {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition:
+    width 0.3s ease,
+    background 0.3s ease;
+}
+
+:host ::ng-deep .p-password-strength.weak {
+  background: var(--red-500) !important;
+}
+
+:host ::ng-deep .p-password-strength.medium {
+  background: var(--orange-500) !important;
+}
+
+:host ::ng-deep .p-password-strength.strong {
+  background: var(--green-500) !important;
 }
 
 :host ::ng-deep .p-input-icon-left > i {
   top: 50%;
-  margin-top: -0.5rem;
-  left: 0.75rem;
+  margin-top: calc(var(--space-sm) * -1);
+  left: var(--space-md);
 }
 
 :host ::ng-deep .p-input-icon-left > input {
-  padding-left: 2.5rem;
+  padding-left: var(--space-input-icon-offset);
 }
 
 .form-error-banner {

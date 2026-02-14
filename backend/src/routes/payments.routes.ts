@@ -31,10 +31,6 @@ const stripe =
   stripeKey && stripeKey.startsWith('sk_') && !isPlaceholderKey(stripeKey)
     ? new Stripe(stripeKey)
     : null;
-const shouldAutoPaidForTest =
-  !!stripeKey &&
-  stripeKey.startsWith('sk_test') &&
-  process.env.NODE_ENV !== 'production';
 const stripeStrict =
   process.env.STRIPE_STRICT === 'true' || process.env.NODE_ENV === 'production';
 const shouldFallbackOnStripeError =
@@ -186,7 +182,15 @@ const handleStripeCheckout = async (
   successUrl: string,
   cancelUrl: string,
 ): Promise<void> => {
+  // 1. Production Security Check
   if (!stripe) {
+    if (process.env.NODE_ENV === 'production') {
+      res.status(500).json({ message: 'Payment system configuration error' });
+      return;
+    }
+
+    // Fallback ONLY in Development
+    console.warn('⚠️ Stripe key missing. Faking success in DEV mode only.');
     await markOrderPaidOr500(res, user.id, order.id, successUrl);
     return;
   }
@@ -207,16 +211,18 @@ const handleStripeCheckout = async (
       return;
     }
 
-    if (shouldAutoPaidForTest) {
-      const updated = await updateOrderStatus(user.id, order.id, 'paid');
-      if (!updated) {
-        console.warn(`Unable to auto-mark order ${order.id} as paid.`);
-      }
-    }
+    // Auto-pay removed as per user request to allow testing of payment flow / cancellation.
+    // if (shouldAutoPaidForTest) {
+    //   const updated = await updateOrderStatus(user.id, order.id, 'paid');
+    //   if (!updated) {
+    //     console.warn(`Unable to auto-mark order ${order.id} as paid.`);
+    //   }
+    // }
 
     sendOrderPaidResponse(res, order.id, session.url);
   } catch (error) {
-    if (shouldFallbackOnStripeError) {
+    // In production we do NOT fallback if Stripe fails
+    if (process.env.NODE_ENV !== 'production' && shouldFallbackOnStripeError) {
       await markOrderPaidOr500(res, user.id, order.id, successUrl);
       return;
     }
@@ -304,6 +310,12 @@ paymentsRouter.post(
       const isE2e = req.headers['x-e2e-test'] === 'true';
 
       if (isE2e) {
+        if (process.env.NODE_ENV === 'production') {
+          res
+            .status(403)
+            .json({ message: 'E2E test headers not allowed in production' });
+          return;
+        }
         await markOrderPaidOr500(res, user.id, order.id, successUrl);
         return;
       }

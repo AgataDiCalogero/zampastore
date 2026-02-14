@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { API_BASE_URL } from '@zampa/shared';
 import { App } from './app';
 
 describe('App', () => {
@@ -24,7 +25,12 @@ describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([]), provideHttpClientTesting(), MessageService],
+      providers: [
+        provideRouter([]),
+        provideHttpClientTesting(),
+        MessageService,
+        { provide: API_BASE_URL, useValue: '' },
+      ],
     }).compileComponents();
   });
 

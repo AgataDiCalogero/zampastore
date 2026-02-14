@@ -1,27 +1,21 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrdersService } from '@zampa/orders/data-access';
-import { Order, OrderStatus } from '@zampa/shared';
+import { OrderStatus } from '@zampa/shared';
 import {
-  Observable,
+  BehaviorSubject,
   catchError,
   map,
   of,
   startWith,
-  BehaviorSubject,
   switchMap,
 } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
 import { SkeletonModule } from 'primeng/skeleton';
 import { CardModule } from 'primeng/card';
-
-type OrdersState =
-  | { status: 'loading' }
-  | { status: 'ready'; orders: Order[] }
-  | { status: 'empty' }
-  | { status: 'error' };
 
 @Component({
   selector: 'app-orders',
@@ -63,18 +57,21 @@ export class Orders {
 
   private readonly refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
-  readonly state$: Observable<OrdersState> = this.refreshTrigger$.pipe(
-    switchMap(() =>
-      this.ordersService.getOrders().pipe(
-        map((orders) =>
-          orders.length > 0
-            ? ({ status: 'ready', orders } as const)
-            : ({ status: 'empty' } as const),
+  readonly state = toSignal(
+    this.refreshTrigger$.pipe(
+      switchMap(() =>
+        this.ordersService.getOrders().pipe(
+          map((orders) =>
+            orders.length > 0
+              ? ({ status: 'ready', orders } as const)
+              : ({ status: 'empty' } as const),
+          ),
+          catchError(() => of({ status: 'error' } as const)),
+          startWith({ status: 'loading' } as const),
         ),
-        catchError(() => of({ status: 'error' } as const)),
-        startWith({ status: 'loading' } as const),
       ),
     ),
+    { requireSync: true },
   );
 
   refresh() {

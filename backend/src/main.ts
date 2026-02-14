@@ -2,11 +2,12 @@
  * Minimal backend to get started.
  */
 
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import express from 'express';
 import * as path from 'node:path';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import swaggerUI from 'swagger-ui-express';
 import { openApiSpec } from './swagger';
 import { authRouter } from './routes/auth.routes';
@@ -21,16 +22,21 @@ import { errorHandler } from './middleware/error.middleware';
 import {
   authLimiter,
   checkoutLimiter,
+  rateLimiter,
 } from './middleware/rate-limit.middleware';
+import { requireCsrf } from './middleware/csrf.middleware';
 import { productsStore } from './services/products.store';
-
-dotenv.config();
 
 const app = express();
 const env = getEnv();
+const isProduction = process.env.NODE_ENV === 'production';
 
 app.disable('x-powered-by');
+app.use(helmet());
+
+// CSP Exception for Swagger UI
 app.use(
+  '/api/docs',
   helmet({
     contentSecurityPolicy: false,
   }),
@@ -38,28 +44,59 @@ app.use(
 
 app.use(
   cors({
-    origin: env.clientUrl,
+    origin: env.clientUrl || 'http://localhost:4200',
     credentials: true,
-    allowedHeaders: ['Content-Type', 'x-csrf-token'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-csrf-token',
+      'x-e2e-test',
+    ],
   }),
 );
 
+app.use(cookieParser());
+app.use(rateLimiter);
+
+// JSON Parser with Webhook Exception
 const jsonParser = express.json();
 app.use((req, res, next) => {
   if (req.originalUrl === '/api/payments/webhook') {
     next();
-    return;
+  } else {
+    jsonParser(req, res, next);
   }
-  jsonParser(req, res, next);
 });
 
-void (async () => {
-  try {
-    await productsStore.ensureSeeded();
-  } catch (error) {
-    console.error('Product seed failed.', error);
+// CSRF Protection (Skip for Auth & Webhooks)
+const csrfMiddleware = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  const skipCsrf = [
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/payments/webhook',
+  ];
+  if (skipCsrf.includes(req.originalUrl)) {
+    next();
+    return;
   }
-})();
+  requireCsrf(req, res, next);
+};
+app.use(csrfMiddleware);
+
+if (!isProduction) {
+  void (async () => {
+    try {
+      await productsStore.ensureSeeded();
+    } catch (error) {
+      console.error('Product seed failed.', error);
+    }
+  })();
+}
 
 const SESSION_CLEANUP_INTERVAL_MS = 1000 * 60 * 10;
 const runSessionCleanup = async (): Promise<void> => {

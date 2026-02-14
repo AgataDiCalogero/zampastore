@@ -30,9 +30,9 @@
   border-radius: var(--radius-md);
   font-weight: 600;
   letter-spacing: 0.2px;
-  padding: 0.75rem 1.3rem;
+  padding: var(--space-md) var(--space-button-x);
   min-height: 46px;
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -57,9 +57,9 @@ a[pButton] {
   border-radius: var(--radius-md);
   font-weight: 600;
   letter-spacing: 0.2px;
-  padding: 0.75rem 1.3rem;
+  padding: var(--space-md) var(--space-button-x);
   min-height: 46px;
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -81,7 +81,11 @@ button[pbutton]:enabled:hover,
 button[pButton]:enabled:hover,
 a[pbutton]:hover,
 a[pButton]:hover {
-  background: linear-gradient(135deg, #f7c65a 0%, #f0b938 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-cta-hover-start) 0%,
+    var(--color-cta-hover-end) 100%
+  );
   border-color: var(--color-cta-dark);
   box-shadow: var(--shadow-2);
   transform: translateY(-1px);
@@ -149,7 +153,7 @@ button[pButton]:disabled,
 }
 
 .p-button.p-button-text:enabled:hover {
-  background: rgba(8, 58, 79, 0.06);
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
   text-decoration: none;
 }
 
@@ -170,14 +174,14 @@ button[pButton]:disabled,
 }
 
 .p-button.p-button-danger.p-button-text:enabled:hover {
-  background: rgba(220, 53, 69, 0.08);
+  background: color-mix(in srgb, var(--red-500) 8%, transparent);
 }
 
 .p-inputtext,
 .p-inputnumber-input {
   border-radius: var(--radius-md);
   border-color: var(--border-color);
-  padding: 0.65rem 0.75rem;
+  padding: var(--space-control-y) var(--space-md);
   height: 44px;
   font-size: var(--font-size-md);
   color: var(--text-primary);
@@ -190,7 +194,7 @@ input[pinputtext],
 input[pInputText] {
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
-  padding: 0.65rem 0.75rem;
+  padding: var(--space-control-y) var(--space-md);
   height: 44px;
   font-size: var(--font-size-md);
   color: var(--text-primary);
@@ -207,8 +211,8 @@ input[pInputText] {
 .p-password .p-password-input {
   width: 100%;
   height: 44px;
-  padding: 0.65rem 0.75rem;
-  padding-right: 3rem;
+  padding: var(--space-control-y) var(--space-md);
+  padding-right: var(--space-3xl);
   box-sizing: border-box;
 }
 
@@ -218,7 +222,7 @@ input[pInputText] {
 .p-password .p-password-clear-icon {
   position: absolute;
   top: 50%;
-  right: 0.75rem;
+  right: var(--space-md);
   transform: translateY(-50%);
   color: var(--text-secondary);
   display: inline-flex;
@@ -247,7 +251,7 @@ input[pInputText] {
 }
 
 .p-select .p-select-label {
-  padding: 0.65rem 0.75rem;
+  padding: var(--space-control-y) var(--space-md);
 }
 
 .p-select .p-select-trigger {
@@ -260,6 +264,7 @@ input[pInputText] {
 .p-select-overlay,
 .p-select-panel,
 .p-dropdown-panel {
+  /* Keep high stacking context for PrimeNG overlays mounted to body. */
   z-index: 9999 !important;
   background: var(--surface-0);
 }
@@ -273,7 +278,7 @@ input[pInputText] {
 }
 
 .checkout-select-panel {
-  margin-top: 4px;
+  margin-top: var(--space-xs);
 }
 
 .p-inputnumber-buttons-horizontal .p-inputnumber-button {
@@ -302,8 +307,8 @@ input[pInputText] {
 
 .p-button.p-button-sm {
   min-height: 32px;
-  font-size: 0.85rem;
-  padding: 0.4rem 0.8rem;
+  font-size: var(--font-size-sm-alt);
+  padding: var(--space-button-sm-y) var(--space-button-sm-x);
 }
 
 .p-datatable .p-datatable-thead > tr > th {
@@ -324,7 +329,7 @@ input[pInputText] {
 }
 
 .p-datatable .p-datatable-tbody > tr:nth-child(even) {
-  background: rgba(192, 213, 214, 0.25);
+  background: color-mix(in srgb, var(--surface-subtle) 25%, transparent);
 }
 
 .p-toast .p-toast-message {
@@ -368,35 +373,67 @@ input[pInputText] {
   font-size: var(--font-size-lg);
 }
 
-.p-confirmdialog .p-dialog-content {
-  padding: 0 var(--space-xl) var(--space-xl);
+.p-confirm-dialog .p-dialog-content {
+  padding: var(--space-xl) var(--space-2xl);
   color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-2xl);
 }
 
-.p-confirmdialog .p-confirm-dialog-icon {
-  font-size: 2rem;
-  color: var(--color-cta-dark); /* Gold/Warning color */
+/* Fix selector: .p-confirm-dialog not .p-confirmdialog */
+.p-confirm-dialog .p-confirm-dialog-icon {
+  font-size: var(--font-size-4xl);
+  color: var(--red-500) !important;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.p-confirmdialog .p-confirm-dialog-message {
+.p-confirm-dialog .p-confirm-dialog-message {
   line-height: 1.5;
-  font-size: 1.05rem;
+  font-size: var(--font-size-lg-compact);
+  color: var(--text-primary);
+  margin: 0 !important; /* Ensure no margin disrupts centering */
+  align-self: center; /* Force self-alignment */
 }
 
-.p-confirmdialog .p-dialog-footer {
-  padding: 0 var(--space-xl) var(--space-xl);
+.p-confirm-dialog .p-dialog-footer {
+  padding: var(--space-md) var(--space-xl) var(--space-xl);
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   justify-content: flex-end;
   background: transparent;
   border: none;
 }
 
-.p-confirmdialog .p-dialog-footer button {
+.p-confirm-dialog .p-dialog-footer button {
   min-width: 100px;
+}
+
+.p-confirm-dialog .p-dialog-footer .p-button-danger {
+  background-color: var(--red-500) !important;
+  border-color: var(--red-500) !important;
+  color: var(--color-white) !important;
+  font-weight: 600;
+}
+
+.p-confirm-dialog .p-dialog-footer .p-button-danger:hover {
+  background-color: var(--red-600);
+  border-color: var(--red-600);
+}
+
+.p-confirm-dialog .p-dialog-footer .p-button-secondary,
+.p-confirm-dialog .p-dialog-footer .p-button-text {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.p-confirm-dialog .p-dialog-footer .p-button-secondary:hover,
+.p-confirm-dialog .p-dialog-footer .p-button-text:hover {
+  color: var(--text-primary);
+  background: var(--surface-50);
 }
 
 .toast-summary {

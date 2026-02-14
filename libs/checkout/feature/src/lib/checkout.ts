@@ -30,7 +30,11 @@ export class Checkout {
 
   protected readonly cartItems = this.checkoutFacade.cartItems;
   protected readonly cartTotal = this.checkoutFacade.cartTotal;
+  protected readonly shippingCost = this.checkoutFacade.shippingCost;
+  protected readonly grandTotal = this.checkoutFacade.grandTotal;
   protected readonly shippingOptions = this.checkoutFacade.shippingOptions;
+  protected readonly selectedShippingMethod =
+    this.checkoutFacade.selectedShippingMethod;
   protected readonly form = this.checkoutFacade.form;
   protected readonly submitting = this.checkoutFacade.submitting;
   protected readonly errorMessage = this.checkoutFacade.errorMessage;

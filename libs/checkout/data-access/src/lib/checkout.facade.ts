@@ -1,4 +1,12 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
+import {
+  Injectable,
+  effect,
+  inject,
+  signal,
+  computed,
+  PLATFORM_ID,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -11,6 +19,7 @@ export type ShippingOption = {
   label: string;
   value: string;
   subtitle: string;
+  cost: number;
 };
 
 export type CheckoutForm = {
@@ -29,6 +38,7 @@ export class CheckoutFacade {
   private readonly cartService = inject(CartService);
   private readonly paymentService = inject(PaymentService);
   private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly cartItems = this.cartService.cartItems;
   readonly cartTotal = this.cartService.cartTotal;
@@ -38,13 +48,27 @@ export class CheckoutFacade {
       label: 'Standard (2-3 giorni)',
       value: 'standard',
       subtitle: 'Gratuita',
+      cost: 0,
     },
     {
       label: 'Express (24h)',
       value: 'express',
       subtitle: '€ 4,90',
+      cost: 4.9,
     },
   ];
+
+  readonly selectedShippingMethod = signal<ShippingOption | undefined>(
+    this.shippingOptions[0],
+  );
+
+  // We need to listen to form value changes, but since Reactive Forms aren't signals, we use toSignal or primitive approach.
+  // Simplified approach: rely on the fact that we can't easily signal-wrap the form control without boilerplate.
+  // Instead, let's expose specific signals.
+
+  readonly shippingCost = signal(0);
+
+  readonly grandTotal = computed(() => this.cartTotal() + this.shippingCost());
 
   readonly form = new FormGroup<CheckoutForm>({
     email: new FormControl('', {
@@ -87,19 +111,28 @@ export class CheckoutFacade {
   private readonly STORAGE_KEY = 'checkout_form_state';
 
   constructor() {
-    const savedState = localStorage.getItem(this.STORAGE_KEY);
-    if (savedState) {
-      try {
-        const value = JSON.parse(savedState);
-        this.form.patchValue(value);
-      } catch (e) {
-        console.error('Failed to restore checkout state', e);
+    if (isPlatformBrowser(this.platformId)) {
+      const savedState = localStorage.getItem(this.STORAGE_KEY);
+      if (savedState) {
+        try {
+          const value = JSON.parse(savedState);
+          this.form.patchValue(value);
+        } catch (e) {
+          console.error('Failed to restore checkout state', e);
+        }
       }
+
+      // Save state on change
+      this.form.valueChanges.subscribe((value) => {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(value));
+      });
     }
 
-    // Save state on change
-    this.form.valueChanges.subscribe((value) => {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(value));
+    // Update shipping cost when method changes
+    this.form.controls.shippingMethod.valueChanges.subscribe((value) => {
+      const option = this.shippingOptions.find((opt) => opt.value === value);
+      this.shippingCost.set(option?.cost ?? 0);
+      this.selectedShippingMethod.set(option);
     });
 
     // Pre-fill from Auth (via CartService to respect module boundaries)
@@ -151,6 +184,7 @@ export class CheckoutFacade {
       const items = this.cartItems();
       this.cartSnapshot = items;
       if (items.length === 0) {
+        // Safe navigation logic might be needed here too if using window.location, but router is safe
         void this.router.navigateByUrl('/carrello');
       }
     });
@@ -213,8 +247,10 @@ export class CheckoutFacade {
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: (response) => {
-          localStorage.removeItem(this.STORAGE_KEY);
-          globalThis.location.href = response.url;
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.removeItem(this.STORAGE_KEY);
+            globalThis.location.href = response.url;
+          }
         },
         error: (error: unknown) => {
           if (

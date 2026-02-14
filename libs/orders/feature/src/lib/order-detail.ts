@@ -2,18 +2,13 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { OrdersService } from '@zampa/orders/data-access';
-import { OrderDetail as OrderDetailModel, OrderStatus } from '@zampa/shared';
-import { Observable, catchError, map, of, startWith, switchMap } from 'rxjs';
+import { OrderStatus } from '@zampa/shared';
+import { catchError, map, of, startWith, switchMap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
-
-type OrderDetailState =
-  | { status: 'loading' }
-  | { status: 'ready'; order: OrderDetailModel }
-  | { status: 'not-found' }
-  | { status: 'error' };
 
 @Component({
   selector: 'app-order-detail',
@@ -52,7 +47,7 @@ export class OrderDetail {
     return id.substring(0, 8).toUpperCase();
   }
 
-  protected readonly state$: Observable<OrderDetailState> =
+  protected readonly state = toSignal(
     this.route.paramMap.pipe(
       map((params) => params.get('id')),
       switchMap((id) =>
@@ -71,5 +66,7 @@ export class OrderDetail {
         ),
       ),
       startWith({ status: 'loading' } as const),
-    );
+    ),
+    { requireSync: true },
+  );
 }

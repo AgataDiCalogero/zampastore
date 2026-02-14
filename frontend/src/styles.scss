@@ -29,15 +29,11 @@
   --color-info-bg: #e0f2fe;
   --color-danger-bg: #fee2e2;
 
-  /* Semantic Status Colors (Traffic Light) */
+  /* Semantic Status Colors (Traffic Light) - Consolidating overrides */
   --bg-success: #ecfdf5;
-  --color-success: #15803d;
   --bg-warning: #fefce8;
-  --color-warning: #a16207;
   --bg-danger: #fef2f2;
-  --color-danger: #b91c1c;
   --bg-info: #eff6ff;
-  --color-info: #1d4ed8;
 
   --surface-0: #f7f4f0;
   --surface-50: #f1ede8;
@@ -320,6 +316,51 @@ h6 {
       }
     }
   }
+}
+
+/* Cart Clear ConfirmDialog */
+.p-dialog.cart-clear-confirm .p-dialog-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xl, 2rem);
+}
+
+.p-dialog.cart-clear-confirm :is(.p-confirmdialog-icon, .p-confirm-dialog-icon) {
+  color: var(--red-500, #ef4444) !important;
+  font-size: 2.25rem;
+  line-height: 1;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.p-dialog.cart-clear-confirm :is(
+    .p-confirmdialog-message,
+    .p-confirm-dialog-message
+  ) {
+  margin: 0 !important;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.p-dialog.cart-clear-confirm .p-dialog-footer .p-button.p-button-danger,
+.p-dialog.cart-clear-confirm
+  .p-dialog-footer
+  .p-button.cart-clear-confirm-accept {
+  background: var(--red-500, #ef4444) !important;
+  border-color: var(--red-500, #ef4444) !important;
+  color: #ffffff !important;
+}
+
+.p-dialog.cart-clear-confirm .p-dialog-footer .p-button.p-button-danger:hover,
+.p-dialog.cart-clear-confirm
+  .p-dialog-footer
+  .p-button.cart-clear-confirm-accept:hover {
+  background: var(--red-600, #dc2626) !important;
+  border-color: var(--red-600, #dc2626) !important;
+  color: #ffffff !important;
 }
 
 /* Premium Password Panel & Traffic Light Validation */

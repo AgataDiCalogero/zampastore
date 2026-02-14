@@ -14,6 +14,10 @@ productsRouter.get('/', async (req, res) => {
 });
 
 productsRouter.post('/seed', async (_req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    res.status(403).json({ message: 'Seeding is disabled in production' });
+    return;
+  }
   await productsStore.forceSeed();
   res.json({ message: 'Products seeded successfully' });
 });

@@ -27,7 +27,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl-compact);
   margin-bottom: var(--space-lg);
 }
 
@@ -85,7 +85,7 @@
 }
 
 .checkout-empty .empty-state .pi {
-  font-size: 2rem;
+  font-size: var(--font-size-3xl-compact);
   color: var(--color-secondary);
   margin-bottom: var(--space-sm);
 }

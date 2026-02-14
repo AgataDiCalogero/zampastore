@@ -161,11 +161,18 @@
                 </span>
               </li>
               }
+              <li class="shipping-line">
+                <span>Spedizione ({{ selectedShippingMethod()?.label }})</span>
+                <span>
+                  {{ shippingCost() === 0 ? 'Gratis' : (shippingCost() | number:
+                  '1.2-2' ) + ' €' }}
+                </span>
+              </li>
             </ul>
             }
             <div class="summary-total">
               <span>Totale</span>
-              <strong>{{ cartTotal() | number: '1.2-2' }} €</strong>
+              <strong>{{ grandTotal() | number: '1.2-2' }} €</strong>
             </div>
           </div>
 

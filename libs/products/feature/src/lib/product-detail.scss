@@ -64,7 +64,7 @@
 }
 
 .product-image-fallback .pi {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl-compact);
   color: var(--color-secondary);
 }
 
@@ -116,7 +116,7 @@
 }
 
 .empty-state .pi {
-  font-size: 2rem;
+  font-size: var(--font-size-3xl-compact);
   color: var(--color-secondary);
   margin-bottom: var(--space-sm);
 }
@@ -190,12 +190,15 @@
   height: 44px;
   cursor: pointer;
   box-shadow: var(--shadow-1);
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-primary);
-  z-index: 2;
+  z-index: 2; /* Keep arrows above image content */
 
   &:hover {
     background: var(--surface-0);
@@ -208,7 +211,7 @@
   }
 
   .pi {
-    font-size: 1rem;
+    font-size: var(--font-size-md);
   }
 }
 
@@ -236,7 +239,10 @@
   border: 2px solid transparent;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;

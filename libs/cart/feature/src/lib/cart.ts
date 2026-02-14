@@ -5,7 +5,7 @@ import {
   effect,
   inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   FormArray,
   FormControl,
@@ -14,8 +14,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { TableModule } from 'primeng/table';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -35,13 +35,13 @@ type CartRowForm = {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    TableModule,
     InputNumberModule,
     ButtonModule,
     CardModule,
     SkeletonModule,
     ConfirmDialogModule,
     RouterLink,
+    NgOptimizedImage,
   ],
   templateUrl: './cart.html',
   styleUrl: './cart.scss',
@@ -52,7 +52,6 @@ export class Cart {
   private readonly router = inject(Router);
   private readonly uiFeedback = inject(UiFeedbackService);
   private readonly confirmationService = inject(ConfirmationService);
-  private rowSubscriptions: Subscription[] = [];
   private cartItemIds: string[] = [];
 
   protected readonly cartItems = this.cartService.cartItems;
@@ -105,13 +104,15 @@ export class Cart {
       return;
     }
     this.confirmationService.confirm({
+      key: 'clear-cart',
       header: 'Svuotare il carrello?',
       message: 'Rimuoveremo tutti i prodotti dal carrello.',
       icon: 'pi pi-trash',
       acceptLabel: 'Svuota',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'p-button-danger cart-clear-confirm-accept',
       rejectLabel: 'Annulla',
-      rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
+      rejectButtonStyleClass:
+        'p-button-secondary p-button-outlined cart-clear-confirm-reject',
       acceptIcon: 'none',
       rejectIcon: 'none',
       accept: () => {
@@ -146,9 +147,6 @@ export class Cart {
   }
 
   private rebuildForm(items: CartItem[]): void {
-    this.rowSubscriptions.forEach((sub) => sub.unsubscribe());
-    this.rowSubscriptions = [];
-
     const rows = items.map((item) => this.createRow(item));
     const formArray = new FormArray<FormGroup<CartRowForm>>(rows);
     this.form.setControl('items', formArray);
@@ -167,8 +165,8 @@ export class Cart {
       }),
     });
 
-    const sub = group.controls.quantity.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
+    group.controls.quantity.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((qty) => {
         if (group.controls.quantity.invalid) {
           return;
@@ -176,7 +174,6 @@ export class Cart {
         this.cartService.updateQuantity(item.product.id, qty);
         this.uiFeedback.showQuantityUpdated(item.product.name, qty);
       });
-    this.rowSubscriptions.push(sub);
 
     return group;
   }

@@ -1,4 +1,4 @@
-@if (state$ | async; as state) { @if (state.status === 'ready') {
+@if (state(); as state) { @if (state.status === 'ready') {
 <section class="order-detail section">
   <nav class="order-breadcrumb">
     <a [routerLink]="['/ordini']">Ordini</a>
@@ -6,18 +6,18 @@
     <span>#{{ getShortId(state.order.id) }}</span>
   </nav>
   <p-card class="order-card" header="Dettaglio ordine">
-    <div class="order-header-grid">
-      <div class="meta-item">
+    <div class="order-meta-grid">
+      <div class="meta-cell">
         <span class="meta-label">Riferimento</span>
-        <span class="meta-value">#{{ getShortId(state.order.id) }}</span>
+        <span class="meta-value mono">#{{ getShortId(state.order.id) }}</span>
       </div>
-      <div class="meta-item">
+      <div class="meta-cell">
         <span class="meta-label">Data</span>
         <span class="meta-value">
           {{ state.order.createdAt | date: 'dd/MM/yyyy' }}
         </span>
       </div>
-      <div class="meta-item">
+      <div class="meta-cell">
         <span class="meta-label">Stato</span>
         <span
           class="status-chip"
@@ -26,9 +26,9 @@
           {{ statusFor(state.order.status).label }}
         </span>
       </div>
-      <div class="meta-item meta-total">
+      <div class="meta-cell">
         <span class="meta-label">Totale</span>
-        <span class="meta-value">
+        <span class="meta-value meta-total">
           {{ state.order.totalCents / 100 | number: '1.2-2' }} €
         </span>
       </div>

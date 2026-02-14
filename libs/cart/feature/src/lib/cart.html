@@ -1,187 +1,112 @@
 <section class="cart-page section">
-  <p-card class="cart-card" header="Carrello">
-    @if (state(); as currentState) { @if (currentState.status === 'ready') {
-    <form class="cart-layout" [formGroup]="form">
-      <div class="cart-items-container">
-        <!-- Desktop List (New Card Layout) -->
-        <div class="desktop-cart">
-          <div class="cart-header-row">
-            <span class="col-product">Prodotto</span>
-            <span class="col-price">Prezzo</span>
-            <span class="col-qty">Quantità</span>
-            <span class="col-total">Totale</span>
-            <span class="col-actions"></span>
-          </div>
+  <h1 class="cart-title">Carrello</h1>
 
-          @for (cartItem of currentState.items; track cartItem.product.id; let i
-          = $index) {
-          <div class="cart-item-desktop" [formGroup]="itemsArray.controls[i]">
-            <!-- Product -->
-            <div class="col-product">
-              @if (cartItem.product.imageUrl) {
-              <img
-                [src]="cartItem.product.imageUrl"
-                [alt]="cartItem.product.name"
-                class="cart-item-img"
-              />
-              }
-              <span class="cart-item-name">{{ cartItem.product.name }}</span>
-            </div>
-
-            <!-- Price -->
-            <div class="col-price">
-              {{ cartItem.product.priceCents / 100 | number: '1.2-2' }} €
-            </div>
-
-            <!-- Quantity -->
-            <div class="col-qty">
-              <p-inputNumber
-                formControlName="quantity"
-                [showButtons]="true"
-                buttonLayout="horizontal"
-                [minFractionDigits]="0"
-                [maxFractionDigits]="0"
-                incrementButtonIcon="pi pi-plus"
-                decrementButtonIcon="pi pi-minus"
-                [inputStyle]="{ width: '3rem', 'text-align': 'center' }"
-                ariaLabel="Quantità"
-              ></p-inputNumber>
-            </div>
-
-            <!-- Total -->
-            <div class="col-total">
-              <strong>
-                {{ (cartItem.product.priceCents * cartItem.qty) / 100 | number:
-                '1.2-2' }} €
-              </strong>
-            </div>
-
-            <!-- Actions -->
-            <div class="col-actions">
-              <button
-                pButton
-                type="button"
-                icon="pi pi-trash"
-                class="p-button-text p-button-danger p-button-rounded"
-                aria-label="Rimuovi"
-                (click)="removeItem(cartItem.product.id)"
-                pTooltip="Rimuovi prodotto"
-                tooltipPosition="left"
-              ></button>
-            </div>
-          </div>
-          }
-        </div>
-
-        <!-- Mobile List -->
-        <div class="mobile-cart">
-          @for (cartItem of currentState.items; track cartItem.product.id; let i
-          = $index) {
-          <div class="product-card-mobile" [formGroup]="itemsArray.controls[i]">
-            @if (cartItem.product.imageUrl) {
-            <div class="product-image">
-              <img
-                [src]="cartItem.product.imageUrl"
-                [alt]="cartItem.product.name"
-                loading="lazy"
-              />
-            </div>
-            }
-            <div class="product-details">
-              <div class="details-header">
-                <span class="product-name">{{ cartItem.product.name }}</span>
-                <button
-                  pButton
-                  icon="pi pi-trash"
-                  class="p-button-danger p-button-text p-button-rounded remove-btn"
-                  aria-label="Rimuovi"
-                  (click)="removeItem(cartItem.product.id)"
-                ></button>
-              </div>
-
-              <div class="details-body">
-                <span class="unit-price">
-                  {{ cartItem.product.priceCents / 100 | number: '1.2-2' }} €
-                </span>
-                <p-inputNumber
-                  formControlName="quantity"
-                  [showButtons]="true"
-                  buttonLayout="horizontal"
-                  incrementButtonIcon="pi pi-plus"
-                  decrementButtonIcon="pi pi-minus"
-                  [inputStyle]="{ width: '2.5rem', 'text-align': 'center', 'padding': '0' }"
-                  class="compact-input"
-                ></p-inputNumber>
-              </div>
-
-              <div class="details-footer">
-                <span class="total-label">Totale:</span>
-                <span class="total-price">
-                  {{ (cartItem.product.priceCents * cartItem.qty) / 100 |
-                  number: '1.2-2' }} €
-                </span>
-              </div>
-            </div>
-          </div>
-          }
-        </div>
-      </div>
-
-      <aside class="cart-summary">
-        <div class="cart-summary-row">
-          <span class="font-semibold"
-            >Totale: {{ cartTotal() | number: '1.2-2' }} €</span
-          >
-          <button
-            pButton
-            type="button"
-            class="p-button-text p-button-danger p-button-sm clear-cart-button"
-            icon="pi pi-trash"
-            (click)="clearCart()"
-            aria-label="Svuota carrello"
-          ></button>
-        </div>
-        <div class="cart-actions">
-          <p-button
-            label="Vai al checkout"
-            icon="pi pi-arrow-right"
-            iconPos="right"
-            styleClass="checkout-cta"
-            (onClick)="confirmOrder()"
-          ></p-button>
-        </div>
-      </aside>
-    </form>
-    <p-confirmDialog></p-confirmDialog>
-    } @else if (currentState.status === 'empty') {
-    <div class="cart-empty">
-      <div class="empty-state">
-        <i class="pi pi-shopping-bag"></i>
-        <h3>Il carrello è vuoto</h3>
-        <p>Scegli i migliori prodotti per il tuo animale.</p>
-        <button pButton type="button" [routerLink]="['/prodotti']">
-          Vai al catalogo
-        </button>
-      </div>
-    </div>
-    } @else {
-    <div class="cart-skeleton">
-      <div class="cart-skeleton-table">
-        @for (row of skeletonRows; track $index) {
-        <div class="cart-skeleton-row">
-          <p-skeleton height="22px" width="50%"></p-skeleton>
-          <p-skeleton height="22px" width="80px"></p-skeleton>
-          <p-skeleton height="36px" width="120px"></p-skeleton>
-          <p-skeleton height="22px" width="80px"></p-skeleton>
+  @if (state(); as currentState) { @if (currentState.status === 'ready') {
+  <form class="cart-layout" [formGroup]="form">
+    <div class="cart-items">
+      @for (cartItem of currentState.items; track cartItem.product.id; let i =
+      $index) {
+      <div class="cart-item-card" [formGroup]="itemsArray.controls[i]">
+        @if (cartItem.product.imageUrl) {
+        <div class="item-image">
+          <img
+            [ngSrc]="cartItem.product.imageUrl"
+            [alt]="cartItem.product.name"
+            width="64"
+            height="64"
+          />
         </div>
         }
+
+        <div class="item-info">
+          <div class="item-name">{{ cartItem.product.name }}</div>
+          <div class="item-unit-price">
+            {{ cartItem.product.priceCents / 100 | number: '1.2-2' }} €
+          </div>
+        </div>
+
+        <div class="item-qty">
+          <p-inputNumber
+            formControlName="quantity"
+            [showButtons]="true"
+            buttonLayout="horizontal"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="0"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus"
+            [inputStyle]="{ width: '2.5rem', 'text-align': 'center' }"
+            ariaLabel="Quantità"
+          ></p-inputNumber>
+        </div>
+
+        <div class="item-total">
+          {{ (cartItem.product.priceCents * cartItem.qty) / 100 | number:
+          '1.2-2' }} €
+        </div>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-trash"
+          class="p-button-text p-button-danger p-button-rounded item-remove"
+          aria-label="Rimuovi"
+          (click)="removeItem(cartItem.product.id)"
+          pTooltip="Rimuovi"
+          tooltipPosition="left"
+        ></button>
       </div>
-      <div class="cart-skeleton-summary">
-        <p-skeleton height="18px" width="40%"></p-skeleton>
-        <p-skeleton height="46px" width="100%"></p-skeleton>
-        <p-skeleton height="36px" width="60%"></p-skeleton>
+      }
+    </div>
+
+    <aside class="cart-summary">
+      <div class="summary-total-row">
+        <span>Totale</span>
+        <strong>{{ cartTotal() | number: '1.2-2' }} €</strong>
+      </div>
+
+      <div class="summary-actions">
+        <p-button
+          label="Vai al checkout"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          styleClass="checkout-cta"
+          (onClick)="confirmOrder()"
+        ></p-button>
+
+        <button
+          pButton
+          type="button"
+          class="p-button-text p-button-danger p-button-sm clear-cart-btn"
+          icon="pi pi-trash"
+          label="Svuota carrello"
+          (click)="clearCart()"
+        ></button>
+      </div>
+    </aside>
+  </form>
+  <p-confirmDialog key="clear-cart"></p-confirmDialog>
+  } @else if (currentState.status === 'empty') {
+  <div class="cart-empty">
+    <div class="empty-state">
+      <i class="pi pi-shopping-bag"></i>
+      <h3>Il carrello è vuoto</h3>
+      <p>Scegli i migliori prodotti per il tuo animale.</p>
+      <button pButton type="button" [routerLink]="['/prodotti']">
+        Vai al catalogo
+      </button>
+    </div>
+  </div>
+  } @else {
+  <div class="cart-skeleton">
+    @for (row of skeletonRows; track $index) {
+    <div class="cart-skeleton-row">
+      <p-skeleton height="80px" width="80px" borderRadius="12px"></p-skeleton>
+      <div class="cart-skeleton-text">
+        <p-skeleton height="18px" width="60%"></p-skeleton>
+        <p-skeleton height="14px" width="30%"></p-skeleton>
       </div>
     </div>
-    } }
-  </p-card>
+    }
+  </div>
+  } }
 </section>

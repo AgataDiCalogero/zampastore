@@ -33,7 +33,7 @@
   font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 0.35rem 0.6rem;
+  padding: var(--space-tag-y) var(--space-tag-x);
   border-radius: 999px;
   font-weight: 600;
 }
@@ -59,14 +59,8 @@
 }
 
 .stripe-card-number {
-  font-family:
-    'JetBrains Mono',
-    'SFMono-Regular',
-    Consolas,
-    'Liberation Mono',
-    Menlo,
-    monospace;
-  font-size: 0.95rem;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-md-plus);
   letter-spacing: 0.08em;
   white-space: nowrap;
 }
@@ -82,7 +76,7 @@
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.65rem;
+  font-size: var(--font-size-2xs);
 }
 
 .stripe-card-meta strong {

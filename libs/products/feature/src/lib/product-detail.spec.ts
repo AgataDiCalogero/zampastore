@@ -6,6 +6,7 @@ import {
   provideRouter,
 } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { API_BASE_URL } from '@zampa/shared';
 import { of } from 'rxjs';
 import { describe, beforeEach, it, expect } from 'vitest';
 import { ProductDetail } from './product-detail';
@@ -22,6 +23,7 @@ describe('ProductDetail', () => {
           provide: ActivatedRoute,
           useValue: { paramMap: of(convertToParamMap({ id: 'p-001' })) },
         },
+        { provide: API_BASE_URL, useValue: '' },
       ],
     }).compileComponents();
   });

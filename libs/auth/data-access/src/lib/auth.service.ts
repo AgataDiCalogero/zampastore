@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
+  API_BASE_URL,
   AuthResponse,
   AuthUser,
   LoginRequest,
@@ -21,6 +22,7 @@ import {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly apiUrl = inject(API_BASE_URL);
   private readonly authStateSignal = signal<AuthUser | null>(null);
   readonly authState = this.authStateSignal.asReadonly();
   private initialized = false;
@@ -31,21 +33,25 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<AuthUser> {
-    return this.http.post<AuthResponse>('/api/auth/login', credentials).pipe(
-      map((response) => response.user),
-      tap((user) => this.authStateSignal.set(user)),
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/api/auth/login`, credentials)
+      .pipe(
+        map((response) => response.user),
+        tap((user) => this.authStateSignal.set(user)),
+      );
   }
 
   register(payload: RegisterRequest): Observable<AuthUser> {
-    return this.http.post<AuthResponse>('/api/auth/register', payload).pipe(
-      map((response) => response.user),
-      tap((user) => this.authStateSignal.set(user)),
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/api/auth/register`, payload)
+      .pipe(
+        map((response) => response.user),
+        tap((user) => this.authStateSignal.set(user)),
+      );
   }
 
   refresh(): Observable<AuthUser | null> {
-    return this.http.get<AuthResponse>('/api/auth/me').pipe(
+    return this.http.get<AuthResponse>(`${this.apiUrl}/api/auth/me`).pipe(
       map((response) => response.user),
       tap((user) => this.authStateSignal.set(user)),
       catchError(() => {
@@ -75,7 +81,7 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>('/api/auth/logout', {}).pipe(
+    return this.http.post<void>(`${this.apiUrl}/api/auth/logout`, {}).pipe(
       tap(() => this.authStateSignal.set(null)),
       catchError((error) => {
         this.authStateSignal.set(null);
@@ -98,6 +104,6 @@ export class AuthService {
     const targetUrl = isAuthRoute
       ? '/login'
       : `/login?returnUrl=${encodeURIComponent(normalizedReturnUrl)}`;
-    void this.router.navigateByUrl(targetUrl);
+    this.router.navigateByUrl(targetUrl);
   }
 }

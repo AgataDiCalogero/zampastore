@@ -54,3 +54,4 @@ cypress/screenshots
 cypress/videos
 cypress/downloads
 test-results/
+.cache/system-libs/

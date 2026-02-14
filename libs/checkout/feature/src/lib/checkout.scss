@@ -79,7 +79,7 @@
 .form-error {
   color: var(--color-danger);
   font-size: var(--font-size-sm);
-  margin-top: 2px;
+  margin-top: var(--space-xxs);
 }
 
 .text-muted {
@@ -90,6 +90,8 @@
 .shipping-option {
   display: flex;
   flex-direction: column;
+  padding: var(--space-sm) 0; /* Add vertical padding */
+  gap: var(--space-xs); /* Add small gap between label and subtitle */
 }
 
 /* Summary */
@@ -99,6 +101,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  z-index: 10; /* Ensure sticky summary stays above scrolling form content */
 }
 
 @media (max-width: 960px) {
@@ -157,5 +160,5 @@
 }
 
 .checkout-select-panel .p-element {
-  font-size: 0.9rem;
+  font-size: var(--font-size-md-compact);
 }

@@ -4,7 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { OrdersService } from './orders.service';
-import { Order, OrderDetail } from '@zampa/shared';
+import { Order, OrderDetail, API_BASE_URL } from '@zampa/shared';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { firstValueFrom } from 'rxjs';
 
@@ -14,7 +14,10 @@ describe('OrdersService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClientTesting()],
+      providers: [
+        provideHttpClientTesting(),
+        { provide: API_BASE_URL, useValue: '' },
+      ],
     });
     service = TestBed.inject(OrdersService);
     httpMock = TestBed.inject(HttpTestingController);

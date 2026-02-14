@@ -7,10 +7,12 @@
     "frontend:serve": "nx run frontend:serve",
     "start:all": "concurrently -n \"API,Piattaforma\" -c \"blue,magenta\" \"nx run backend:serve\" \"wait-on tcp:localhost:3333 && nx run frontend:serve\"",
     "dev": "concurrently \"npm run backend:serve\" \"npm run frontend:serve\"",
-    "check": "nx run-many -t lint test typecheck build e2e --configuration=ci --skip-nx-cache",
-    "e2e": "nx run frontend-e2e:e2e --configuration=ci --watch=false",
-    "e2e:local": "nx run frontend-e2e:e2e --watch=false",
-    "e2e:cypress": "nx run frontend-e2e:cypress --watch=false"
+    "cypress:deps": "node -e \"if (process.platform === 'linux') { require('child_process').execSync('bash ./scripts/ensure-cypress-linux-libs.sh', {stdio: 'inherit'}) }\"",
+    "nx:clean": "node -e \"const fs = require('fs'); ['.nx/workspace-data', '.nx/cache'].forEach(dir => fs.rmSync(dir, {recursive: true, force: true}));\"",
+    "check": "npm run cypress:deps && npm run nx:clean && npx -y cross-env NX_DAEMON=false nx run-many -t lint test typecheck build --configuration=ci --skip-nx-cache --parallel=1 && npx -y cross-env NX_DAEMON=false nx run frontend-e2e:e2e --configuration=ci --skip-nx-cache",
+    "e2e": "npm run cypress:deps && npx -y cross-env NX_DAEMON=false nx run frontend-e2e:e2e --configuration=ci",
+    "e2e:local": "npm run cypress:deps && npx -y cross-env NX_DAEMON=false nx run frontend-e2e:e2e",
+    "e2e:cypress": "npm run cypress:deps && npx -y cross-env NX_DAEMON=false nx run frontend-e2e:cypress --watch=false"
   },
   "private": true,
   "devDependencies": {
@@ -41,6 +43,7 @@
     "@types/express": "^4.17.21",
     "@types/node": "20.19.9",
     "@types/swagger-ui-express": "^4.1.8",
+    "@types/cookie-parser": "^1.4.7",
     "@typescript-eslint/utils": "^8.40.0",
     "angular-eslint": "^21.0.1",
     "drizzle-kit": "^0.30.4",
@@ -86,6 +89,7 @@
     "rxjs": "~7.8.0",
     "stripe": "^14.25.0",
     "swagger-ui-express": "^5.0.1",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "cookie-parser": "^1.4.6"
   }
 }

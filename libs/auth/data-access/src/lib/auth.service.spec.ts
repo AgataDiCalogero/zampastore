@@ -4,7 +4,12 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
-import { AuthResponse, AuthUser, LoginRequest } from '@zampa/shared';
+import {
+  AuthResponse,
+  AuthUser,
+  LoginRequest,
+  API_BASE_URL,
+} from '@zampa/shared';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { AuthService } from './auth.service';
 import { firstValueFrom } from 'rxjs';
@@ -15,7 +20,11 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClientTesting(), provideRouter([])],
+      providers: [
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: API_BASE_URL, useValue: '' },
+      ],
     });
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);

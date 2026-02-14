@@ -21,7 +21,7 @@
 }
 
 .hero-content h1 {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(var(--font-size-3xl-compact), 4vw, var(--font-size-5xl));
   margin: 0;
 }
 
@@ -93,23 +93,27 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary) 0%, #0a4d60 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-emphasis) 100%
+  );
 }
 
 .feature-icon i {
-  font-size: 1.75rem;
-  color: #ffffff;
+  font-size: var(--font-size-2xl);
+  color: var(--color-white);
 }
 
 .feature-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 .feature-title {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg-plus);
   color: var(--text-primary);
   margin: 0;
 }
@@ -153,7 +157,7 @@
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 .section-link:hover {
@@ -204,6 +208,11 @@
     width: 100%;
   }
 
+  /* Tablet Optimized Grid for Featured Products (600px - 1100px approx) */
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .features-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-md);
@@ -219,11 +228,11 @@
   }
 
   .feature-icon i {
-    font-size: 1.5rem;
+    font-size: var(--font-size-2xl-compact);
   }
 
   .feature-title {
-    font-size: 1rem;
+    font-size: var(--font-size-md);
   }
 }
 
@@ -238,6 +247,12 @@
   .section-link {
     align-self: flex-start;
     margin-top: var(--space-xs);
+  }
+
+  /* Mobile: 1 column like the catalog */
+  .product-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
   }
 
   .features-grid {
@@ -259,14 +274,14 @@
   }
 
   .feature-icon i {
-    font-size: 1.25rem;
+    font-size: var(--font-size-xl-compact);
   }
 
   .feature-title {
-    font-size: 0.95rem;
+    font-size: var(--font-size-md-plus);
   }
 
   .feature-desc {
-    font-size: 0.8rem;
+    font-size: var(--font-size-sm-plus);
   }
 }

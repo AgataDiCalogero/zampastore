@@ -21,7 +21,7 @@
 
   .page-title {
     font-family: var(--font-serif);
-    font-size: 2rem;
+    font-size: var(--font-size-3xl-compact);
     font-weight: 400;
     color: var(--text-primary);
     margin: 0;
@@ -43,7 +43,10 @@
   background: var(--surface-card);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-lg);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition:
+    transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    border-color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
 
   &:hover {
@@ -56,18 +59,18 @@
 .order-main-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
 
   .order-id {
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: var(--font-size-md-compact);
     color: var(--text-secondary);
     letter-spacing: 0.5px;
   }
 
   .order-date {
     font-weight: 600;
-    font-size: 1.05rem;
+    font-size: var(--font-size-lg-compact);
     color: var(--text-primary);
   }
 }
@@ -77,39 +80,44 @@
   justify-content: center; /* Center status primarily */
 }
 
-/* Minimalist Badge */
+/* Premium Badge — palette-aligned */
 .status-badge {
   display: inline-flex;
   align-items: center;
-  padding: 6px 14px;
+  padding: var(--space-chip-y) var(--space-chip-x);
   border-radius: 99px;
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs-plus);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
+  line-height: 1;
 
+  /* "Pagato" — teal/primary accent */
   &.status-success {
-    background: var(--surface-50);
-    color: var(--color-success);
-    border: 1px solid var(--color-success);
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    color: var(--color-primary);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
   }
 
+  /* "In attesa" */
   &.status-warning {
-    background: var(--surface-50);
+    background: color-mix(in srgb, var(--color-warning) 12%, transparent);
     color: var(--color-warning);
-    border: 1px solid var(--color-warning);
+    border: 1px solid color-mix(in srgb, var(--color-warning) 30%, transparent);
   }
 
+  /* "In lavorazione" */
   &.status-info {
-    background: var(--surface-50);
+    background: color-mix(in srgb, var(--color-info) 12%, transparent);
     color: var(--color-info);
-    border: 1px solid var(--color-info);
+    border: 1px solid color-mix(in srgb, var(--color-info) 30%, transparent);
   }
 
+  /* "Annullato" */
   &.status-danger {
-    background: var(--surface-50);
+    background: color-mix(in srgb, var(--color-danger) 10%, transparent);
     color: var(--color-danger);
-    border: 1px solid var(--color-danger);
+    border: 1px solid color-mix(in srgb, var(--color-danger) 25%, transparent);
   }
 }
 
@@ -120,7 +128,7 @@
   gap: var(--space-xl);
 
   .order-total {
-    font-size: 1.1rem;
+    font-size: var(--font-size-lg-plus);
     font-weight: 700;
     color: var(--text-primary);
   }
@@ -128,8 +136,8 @@
   .detail-link {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
+    gap: var(--space-sm);
+    font-size: var(--font-size-md-compact);
     font-weight: 600;
     color: var(--primary-color);
     text-decoration: none;
@@ -137,11 +145,11 @@
 
     &:hover {
       text-decoration: underline;
-      gap: 12px; /* Animated arrow movement */
+      gap: var(--space-md); /* Animated arrow movement */
     }
 
     i {
-      font-size: 0.8rem;
+      font-size: var(--font-size-sm-plus);
     }
   }
 }
@@ -166,7 +174,7 @@
       justify-content: center;
 
       i {
-        font-size: 2rem;
+        font-size: var(--font-size-3xl-compact);
         color: var(--text-secondary);
       }
     }

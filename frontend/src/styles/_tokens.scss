@@ -1,11 +1,15 @@
 :root {
   /* Palette */
   --color-primary: #083a4f;
+  --color-primary-emphasis: #0a4d60;
   --color-accent: #a58d66;
   --color-secondary: #407e8c;
   --color-cta: #f2c14b;
   --color-cta-dark: #d9a441;
+  --color-cta-hover-start: #f7c65a;
+  --color-cta-hover-end: #f0b938;
   --color-cta-text: #2b2b2b;
+  --color-white: #ffffff;
   --surface-base: #e5e1dd;
   --surface-subtle: #c0d5d6;
 
@@ -48,10 +52,23 @@
   --space-2xl: 2rem; /* 32px */
   --space-3xl: 3rem; /* 48px */
   --space-4xl: 4rem; /* 64px */
+  --space-button-x: 1.3rem;
+  --space-button-sm-y: 0.4rem;
+  --space-button-sm-x: 0.8rem;
+  --space-input-icon-offset: 2.5rem;
+  --space-chip-y: 5px;
+  --space-chip-x: 14px;
+  --space-tag-y: 0.35rem;
+  --space-tag-x: 0.6rem;
+  --space-control-y: 0.65rem;
+  --space-tight: 6px;
+  --space-xxs: 2px;
 
   /* Typography */
   --font-sans: 'Manrope', 'Segoe UI', Arial, sans-serif;
   --font-serif: 'Playfair Display', 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono',
+    Menlo, monospace;
   --font-size-xs: 0.75rem; /* 12px */
   --font-size-sm: 0.875rem; /* 14px */
   --font-size-md: 1rem; /* 16px */
@@ -59,5 +76,20 @@
   --font-size-xl: 1.375rem; /* 22px */
   --font-size-2xl: 1.75rem; /* 28px */
   --font-size-3xl: 2.25rem; /* 36px */
+  --font-size-2xs: 0.65rem;
+  --font-size-3xs: 0.7rem;
+  --font-size-xs-plus: 0.72rem;
+  --font-size-sm-plus: 0.8rem;
+  --font-size-sm-alt: 0.85rem;
+  --font-size-md-compact: 0.9rem;
+  --font-size-md-plus: 0.95rem;
+  --font-size-lg-compact: 1.05rem;
+  --font-size-lg-plus: 1.1rem;
+  --font-size-xl-compact: 1.25rem;
+  --font-size-xl-plus: 1.4rem;
+  --font-size-2xl-compact: 1.5rem;
+  --font-size-3xl-compact: 2rem;
+  --font-size-4xl: 2.5rem;
+  --font-size-5xl: 3rem;
   --line-height-base: 1.5;
 }
