@@ -1,32 +1,139 @@
 @if (state$ | async; as state) { @if (state.status === 'ready') {
-<section class="checkout-success">
-  <div class="checkout-hero">
-    <div class="checkout-badge">
+<section class="checkout-success section">
+  <!-- Hero -->
+  <div class="success-hero">
+    <div class="success-badge">
       <i class="pi pi-check"></i>
     </div>
-    <div class="checkout-copy">
-      <h2>Ordine confermato</h2>
-      <p>Grazie! Il tuo ordine è stato confermato.</p>
-    </div>
+    <h1>Ordine confermato!</h1>
+    <p class="success-subtitle">
+      Grazie per il tuo acquisto. Riceverai una conferma via email.
+    </p>
+  </div>
 
-    <div class="checkout-meta">
-      <div>
-        <span class="label">Riferimento</span>
-        <span class="value">{{ state.order.id }}</span>
+  <!-- Order Card -->
+  <p-card class="success-card">
+    <!-- Meta Grid -->
+    <div class="order-meta-grid">
+      <div class="meta-cell">
+        <span class="meta-label">Riferimento</span>
+        <span class="meta-value mono">#{{ getShortId(state.order.id) }}</span>
       </div>
-      <div>
-        <span class="label">Stato</span>
-        <span class="value">{{ state.order.status }}</span>
+      <div class="meta-cell">
+        <span class="meta-label">Data</span>
+        <span class="meta-value">
+          {{ state.order.createdAt | date: 'dd/MM/yyyy' }}
+        </span>
       </div>
-      <div>
-        <span class="label">Totale</span>
-        <span class="value">
+      <div class="meta-cell">
+        <span class="meta-label">Stato</span>
+        <span
+          class="status-chip"
+          [class]="'status-chip status-' + statusFor(state.order.status).tone"
+        >
+          {{ statusFor(state.order.status).label }}
+        </span>
+      </div>
+      <div class="meta-cell">
+        <span class="meta-label">Totale</span>
+        <span class="meta-value meta-total">
           {{ state.order.totalCents / 100 | number: '1.2-2' }} €
         </span>
       </div>
     </div>
 
-    <div class="checkout-actions">
+    <!-- Shipping Address -->
+    <h4 class="section-title">Spedizione</h4>
+    <div class="shipping-box">
+      <div class="shipping-icon">
+        <i class="pi pi-map-marker"></i>
+      </div>
+      <div class="shipping-details">
+        <div class="shipping-name">
+          {{ state.order.shippingAddress.firstName }} {{
+          state.order.shippingAddress.lastName }}
+        </div>
+        <div class="shipping-addr">
+          {{ state.order.shippingAddress.address }}
+        </div>
+        <div class="shipping-city">
+          {{ state.order.shippingAddress.postalCode }} {{
+          state.order.shippingAddress.city }} ({{
+          state.order.shippingAddress.country }})
+        </div>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <h4 class="section-title">Prodotti ordinati</h4>
+
+    <!-- Desktop Table -->
+    <div class="desktop-view">
+      <p-table
+        [value]="state.order.items"
+        dataKey="productId"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th scope="col">Prodotto</th>
+            <th scope="col">Prezzo</th>
+            <th scope="col">Qtà</th>
+            <th scope="col">Totale</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td>
+              <div class="product-cell">
+                @if (item.imageUrl) {
+                <img
+                  [src]="item.imageUrl"
+                  [alt]="item.name"
+                  width="40"
+                  class="product-thumb"
+                />
+                }
+                <span>{{ item.name }}</span>
+              </div>
+            </td>
+            <td>{{ item.unitPriceCents / 100 | number: '1.2-2' }} €</td>
+            <td>{{ item.qty }}</td>
+            <td class="line-total">
+              {{ item.lineTotalCents / 100 | number: '1.2-2' }} €
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Mobile List -->
+    <div class="mobile-view">
+      @for (item of state.order.items; track item.productId) {
+      <div class="product-card-mobile">
+        @if (item.imageUrl) {
+        <div class="product-image">
+          <img [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
+        </div>
+        }
+        <div class="product-details">
+          <span class="product-name">{{ item.name }}</span>
+          <div class="product-meta">
+            <span class="product-qty">Qtà: {{ item.qty }}</span>
+            <span class="product-price">
+              {{ item.unitPriceCents / 100 | number: '1.2-2' }} €
+            </span>
+          </div>
+        </div>
+        <div class="product-total">
+          {{ item.lineTotalCents / 100 | number: '1.2-2' }} €
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Actions -->
+    <div class="success-actions">
       <button
         pButton
         type="button"
@@ -34,26 +141,24 @@
         icon="pi pi-list"
         label="I miei ordini"
         [routerLink]="['/ordini']"
-      >
-      </button>
+      ></button>
       <button
         pButton
         type="button"
-        icon="pi pi-arrow-left"
+        icon="pi pi-shopping-bag"
         label="Continua lo shopping"
         [routerLink]="['/prodotti']"
-      >
-      </button>
+      ></button>
     </div>
-  </div>
+  </p-card>
 </section>
 } @else if (state.status === 'empty') {
-<section class="checkout-empty">
+<section class="checkout-empty section">
   <div class="empty-state">
     <i class="pi pi-inbox"></i>
     <h3>Ordine non trovato</h3>
     <p>Non abbiamo trovato questo ordine. Torna alla lista o allo shop.</p>
-    <div class="checkout-actions">
+    <div class="empty-actions">
       <button pButton type="button" [routerLink]="['/ordini']">
         Vai agli ordini
       </button>
@@ -69,7 +174,7 @@
   </div>
 </section>
 } @else if (state.status === 'error') {
-<section class="checkout-empty">
+<section class="checkout-empty section">
   <div class="empty-state">
     <i class="pi pi-exclamation-triangle"></i>
     <h3>Errore di caricamento</h3>
@@ -77,19 +182,21 @@
   </div>
 </section>
 } @else {
-<section class="checkout-success">
-  <p-card class="checkout-skeleton" header="Ordine confermato">
-    <div class="skeleton-row">
-      <p-skeleton height="32px"></p-skeleton>
-    </div>
+<section class="checkout-success section">
+  <div class="success-hero">
+    <p-skeleton shape="circle" size="56px"></p-skeleton>
+    <p-skeleton width="200px" height="32px"></p-skeleton>
+    <p-skeleton width="300px" height="20px"></p-skeleton>
+  </div>
+  <p-card class="success-card">
     <div class="skeleton-grid">
-      <p-skeleton height="24px"></p-skeleton>
-      <p-skeleton height="24px"></p-skeleton>
-      <p-skeleton height="24px"></p-skeleton>
+      <p-skeleton height="60px"></p-skeleton>
+      <p-skeleton height="60px"></p-skeleton>
+      <p-skeleton height="60px"></p-skeleton>
+      <p-skeleton height="60px"></p-skeleton>
     </div>
-    <div class="skeleton-row">
-      <p-skeleton height="40px"></p-skeleton>
-    </div>
+    <p-skeleton height="100px" styleClass="mt-3"></p-skeleton>
+    <p-skeleton height="120px" styleClass="mt-3"></p-skeleton>
   </p-card>
 </section>
 } }

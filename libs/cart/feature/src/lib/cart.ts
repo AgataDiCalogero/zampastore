@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   computed,
   effect,
   inject,
@@ -52,6 +53,7 @@ export class Cart {
   private readonly router = inject(Router);
   private readonly uiFeedback = inject(UiFeedbackService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly destroyRef = inject(DestroyRef);
   private cartItemIds: string[] = [];
 
   protected readonly cartItems = this.cartService.cartItems;
@@ -166,7 +168,11 @@ export class Cart {
     });
 
     group.controls.quantity.valueChanges
-      .pipe(debounceTime(800), distinctUntilChanged(), takeUntilDestroyed())
+      .pipe(
+        debounceTime(800),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((qty) => {
         if (group.controls.quantity.invalid) {
           return;

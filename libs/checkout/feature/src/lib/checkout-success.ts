@@ -4,9 +4,10 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
+import { TableModule } from 'primeng/table';
 import { CartService } from '@zampa/cart/data-access';
 import { OrdersService } from '@zampa/orders/data-access';
-import { OrderDetail } from '@zampa/shared';
+import { OrderDetail, OrderStatus } from '@zampa/shared';
 import {
   Observable,
   catchError,
@@ -19,7 +20,14 @@ import {
 
 @Component({
   selector: 'app-checkout-success',
-  imports: [CommonModule, RouterLink, ButtonModule, CardModule, SkeletonModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ButtonModule,
+    CardModule,
+    SkeletonModule,
+    TableModule,
+  ],
   templateUrl: './checkout-success.html',
   styleUrl: './checkout-success.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +37,26 @@ export class CheckoutSuccess {
   private readonly route = inject(ActivatedRoute);
   private readonly ordersService = inject(OrdersService);
   private cleared = false;
+
+  protected readonly statusMeta: Record<
+    OrderStatus,
+    { label: string; tone: 'success' | 'warning' | 'info' | 'danger' }
+  > = {
+    pending: { label: 'In attesa', tone: 'warning' },
+    paid: { label: 'Pagato', tone: 'success' },
+    processing: { label: 'In lavorazione', tone: 'info' },
+    shipped: { label: 'Spedito', tone: 'info' },
+    delivered: { label: 'Consegnato', tone: 'success' },
+    cancelled: { label: 'Annullato', tone: 'danger' },
+  };
+
+  protected statusFor(status: OrderStatus) {
+    return this.statusMeta[status];
+  }
+
+  protected getShortId(id: string): string {
+    return id.substring(0, 8).toUpperCase();
+  }
 
   protected readonly state$: Observable<
     | { status: 'loading' }

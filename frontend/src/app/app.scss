@@ -5,6 +5,10 @@
 .app-header {
   padding: var(--space-lg) 0 0;
   background: var(--surface-base);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
 }
 
 .app-content {
