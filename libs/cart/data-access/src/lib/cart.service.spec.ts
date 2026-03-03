@@ -9,8 +9,11 @@ import { describe, beforeEach, it, expect } from 'vitest';
 const buildProduct = (overrides?: Partial<Product>): Product => ({
   id: 'prod-1',
   name: 'Test Product',
+  description: 'Descrizione prodotto',
   priceCents: 1000,
-  imageUrl: undefined,
+  imageUrl: '/assets/products/test-product.jpg',
+  images: ['/assets/products/test-product.jpg'],
+  category: 'Test',
   ...overrides,
 });
 

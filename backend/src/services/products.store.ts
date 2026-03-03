@@ -24,12 +24,12 @@ class MysqlProductsStore {
         PRODUCTS.map((p) => ({
           id: p.id,
           name: p.name,
-          description: p.description ?? '',
+          description: p.description,
           priceCents: p.priceCents,
           stock: 20,
-          category: p.category ?? null,
-          imageUrl: p.imageUrl ?? null,
-          images: p.images ?? null,
+          category: p.category,
+          imageUrl: p.imageUrl,
+          images: p.images,
           createdAt: now,
           updatedAt: now,
         })),
@@ -71,13 +71,7 @@ class MysqlProductsStore {
 
     if (!row) return null;
 
-    return {
-      ...row,
-      description: row.description ?? '',
-      imageUrl: row.imageUrl ?? undefined,
-      images: row.images ?? undefined,
-      category: row.category ?? undefined,
-    };
+    return this.mapRowToProduct(row);
   }
 
   async getProductsByIds(productIds: string[]): Promise<Product[]> {
@@ -111,11 +105,13 @@ class MysqlProductsStore {
 
   private mapRowToProduct(row: typeof products.$inferSelect): Product {
     return {
-      ...row,
+      id: row.id,
+      name: row.name,
       description: row.description ?? '',
-      imageUrl: row.imageUrl ?? undefined,
-      images: row.images ?? undefined,
-      category: row.category ?? undefined,
+      priceCents: row.priceCents,
+      imageUrl: row.imageUrl ?? '',
+      images: row.images ?? (row.imageUrl ? [row.imageUrl] : []),
+      category: row.category ?? '',
     };
   }
 }

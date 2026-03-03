@@ -11,7 +11,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { CartItem, CartService } from '@zampa/cart/data-access';
+import { CartService } from '@zampa/cart/data-access';
+import type { CartLineViewModel } from '@zampa/cart/data-access';
 import { PaymentService } from '@zampa/payment/data-access';
 import { CreateCheckoutSessionRequest, ShippingAddress } from '@zampa/shared';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -108,7 +109,7 @@ export class CheckoutFacade {
 
   readonly submitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
-  private cartSnapshot: CartItem[] = [];
+  private cartSnapshot: CartLineViewModel[] = [];
   private readonly STORAGE_KEY = 'checkout_form_state';
 
   constructor() {

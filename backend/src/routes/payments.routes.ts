@@ -9,9 +9,10 @@ import {
 import { getEnv } from '../config/env';
 import { requireAuth } from '../middleware/auth.middleware';
 import { requireCsrf } from '../middleware/csrf.middleware';
-import { mapDbError } from '../utils/db-errors';
+import { checkoutLimiter } from '../middleware/rate-limit.middleware';
 import { parseCheckoutRequest } from '../services/checkout.validation';
 import { stripeEventsStore } from '../services/stripe-events.store';
+import { AppError } from '../utils/app-error';
 
 export const paymentsRouter = Router();
 
@@ -172,6 +173,19 @@ const createStripeSession = (
     customer_email: user.email,
   });
 
+const markOrderAsCancelled = async (
+  userId: string,
+  orderId: string,
+): Promise<void> => {
+  const updated = await updateOrderStatus(userId, orderId, 'cancelled');
+  if (!updated) {
+    throw new AppError(
+      'Impossibile aggiornare lo stato ordine dopo errore pagamento.',
+      500,
+    );
+  }
+};
+
 const handleStripeCheckout = async (
   res: express.Response,
   user: AuthenticatedUser,
@@ -179,10 +193,9 @@ const handleStripeCheckout = async (
   successUrl: string,
   cancelUrl: string,
 ): Promise<void> => {
-  // 1. Production Security Check
   if (!stripe) {
-    res.status(500).json({ message: 'Payment system configuration error' });
-    return;
+    await markOrderAsCancelled(user.id, order.id);
+    throw new AppError('Payment system configuration error', 500);
   }
 
   try {
@@ -195,10 +208,8 @@ const handleStripeCheckout = async (
     );
 
     if (!session.url) {
-      res
-        .status(500)
-        .json({ message: 'Sessione Stripe senza URL di redirect.' });
-      return;
+      await markOrderAsCancelled(user.id, order.id);
+      throw new AppError('Sessione Stripe senza URL di redirect.', 500);
     }
 
     // Auto-pay removed as per user request to allow testing of payment flow / cancellation.
@@ -211,71 +222,76 @@ const handleStripeCheckout = async (
 
     sendOrderPaidResponse(res, order.id, session.url);
   } catch (error) {
-    // We do NOT fallback if Stripe fails
-
+    if (error instanceof AppError) {
+      throw error;
+    }
+    await markOrderAsCancelled(user.id, order.id);
     console.error('Stripe session error', error);
-    res
-      .status(500)
-      .json({ message: 'Impossibile creare la sessione di pagamento.' });
+    throw new AppError('Impossibile creare la sessione di pagamento.', 500);
   }
 };
 
 paymentsRouter.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
-  async (req, res) => {
-    if (!stripe || !webhookSecret) {
-      res.status(501).json({ message: 'Webhook Stripe non configurato.' });
-      return;
-    }
-    const signature = req.headers['stripe-signature'];
-    if (!signature || Array.isArray(signature)) {
-      res.status(400).json({ message: 'Firma Stripe mancante.' });
-      return;
-    }
-
-    let event: Stripe.Event;
+  async (req, res, next) => {
     try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        signature,
-        webhookSecret,
-      );
-    } catch {
-      res.status(400).json({ message: 'Firma Stripe non valida.' });
-      return;
-    }
-
-    const recorded = await stripeEventsStore.recordEvent(event.id, event.type);
-    if (!recorded) {
-      res.json({ received: true, duplicate: true });
-      return;
-    }
-
-    if (isCheckoutSessionCompletedEvent(event)) {
-      const session = event.data.object;
-      const orderId = session.metadata?.orderId;
-      const userId = session.metadata?.userId;
-      if (!orderId || !userId) {
-        res.status(400).json({ message: 'Metadata ordine mancante.' });
+      if (!stripe || !webhookSecret) {
+        res.status(501).json({ message: 'Webhook Stripe non configurato.' });
         return;
       }
-      const updated = await updateOrderStatus(userId, orderId, 'paid');
-      if (!updated) {
-        res.status(404).json({ message: 'Ordine non trovato.' });
+      const signature = req.headers['stripe-signature'];
+      if (!signature || Array.isArray(signature)) {
+        res.status(400).json({ message: 'Firma Stripe mancante.' });
         return;
       }
-    }
 
-    res.json({ received: true });
+      let event: Stripe.Event;
+      try {
+        event = stripe.webhooks.constructEvent(
+          req.body,
+          signature,
+          webhookSecret,
+        );
+      } catch {
+        res.status(400).json({ message: 'Firma Stripe non valida.' });
+        return;
+      }
+
+      const recorded = await stripeEventsStore.recordEvent(event.id, event.type);
+      if (!recorded) {
+        res.json({ received: true, duplicate: true });
+        return;
+      }
+
+      if (isCheckoutSessionCompletedEvent(event)) {
+        const session = event.data.object;
+        const orderId = session.metadata?.orderId;
+        const userId = session.metadata?.userId;
+        if (!orderId || !userId) {
+          res.status(400).json({ message: 'Metadata ordine mancante.' });
+          return;
+        }
+        const updated = await updateOrderStatus(userId, orderId, 'paid');
+        if (!updated) {
+          res.status(404).json({ message: 'Ordine non trovato.' });
+          return;
+        }
+      }
+
+      res.json({ received: true });
+    } catch (error) {
+      next(error);
+    }
   },
 );
 
 paymentsRouter.post(
   '/checkout-session',
+  checkoutLimiter,
   requireAuth,
   requireCsrf,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const user = getAuthenticatedUser(req, res);
       if (!user) {
@@ -309,14 +325,7 @@ paymentsRouter.post(
 
       await handleStripeCheckout(res, user, order, successUrl, cancelUrl);
     } catch (error) {
-      const mapped = mapDbError(error);
-      if (mapped) {
-        res.status(mapped.status).json({ message: mapped.message });
-        return;
-      }
-      res
-        .status(500)
-        .json({ message: 'Errore durante la creazione del checkout.' });
+      next(error);
     }
   },
 );

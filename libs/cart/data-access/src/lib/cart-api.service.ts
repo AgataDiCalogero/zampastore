@@ -2,15 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { API_BASE_URL } from '@zampa/shared';
 import { Observable } from 'rxjs';
-import type { CartItem } from './cart.service';
+import type { CartItemDto, CartLineViewModel } from './cart.types';
 
 @Injectable({ providedIn: 'root' })
 export class CartApiService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = inject(API_BASE_URL);
 
-  getCart(): Observable<CartItem[]> {
-    return this.http.get<CartItem[]>(`${this.apiUrl}/api/cart`);
+  getCart(): Observable<CartLineViewModel[]> {
+    return this.http.get<CartLineViewModel[]>(`${this.apiUrl}/api/cart`);
   }
 
   addItem(productId: string, qty: number): Observable<void> {
@@ -20,7 +20,7 @@ export class CartApiService {
     });
   }
 
-  mergeItems(items: { productId: string; qty: number }[]): Observable<void> {
+  mergeItems(items: CartItemDto[]): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/api/cart/merge`, { items });
   }
 

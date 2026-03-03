@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { CartItemDto } from '@zampa/shared';
 
 export type ValidationResult<T> =
   | { ok: true; data: T }
@@ -25,10 +26,12 @@ const toResult = <T>(parsed: z.SafeParseReturnType<unknown, T>): ValidationResul
   return { ok: false, message };
 };
 
-export const parseCartItem = (payload: unknown): ValidationResult<{ productId: string; qty: number }> =>
+export const parseCartItem = (payload: unknown): ValidationResult<CartItemDto> =>
   toResult(itemSchema.safeParse(payload));
 
-export const parseCartMerge = (payload: unknown): ValidationResult<{ items: { productId: string; qty: number }[] }> =>
+export const parseCartMerge = (
+  payload: unknown,
+): ValidationResult<{ items: CartItemDto[] }> =>
   toResult(mergeSchema.safeParse(payload));
 
 export const parseCartQty = (payload: unknown): ValidationResult<{ qty: number }> =>

@@ -1,13 +1,11 @@
 import { randomUUID } from 'node:crypto';
-import type { Product } from '@zampa/shared';
+import type { CartItemDto, CartLineViewModel } from '@zampa/shared';
 import { db } from '../db/client';
 import { cartItems, products } from '../db/schema';
 import { and, desc, eq, sql } from 'drizzle-orm';
 
-export type CartItem = { product: Product; qty: number };
-
 class MysqlCartStore {
-  async listCart(userId: string): Promise<CartItem[]> {
+  async listCart(userId: string): Promise<CartLineViewModel[]> {
     const rows = await db
       .select({
         productId: cartItems.productId,
@@ -16,6 +14,7 @@ class MysqlCartStore {
         description: products.description,
         priceCents: products.priceCents,
         imageUrl: products.imageUrl,
+        images: products.images,
         category: products.category,
       })
       .from(cartItems)
@@ -27,10 +26,11 @@ class MysqlCartStore {
       product: {
         id: row.productId,
         name: row.name,
-        description: row.description ?? undefined,
+        description: row.description ?? '',
         priceCents: row.priceCents,
-        imageUrl: row.imageUrl ?? undefined,
-        category: row.category ?? undefined,
+        imageUrl: row.imageUrl ?? '',
+        images: row.images ?? (row.imageUrl ? [row.imageUrl] : []),
+        category: row.category ?? '',
       },
       qty: row.quantity,
     }));
@@ -84,7 +84,7 @@ class MysqlCartStore {
 
   async mergeItems(
     userId: string,
-    items: { productId: string; qty: number }[],
+    items: CartItemDto[],
   ): Promise<void> {
     if (items.length === 0) {
       return;

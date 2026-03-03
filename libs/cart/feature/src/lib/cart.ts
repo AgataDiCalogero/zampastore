@@ -21,7 +21,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
-import { CartItem, CartService } from '@zampa/cart/data-access';
+import { CartService } from '@zampa/cart/data-access';
+import type { CartLineViewModel } from '@zampa/cart/data-access';
 import { UiFeedbackService } from '@zampa/ui';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
@@ -128,7 +129,7 @@ export class Cart {
     });
   }
 
-  private syncForm(items: CartItem[]): void {
+  private syncForm(items: CartLineViewModel[]): void {
     const ids = items.map((item) => item.product.id);
     const sameStructure =
       ids.length === this.cartItemIds.length &&
@@ -148,13 +149,13 @@ export class Cart {
     });
   }
 
-  private rebuildForm(items: CartItem[]): void {
+  private rebuildForm(items: CartLineViewModel[]): void {
     const rows = items.map((item) => this.createRow(item));
     const formArray = new FormArray<FormGroup<CartRowForm>>(rows);
     this.form.setControl('items', formArray);
   }
 
-  private createRow(item: CartItem): FormGroup<CartRowForm> {
+  private createRow(item: CartLineViewModel): FormGroup<CartRowForm> {
     const group = new FormGroup<CartRowForm>({
       productId: new FormControl(item.product.id, { nonNullable: true }),
       quantity: new FormControl(item.qty, {

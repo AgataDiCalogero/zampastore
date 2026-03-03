@@ -1,8 +1,8 @@
-import { CartItem } from './cart';
-import { ShippingAddress } from './order';
+import type { CartItemDto } from './cart';
+import type { ShippingAddress } from './order';
 
 export interface CreateCheckoutSessionRequest {
-  items: CartItem[];
+  items: CartItemDto[];
   shippingAddress: ShippingAddress;
 }
 

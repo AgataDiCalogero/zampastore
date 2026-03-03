@@ -6,17 +6,17 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { Product } from '@zampa/shared';
+import type { Product } from '@zampa/shared';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '@zampa/auth/data-access';
 import { CartApiService } from './cart-api.service';
+import type { CartItemDto, CartLineViewModel } from './cart.types';
 
-export type CartItem = { product: Product; qty: number };
 const STORAGE_KEY = 'zs_cart';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  readonly cartItems = signal<CartItem[]>([]);
+  readonly cartItems = signal<CartLineViewModel[]>([]);
   private readonly authService = inject(AuthService);
   private readonly cartApi = inject(CartApiService);
   private readonly destroyRef = inject(DestroyRef);
@@ -138,7 +138,7 @@ export class CartService {
 
     const localItems = this.readStoredCart() ?? [];
     if (localItems.length > 0) {
-      const payload = localItems.map((item) => ({
+      const payload: CartItemDto[] = localItems.map((item) => ({
         productId: item.product.id,
         qty: item.qty,
       }));
@@ -172,7 +172,7 @@ export class CartService {
       });
   }
 
-  private readStoredCart(): CartItem[] | null {
+  private readStoredCart(): CartLineViewModel[] | null {
     if (typeof localStorage === 'undefined') {
       return null;
     }
@@ -181,7 +181,7 @@ export class CartService {
       if (!raw) {
         return null;
       }
-      const parsed = JSON.parse(raw) as CartItem[];
+      const parsed = JSON.parse(raw) as CartLineViewModel[];
       if (!Array.isArray(parsed)) {
         return null;
       }
@@ -197,7 +197,7 @@ export class CartService {
     }
   }
 
-  private persistCart(items: CartItem[]): void {
+  private persistCart(items: CartLineViewModel[]): void {
     if (typeof localStorage === 'undefined') {
       return;
     }

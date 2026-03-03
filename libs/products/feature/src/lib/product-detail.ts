@@ -41,7 +41,6 @@ export class ProductDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly uiFeedback = inject(UiFeedbackService);
   protected readonly imageError = signal(false);
-  protected readonly activeSlide = signal(0);
   protected readonly selectedImageIndex = signal(0);
 
   // Computed list of images for the gallery
@@ -81,14 +80,6 @@ export class ProductDetail {
     ),
     { requireSync: true },
   );
-
-  onScroll(event: Event) {
-    // Simple logic to update active dot based on scroll position
-    const element = event.target as HTMLElement;
-    const slideWidth = element.scrollWidth / this.images().length;
-    const currentIndex = Math.round(element.scrollLeft / slideWidth);
-    this.activeSlide.set(currentIndex);
-  }
 
   addToCart(product: Product): void {
     const safeQty = Math.max(1, Math.floor(this.qtyControl.value ?? 1));

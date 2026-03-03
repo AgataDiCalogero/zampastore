@@ -198,6 +198,11 @@
     line-height: 1 !important;
   }
 
+  .p-button-icon-left,
+  .p-button-icon-right {
+    margin: 0 !important;
+  }
+
   &::after {
     content: none !important;
   }

@@ -1,136 +1,170 @@
-# ZampaStore
+# 🐾 ZampaStore
 
 ![CI](https://github.com/agatadicalogero/zampastore/actions/workflows/ci.yml/badge.svg)
+![Angular](https://img.shields.io/badge/Angular-Standalone%20%7C%20Signals-DD0031?logo=angular&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js&logoColor=white)
+![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F?logo=drizzle&logoColor=111111)
+![TiDB](https://img.shields.io/badge/TiDB-Serverless-1A73E8)
+![Nx](https://img.shields.io/badge/Nx-Monorepo-143055?logo=nx&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-Test%20Mode-635BFF?logo=stripe&logoColor=white)
 
-Zampastore is a full-stack e-commerce solution architected as an Rx-based Monorepo. The system simulates a real-world, scalable architecture designed for high performance and maintainability, strictly separating Feature, UI, and Data Access layers.
+## 📖 Descrizione del Progetto
 
-## 🚀 Overview
+**ZampaStore** è un e-commerce full-stack per prodotti dedicati ad animali domestici, sviluppato come **progetto finale di Master**.
 
-- **Architecture**: Nx Monorepo with strict module boundaries.
-- **Frontend**: Angular 18+ (Standalone Components, Signals), PrimeNG, Tailwind CSS.
-- **Backend**: Express.js (Serverless-ready), OpenAPI.
-- **Data**: Drizzle ORM, TiDB / MySQL persistence.
-- **Security**: HttpOnly Sessions, CSRF Protection, Zod Validation.
+L'applicazione implementa un flusso completo:
+- catalogo prodotti
+- autenticazione utente
+- carrello
+- checkout con Stripe
+- storico ordini
 
-## 🏗️ Architecture
+Il progetto è costruito con un approccio professionale su **Nx Monorepo**, separando chiaramente frontend, backend e contratti condivisi.
 
-The project follows a Domain-Driven Design approach:
+## ✨ Features Principali
 
-```mermaid
-flowchart LR
-  U[User Agent] --> F[Angular Frontend]
-  F -->|REST / OpenAPI| B[Express Backend]
-  B --> D[(TiDB / MySQL)]
-  F -.-> S[Shared Contracts]
-  B -.-> S
-```
+- Autenticazione con **cookie HttpOnly** e gestione sessione lato server
+- Protezione **CSRF** (cookie + header `x-csrf-token`) sulle operazioni sensibili
+- Rate limiting dedicato per traffico globale, auth e checkout
+- Catalogo prodotti con dettaglio prodotto e gestione stato UI moderna
+- Carrello con aggiornamento quantità e rimozione elementi
+- Checkout con creazione ordine e redirect a Stripe Checkout (test mode)
+- Webhook Stripe con deduplica eventi (`stripe_events`)
+- Storico ordini e dettaglio ordine per utente autenticato
+- OpenAPI/Swagger disponibile per la REST API
+- Test setup con **Cypress E2E**, unit test e linting via Nx
 
-### Directory Structure
+## 🏗️ Architettura e Scelte Tecniche
+
+Il repository adotta una struttura enterprise-oriented, focalizzata su scalabilità e manutenzione.
+
+### 1) Nx Monorepo + Domain Isolation
 
 ```text
 zampastore/
-├── apps/               # Application Entry Points
-│   ├── backend/        # API Gateway & Logic
-│   └── frontend/       # Angular SPA
-├── libs/               # Domain Libraries
-│   ├── auth/           # Authentication Domain
-│   ├── cart/           # Shopping Cart Domain
-│   ├── checkout/       # Order Placement Domain
-│   ├── orders/         # Order Management Domain
-│   ├── products/       # Catalogue Domain
-│   └── ui/             # Shared Design System
-└── shared/             # Cross-tier Interfaces (DTOs)
+├── frontend/                  # Angular SPA
+├── backend/                   # Express REST API
+├── libs/
+│   ├── auth/                  # scope:auth (feature + data-access)
+│   ├── cart/                  # scope:cart (feature + data-access)
+│   ├── checkout/              # scope:checkout (feature + data-access)
+│   ├── orders/                # scope:orders (feature + data-access)
+│   ├── products/              # scope:products (feature + data-access)
+│   ├── home/                  # scope:home
+│   ├── payment/               # payment data-access
+│   └── ui/                    # componenti/servizi UI condivisi
+├── shared/                    # DTO e contratti condivisi FE/BE
+└── api/[...all].ts            # entrypoint serverless per Vercel
 ```
 
-## 🛠️ Quick Start
+Le librerie sono organizzate per dominio (`scope:*`) e tipo (`feature`, `data-access`, `shared`) con boundary chiari.
 
-Follow these steps to set up the environment locally.
+### 2) Type-Safety End-to-End con libreria `shared`
 
-**1. Install Dependencies**
+I contratti API (`AuthResponse`, `Product`, `CartDto`, `OrderDetail`, `CreateCheckoutSessionResponse`, ecc.) sono centralizzati in `shared/src/lib/*` e importati sia da frontend che backend.
+
+Risultato:
+- meno duplicazione
+- meno mismatch nei payload
+- refactor più sicuri
+
+### 3) Frontend moderno (Angular)
+
+- Standalone components
+- Nuova sintassi template (`@if`, `@for`)
+- Stato UI con **Signals**, `computed`, `effect`
+- Router con lazy loading e guard funzionali (`CanActivateFn`)
+- Interceptor HTTP per `withCredentials` + CSRF header injection
+
+### 4) Backend robusto (Express + Drizzle)
+
+- Middleware di sicurezza: `helmet`, `cors`, `cookie-parser`
+- Rate limit con policy dedicate (`rateLimiter`, `authLimiter`, `checkoutLimiter`)
+- Validazione input con **Zod**
+- Error handling centralizzato (`AppError` + `errorHandler`)
+- Accesso DB via **Drizzle ORM** su TiDB (MySQL compatible)
+- Stripe webhook handling con verifica firma e deduplica eventi
+
+## ⚠️ Disclaimer per l'Esaminatore
+
+Questo progetto è stato sviluppato a **scopo didattico** (Progetto Finale Master).
+
+- Usa un database di test (TiDB serverless).
+- Usa Stripe in **test mode**.
+- Include dati seed/mock per simulare un contesto realistico.
+
+Per testare il checkout Stripe, puoi usare queste carte:
+
+| Scenario | Numero carta |
+| --- | --- |
+| Pagamento riuscito | `4242 4242 4242 4242` |
+| Pagamento rifiutato | `4000 0000 0000 9995` |
+| 3D Secure richiesto | `4000 0025 0000 3155` |
+
+Per tutti i test Stripe:
+- scadenza futura (es. `12/34`)
+- CVC qualsiasi (es. `123`)
+- CAP qualsiasi valido
+
+## 🛠️ Come avviare il progetto in locale
+
+### Requisiti
+
+- Node.js 20+ (consigliato)
+- npm 10+
+
+### 1) Installazione dipendenze
 
 ```bash
 npm install
 ```
 
-**2. Configure Environment**
+### 2) Setup variabili d'ambiente
 
 ```bash
 cp .env.example .env
 ```
 
-_Note: Populate `.env` with your database credentials._
+Compila `.env` con i tuoi valori (TiDB, Stripe, URL client).  
+Riferimento: `.env.example`.
 
-**3. Initialize Database**
-
-```bash
-npx nx run backend:db-push
-```
-
-**4. Start Application**
+### 3) Allineamento schema database
 
 ```bash
-npm run start:all
+nx run backend:db-push
 ```
 
-## ⚙️ Configuration (.env)
+### 4) Avvio backend e frontend
 
-Ensure your `.env` file is configured correctly.
+Terminale 1:
 
-```dotenv
-# Application
-CLIENT_URL=http://localhost:4200
-PORT=3333
-
-# Database (TiDB / MySQL)
-TIDB_HOST=127.0.0.1
-TIDB_PORT=4000
-TIDB_USER=root
-TIDB_PASSWORD=password
-TIDB_DATABASE=zampastore
-TIDB_SSL_MODE=disable
+```bash
+nx serve backend
 ```
 
-## 📜 Commands
+Terminale 2:
 
-**Start All Services**
+```bash
+nx serve frontend
+```
+
+In alternativa:
 
 ```bash
 npm run start:all
 ```
 
-**Start Frontend Only**
+### 5) URL locali utili
 
-```bash
-npm run frontend:serve
-```
+- Frontend: `http://localhost:4200`
+- API: `http://localhost:3333/api`
+- Swagger: `http://localhost:3333/api/docs`
 
-**Start Backend Only**
+## 🌐 Live Demo
 
-```bash
-npm run backend:serve
-```
-
-**Run Full Check (Lint, Test, Build)**
-
-```bash
-npm run check
-```
-
-**Reset Database**
-
-```bash
-npx nx run backend:db-reset
-```
-
-## 🔗 Endpoints
-
-| Service | URL |
-|BC|---|
-| **Frontend** | [http://localhost:4200](http://localhost:4200) |
-| **API** | [http://localhost:3333/api](http://localhost:3333/api) |
-| **Swagger** | [http://localhost:3333/api/docs](http://localhost:3333/api/docs) |
+Deploy (Vercel): **[inserire link qui](https://example.vercel.app)**
 
 ---
 
-**Author**: Agata Di Calogero
-_Developed for Master in Full Stack Development - Start2Impact University_
+Sviluppato da **Agata Di Calogero**  
+Progetto Finale - Master in Full Stack Development

@@ -1,16 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrdersService } from '@zampa/orders/data-access';
 import { OrderStatus } from '@zampa/shared';
 import {
-  BehaviorSubject,
   catchError,
   map,
   of,
   startWith,
   switchMap,
 } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
@@ -55,10 +59,10 @@ export class Orders {
     return id.substring(0, 8).toUpperCase();
   }
 
-  private readonly refreshTrigger$ = new BehaviorSubject<void>(undefined);
+  private readonly refreshTrigger = signal(0);
 
   readonly state = toSignal(
-    this.refreshTrigger$.pipe(
+    toObservable(this.refreshTrigger).pipe(
       switchMap(() =>
         this.ordersService.getOrders().pipe(
           map((orders) =>
@@ -75,6 +79,6 @@ export class Orders {
   );
 
   refresh() {
-    this.refreshTrigger$.next();
+    this.refreshTrigger.update((value) => value + 1);
   }
 }

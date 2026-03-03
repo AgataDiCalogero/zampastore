@@ -16,7 +16,6 @@ import { getEnv } from './config/env';
 import { errorHandler } from './middleware/error.middleware';
 import {
   authLimiter,
-  checkoutLimiter,
   rateLimiter,
 } from './middleware/rate-limit.middleware';
 import { requireCsrf } from './middleware/csrf.middleware';
@@ -25,8 +24,28 @@ import { productsStore } from './services/products.store';
 const app = express();
 const env = getEnv();
 const isProduction = process.env.NODE_ENV === 'production';
+const normalizePath = (pathValue: string): string => {
+  if (pathValue.length > 1 && pathValue.endsWith('/')) {
+    return pathValue.slice(0, -1);
+  }
+  return pathValue;
+};
+const getRequestPath = (req: express.Request): string =>
+  normalizePath(req.path || req.originalUrl.split('?')[0] || '/');
+const isWebhookRequest = (req: express.Request): boolean =>
+  req.method === 'POST' && getRequestPath(req) === '/api/payments/webhook';
+const isAuthPublicRequest = (req: express.Request): boolean => {
+  if (req.method !== 'POST') {
+    return false;
+  }
+  const requestPath = getRequestPath(req);
+  return requestPath === '/api/auth/login' || requestPath === '/api/auth/register';
+};
 
 app.disable('x-powered-by');
+if (process.env.VERCEL) {
+  app.set('trust proxy', 1);
+}
 app.use(helmet());
 
 // CSP Exception for Swagger UI
@@ -57,7 +76,7 @@ app.use(rateLimiter);
 // JSON Parser with Webhook Exception
 const jsonParser = express.json();
 app.use((req, res, next) => {
-  if (req.originalUrl === '/api/payments/webhook') {
+  if (isWebhookRequest(req)) {
     next();
   } else {
     jsonParser(req, res, next);
@@ -70,12 +89,7 @@ const csrfMiddleware = (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const skipCsrf = [
-    '/api/auth/login',
-    '/api/auth/register',
-    '/api/payments/webhook',
-  ];
-  if (skipCsrf.includes(req.originalUrl)) {
+  if (isWebhookRequest(req) || isAuthPublicRequest(req)) {
     next();
     return;
   }
@@ -130,7 +144,7 @@ app.use('/api/products', productsRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/orders', ordersRouter);
-app.use('/api/payments', checkoutLimiter, paymentsRouter);
+app.use('/api/payments', paymentsRouter);
 app.use(errorHandler);
 
 // Local development support

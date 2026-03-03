@@ -32,16 +32,37 @@ export const openApiSpec = {
       schemas: {
         Product: {
           type: 'object',
-          required: ['id', 'name', 'priceCents'],
+          required: [
+            'id',
+            'name',
+            'description',
+            'priceCents',
+            'imageUrl',
+            'images',
+            'category',
+          ],
           properties: {
             id: { type: 'string', example: 'prod-001' },
             name: { type: 'string', example: 'Crocchette premium pollo' },
+            description: {
+              type: 'string',
+              example: 'Ricetta bilanciata con ingredienti naturali.',
+            },
             priceCents: { type: 'number', example: 1899 },
             imageUrl: {
               type: 'string',
               example:
                 'https://images.unsplash.com/photo-1558944351-cf3c1b79f2c4',
             },
+            images: {
+              type: 'array',
+              items: { type: 'string' },
+              example: [
+                '/assets/products/prod-001-crocchette-premium.jpg',
+                '/assets/products/prod-001-crocchette-premium-lifestyle.jpg',
+              ],
+            },
+            category: { type: 'string', example: 'Cibo' },
           },
         },
         AuthUser: {
@@ -58,7 +79,6 @@ export const openApiSpec = {
           required: ['user'],
           properties: {
             user: { $ref: '#/components/schemas/AuthUser' },
-            token: { type: 'string', nullable: true },
           },
         },
         LoginRequest: {
@@ -165,7 +185,7 @@ export const openApiSpec = {
             },
           ],
         },
-        CartItem: {
+        CartItemDto: {
           type: 'object',
           required: ['productId', 'qty'],
           properties: {
@@ -173,7 +193,7 @@ export const openApiSpec = {
             qty: { type: 'number', example: 1 },
           },
         },
-        CartItemDetail: {
+        CartLineViewModel: {
           type: 'object',
           required: ['product', 'qty'],
           properties: {
@@ -187,7 +207,7 @@ export const openApiSpec = {
           properties: {
             items: {
               type: 'array',
-              items: { $ref: '#/components/schemas/CartItem' },
+              items: { $ref: '#/components/schemas/CartItemDto' },
             },
             shippingAddress: { $ref: '#/components/schemas/ShippingAddress' },
           },
@@ -292,7 +312,7 @@ export const openApiSpec = {
                 'application/json': {
                   schema: {
                     type: 'array',
-                    items: { $ref: '#/components/schemas/CartItemDetail' },
+                    items: { $ref: '#/components/schemas/CartLineViewModel' },
                   },
                 },
               },
@@ -355,7 +375,7 @@ export const openApiSpec = {
                   properties: {
                     items: {
                       type: 'array',
-                      items: { $ref: '#/components/schemas/CartItem' },
+                      items: { $ref: '#/components/schemas/CartItemDto' },
                     },
                   },
                 },
@@ -400,7 +420,7 @@ export const openApiSpec = {
             required: true,
             content: {
               'application/json': {
-                schema: { $ref: '#/components/schemas/CartItem' },
+                schema: { $ref: '#/components/schemas/CartItemDto' },
               },
             },
           },
