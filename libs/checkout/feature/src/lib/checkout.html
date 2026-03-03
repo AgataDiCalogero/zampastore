@@ -133,6 +133,7 @@
                 optionLabel="label"
                 optionValue="value"
                 appendTo="body"
+                panelStyleClass="checkout-select-panel"
                 styleClass="w-full"
               >
                 <ng-template let-item pTemplate="item">
@@ -195,6 +196,8 @@
             [routerLink]="['/carrello']"
             label="Torna al carrello"
           ></button>
+
+          <app-stripe-test-cards></app-stripe-test-cards>
         </aside>
       </div>
     </form>

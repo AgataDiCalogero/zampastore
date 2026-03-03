@@ -1,4 +1,4 @@
-<p-toast key="app" position="top-right">
+<p-toast key="app" position="bottom-right">
   <ng-template pTemplate="message" let-message>
     <div class="toast-content">
       <div class="toast-text">
@@ -9,7 +9,7 @@
       <button
         pButton
         type="button"
-        class="p-button-text p-button-sm"
+        class="p-button-text p-button-sm toast-action"
         (click)="message.data.action()"
       >
         {{ message.data.actionLabel }}
@@ -225,14 +225,14 @@
 </main>
 
 <footer class="app-footer">
-  <div class="container footer-content">
-    <div>
-      <strong>ZampaStore</strong>
-      <p class="text-muted">Benessere quotidiano per cani e gatti.</p>
+  <div class="container footer-shell">
+    <div class="footer-brand">
+      <strong class="footer-title">ZampaStore</strong>
+      <p class="footer-tagline">Benessere quotidiano per cani e gatti.</p>
     </div>
-    <div class="footer-links">
-      <span>© 2026 ZampaStore</span>
-      <span>Assistenza clienti 7 giorni su 7</span>
+    <div class="footer-meta" aria-label="Informazioni servizio">
+      <span class="footer-meta-item">© 2026 ZampaStore</span>
+      <span class="footer-meta-item">Assistenza clienti 7 giorni su 7</span>
     </div>
   </div>
 </footer>

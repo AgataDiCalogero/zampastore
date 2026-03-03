@@ -180,28 +180,70 @@
 }
 
 .app-footer {
-  background: var(--surface-0);
-  border-top: 1px solid var(--border-color);
-  padding: var(--space-2xl) 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-0) 88%, #ffffff) 0%,
+    var(--surface-0) 100%
+  );
+  border-top: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+  padding: var(--space-xl) 0;
   margin-top: var(--space-3xl);
 }
 
-.footer-content {
+.footer-shell {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-lg);
+  align-items: flex-end;
   justify-content: space-between;
+  gap: var(--space-xl);
 }
 
-.footer-links {
+.footer-brand {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
-.footer-links span {
+.footer-title {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+.footer-tagline {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.footer-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.footer-meta-item {
   color: var(--text-secondary);
   font-weight: 600;
+  line-height: 1.4;
+}
+
+.footer-meta-item + .footer-meta-item {
+  padding-left: var(--space-md);
+  position: relative;
+}
+
+.footer-meta-item + .footer-meta-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--color-accent) 60%, transparent);
 }
 
 @media (max-width: 768px) {
@@ -224,6 +266,37 @@
 
   .mobile-toggle {
     display: inline-flex;
+  }
+
+  .app-footer {
+    margin-top: var(--space-2xl);
+    padding: var(--space-lg) 0;
+  }
+
+  .footer-shell {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .footer-title {
+    font-size: var(--font-size-md-plus);
+  }
+
+  .footer-meta {
+    width: 100%;
+    display: grid;
+    gap: var(--space-xs);
+    padding-top: var(--space-sm);
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
+  }
+
+  .footer-meta-item + .footer-meta-item {
+    padding-left: 0;
+  }
+
+  .footer-meta-item + .footer-meta-item::before {
+    content: none;
   }
 }
 

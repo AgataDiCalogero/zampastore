@@ -90,8 +90,9 @@
 .shipping-option {
   display: flex;
   flex-direction: column;
-  padding: var(--space-sm) 0; /* Add vertical padding */
-  gap: var(--space-xs); /* Add small gap between label and subtitle */
+  gap: var(--space-xs);
+  width: 100%;
+  padding: 0;
 }
 
 /* Summary */
@@ -157,8 +158,4 @@
   color: var(--text-primary); /* Fixed variable name */
   border-top: 2px solid var(--border-color);
   padding-top: var(--space-md);
-}
-
-.checkout-select-panel .p-element {
-  font-size: var(--font-size-md-compact);
 }

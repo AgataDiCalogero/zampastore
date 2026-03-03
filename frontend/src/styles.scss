@@ -214,6 +214,30 @@ h6 {
   padding: 0 !important;
 }
 
+/* Toast: mobile-first, bottom-right, non-intrusive */
+.p-toast {
+  max-width: calc(100vw - 1rem) !important;
+  width: auto !important;
+  right: 0.5rem !important;
+  bottom: 0.5rem !important;
+  left: 0.5rem !important;
+  z-index: 10000 !important;
+
+  .p-toast-message {
+    font-size: 0.85rem;
+    padding: 0;
+  }
+}
+
+@media (min-width: 576px) {
+  .p-toast {
+    max-width: 22rem !important;
+    left: auto !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+  }
+}
+
 /* Global Button Utilities */
 .p-button.btn-gold {
   background: var(--color-cta);
@@ -322,12 +346,15 @@ h6 {
 .p-dialog.cart-clear-confirm .p-dialog-content {
   display: flex;
   align-items: center;
-  gap: var(--space-2xl, 2rem);
+  gap: var(--space-xl) !important;
+  column-gap: var(--space-xl) !important;
+  padding: var(--space-xl) var(--space-2xl) !important;
 }
 
-.p-dialog.cart-clear-confirm :is(.p-confirmdialog-icon, .p-confirm-dialog-icon) {
-  color: var(--red-500, #ef4444) !important;
-  font-size: 2.25rem;
+.p-dialog.cart-clear-confirm
+  :is(.p-confirmdialog-icon, .p-confirm-dialog-icon) {
+  color: var(--red-500) !important;
+  font-size: var(--font-size-4xl);
   line-height: 1;
   margin: 0 !important;
   display: inline-flex !important;
@@ -336,28 +363,52 @@ h6 {
   flex: 0 0 auto;
 }
 
-.p-dialog.cart-clear-confirm :is(
-    .p-confirmdialog-message,
-    .p-confirm-dialog-message
-  ) {
+.p-dialog.cart-clear-confirm
+  :is(.p-confirmdialog-message, .p-confirm-dialog-message) {
   margin: 0 !important;
+  margin-left: var(--space-md) !important;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
-.p-dialog.cart-clear-confirm .p-dialog-footer .p-button.p-button-danger,
-.p-dialog.cart-clear-confirm
-  .p-dialog-footer
-  .p-button.cart-clear-confirm-accept {
+.p-dialog.cart-clear-confirm .p-dialog-footer .p-button.cart-clear-confirm-accept,
+.p-confirm-dialog .p-dialog-footer .p-button.cart-clear-confirm-accept,
+.p-confirmdialog .p-dialog-footer .p-button.cart-clear-confirm-accept {
   background: var(--red-500, #ef4444) !important;
   border-color: var(--red-500, #ef4444) !important;
   color: #ffffff !important;
 }
 
-.p-dialog.cart-clear-confirm .p-dialog-footer .p-button.p-button-danger:hover,
 .p-dialog.cart-clear-confirm
   .p-dialog-footer
-  .p-button.cart-clear-confirm-accept:hover {
+  .p-button.cart-clear-confirm-accept
+  .p-button-label,
+.p-confirm-dialog
+  .p-dialog-footer
+  .p-button.cart-clear-confirm-accept
+  .p-button-label,
+.p-confirmdialog
+  .p-dialog-footer
+  .p-button.cart-clear-confirm-accept
+  .p-button-label,
+.p-dialog.cart-clear-confirm
+  .p-dialog-footer
+  .p-button.cart-clear-confirm-accept
+  .p-button-icon,
+.p-confirm-dialog
+  .p-dialog-footer
+  .p-button.cart-clear-confirm-accept
+  .p-button-icon,
+.p-confirmdialog
+  .p-dialog-footer
+  .p-button.cart-clear-confirm-accept
+  .p-button-icon {
+  color: #ffffff !important;
+}
+
+.p-dialog.cart-clear-confirm .p-dialog-footer .p-button.cart-clear-confirm-accept:hover,
+.p-confirm-dialog .p-dialog-footer .p-button.cart-clear-confirm-accept:hover,
+.p-confirmdialog .p-dialog-footer .p-button.cart-clear-confirm-accept:hover {
   background: var(--red-600, #dc2626) !important;
   border-color: var(--red-600, #dc2626) !important;
   color: #ffffff !important;

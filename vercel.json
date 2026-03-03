@@ -4,6 +4,10 @@
     {
       "source": "/api/(.*)",
       "destination": "/backend/src/main.ts"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "functions": {
