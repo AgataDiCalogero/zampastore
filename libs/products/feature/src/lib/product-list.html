@@ -1,5 +1,4 @@
-@if (state(); as state) { @if (state.status === 'ready') { @defer (on viewport)
-{
+@if (state(); as state) { @if (state.status === 'ready') {
 <section class="product-list">
   <div class="filter-bar">
     <button
@@ -29,23 +28,7 @@
     }
   </div>
 </section>
-} @placeholder {
-<section class="product-list">
-  <div class="product-grid">
-    @for (item of skeletonItems; track $index) {
-    <div class="product-card-skeleton">
-      <p-skeleton width="70%" height="22px"></p-skeleton>
-      <p-skeleton height="180px"></p-skeleton>
-      <p-skeleton width="35%" height="20px"></p-skeleton>
-      <div class="product-card-actions">
-        <p-skeleton width="120px" height="36px"></p-skeleton>
-        <p-skeleton width="160px" height="36px"></p-skeleton>
-      </div>
-    </div>
-    }
-  </div>
-</section>
-} } @else if (state.status === 'empty') {
+} @else if (state.status === 'empty') {
 <section class="product-empty">
   <div class="empty-state">
     <i class="pi pi-box"></i>

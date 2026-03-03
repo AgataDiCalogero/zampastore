@@ -13,6 +13,7 @@
 **ZampaStore** è un e-commerce full-stack per prodotti dedicati ad animali domestici, sviluppato come **progetto finale di Master**.
 
 L'applicazione implementa un flusso completo:
+
 - catalogo prodotti
 - autenticazione utente
 - carrello
@@ -64,6 +65,7 @@ Le librerie sono organizzate per dominio (`scope:*`) e tipo (`feature`, `data-ac
 I contratti API (`AuthResponse`, `Product`, `CartDto`, `OrderDetail`, `CreateCheckoutSessionResponse`, ecc.) sono centralizzati in `shared/src/lib/*` e importati sia da frontend che backend.
 
 Risultato:
+
 - meno duplicazione
 - meno mismatch nei payload
 - refactor più sicuri
@@ -95,13 +97,14 @@ Questo progetto è stato sviluppato a **scopo didattico** (Progetto Finale Maste
 
 Per testare il checkout Stripe, puoi usare queste carte:
 
-| Scenario | Numero carta |
-| --- | --- |
-| Pagamento riuscito | `4242 4242 4242 4242` |
+| Scenario            | Numero carta          |
+| ------------------- | --------------------- |
+| Pagamento riuscito  | `4242 4242 4242 4242` |
 | Pagamento rifiutato | `4000 0000 0000 9995` |
-| 3D Secure richiesto | `4000 0025 0000 3155` |
+| 3D Secure richiesto | `4000 0000 0000 3220` |
 
 Per tutti i test Stripe:
+
 - scadenza futura (es. `12/34`)
 - CVC qualsiasi (es. `123`)
 - CAP qualsiasi valido

@@ -2,22 +2,29 @@
   <ng-template pTemplate="content">
     <div
       class="product-card-media"
-      [class.has-secondary]="secondaryImage && !secondaryImageError()"
+      [class.has-secondary]="secondaryImageLoaded() && !secondaryImageError()"
+      (mouseenter)="requestSecondaryImage()"
+      (focusin)="requestSecondaryImage()"
+      (touchstart)="requestSecondaryImage()"
     >
       @if (mainImage && !imageError()) {
       <img
         [ngSrc]="mainImage"
         [alt]="product.name"
         class="primary-image"
+        decoding="async"
         fill
         (error)="handleImageError()"
       />
-      @if (secondaryImage && !secondaryImageError()) {
+      @if (shouldRenderSecondary() && secondaryImage && !secondaryImageError()) {
       <img
         [ngSrc]="secondaryImage"
         [alt]="product.name"
         class="secondary-image"
+        loading="lazy"
+        decoding="async"
         fill
+        (load)="handleSecondaryImageLoaded()"
         (error)="handleSecondaryImageError()"
       />
       } } @else {

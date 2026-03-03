@@ -86,11 +86,6 @@ const handleOrderCreationError = (
     return false;
   }
 
-  if (error.code === 'out-of-stock') {
-    res.status(409).json({ message: 'Prodotto esaurito.' });
-    return true;
-  }
-
   res.status(400).json({ message: 'Prodotti non validi.' });
   return true;
 };

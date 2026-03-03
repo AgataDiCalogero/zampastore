@@ -96,13 +96,13 @@
         <ng-template pTemplate="body" let-item>
           <tr>
             <td>
-              <div class="flex align-items-center gap-3">
+              <div class="order-item-main">
                 @if (item.imageUrl) {
                 <img
                   [src]="item.imageUrl"
                   [alt]="item.name"
                   width="40"
-                  class="shadow-1 border-round"
+                  class="order-item-thumb"
                 />
                 }
                 <span>{{ item.name }}</span>
@@ -155,7 +155,7 @@
         class="p-button-text btn-back"
         [routerLink]="['/ordini']"
       >
-        <i class="pi pi-arrow-left mr-2"></i>
+        <i class="pi pi-arrow-left order-back-icon"></i>
         Torna agli ordini
       </button>
     </div>

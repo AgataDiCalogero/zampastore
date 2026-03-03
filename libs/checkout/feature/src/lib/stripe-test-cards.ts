@@ -18,7 +18,7 @@ export class StripeTestCards {
   protected readonly cards: StripeTestCard[] = [
     { number: '4242 4242 4242 4242', title: 'Pagamento riuscito' },
     { number: '4000 0000 0000 9995', title: 'Pagamento rifiutato' },
-    { number: '4000 0025 0000 3155', title: 'Autenticazione 3D Secure' },
+    { number: '4000 0000 0000 3220', title: 'Autenticazione 3D Secure' },
   ];
 
   protected readonly open = signal(false);

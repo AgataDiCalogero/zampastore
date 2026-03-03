@@ -112,12 +112,14 @@ export class Cart {
       message: 'Rimuoveremo tutti i prodotti dal carrello.',
       icon: 'pi pi-trash',
       acceptLabel: 'Svuota',
-      acceptButtonStyleClass: 'p-button-danger cart-clear-confirm-accept',
+      acceptButtonStyleClass: 'cart-clear-confirm-accept',
       rejectLabel: 'Annulla',
-      rejectButtonStyleClass:
-        'p-button-secondary p-button-outlined cart-clear-confirm-reject',
+      rejectButtonStyleClass: 'cart-clear-confirm-reject',
       acceptIcon: 'none',
       rejectIcon: 'none',
+      defaultFocus: 'reject',
+      dismissableMask: true,
+      closeOnEscape: true,
       accept: () => {
         this.cartService.clearCart();
         this.uiFeedback.showCartCleared(() => {

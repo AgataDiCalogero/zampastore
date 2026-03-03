@@ -32,6 +32,8 @@ export class ProductCardComponent {
 
   protected readonly imageError = signal(false);
   protected readonly secondaryImageError = signal(false);
+  protected readonly shouldRenderSecondary = signal(false);
+  protected readonly secondaryImageLoaded = signal(false);
 
   protected get mainImage(): string | undefined {
     return (
@@ -56,11 +58,22 @@ export class ProductCardComponent {
     this.addToCart.emit(this.product);
   }
 
+  protected requestSecondaryImage(): void {
+    if (this.secondaryImage) {
+      this.shouldRenderSecondary.set(true);
+    }
+  }
+
   protected handleImageError(): void {
     this.imageError.set(true);
   }
 
+  protected handleSecondaryImageLoaded(): void {
+    this.secondaryImageLoaded.set(true);
+  }
+
   protected handleSecondaryImageError(): void {
     this.secondaryImageError.set(true);
+    this.secondaryImageLoaded.set(false);
   }
 }

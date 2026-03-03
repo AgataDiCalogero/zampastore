@@ -6,11 +6,11 @@ import {
   OrderStatus,
   ShippingAddress,
 } from '@zampa/shared';
-import { ordersStore, OutOfStockError } from './orders.store';
+import { ordersStore } from './orders.store';
 import { productsStore, type ProductWithStock } from './products.store';
 
 export class OrderCreationError extends Error {
-  constructor(public readonly code: 'invalid-products' | 'out-of-stock') {
+  constructor(public readonly code: 'invalid-products') {
     super(code);
     this.name = 'OrderCreationError';
   }
@@ -27,9 +27,6 @@ const buildOrderLines = (
       throw new OrderCreationError('invalid-products');
     }
     const safeQty = Math.max(1, Math.floor(item.qty));
-    if (product.stock < safeQty) {
-      throw new OrderCreationError('out-of-stock');
-    }
     const unitPriceCents = product.priceCents;
     const lineTotalCents = unitPriceCents * safeQty;
     lines.push({
@@ -69,22 +66,15 @@ export const createOrder = async (
     items: lines,
     shippingAddress,
   };
-  try {
-    await ordersStore.createOrder({
-      id: order.id,
-      userId,
-      totalCents: order.totalCents,
-      status: order.status,
-      createdAt,
-      items: order.items,
-      shippingAddress: order.shippingAddress,
-    });
-  } catch (error) {
-    if (error instanceof OutOfStockError) {
-      throw new OrderCreationError('out-of-stock');
-    }
-    throw error;
-  }
+  await ordersStore.createOrder({
+    id: order.id,
+    userId,
+    totalCents: order.totalCents,
+    status: order.status,
+    createdAt,
+    items: order.items,
+    shippingAddress: order.shippingAddress,
+  });
   return order;
 };
 

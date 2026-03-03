@@ -19,7 +19,6 @@
   }
 
   .auth-side {
-    order: -1;
     order: 1;
   }
 }
@@ -80,14 +79,10 @@
   color: var(--text-primary);
 }
 
-/* .form-error moved to bottom with input overrides */
-
-/* .form-error-banner moved to bottom */
-
 /* PrimeNG Overrides */
 :host ::ng-deep .p-password input {
   width: 100%;
-  padding-right: var(--space-input-icon-offset); /* Space for toggle icon */
+  padding-right: var(--space-input-icon-offset);
 }
 
 .form-error {
@@ -95,35 +90,7 @@
   font-size: var(--font-size-sm);
   font-weight: 500;
   display: block;
-  margin-top: var(--space-sm); /* Increased spacing */
-}
-
-/* Password Meter Styling */
-:host ::ng-deep .p-password-meter {
   margin-top: var(--space-sm);
-  background: var(--surface-200);
-  height: 6px;
-  border-radius: var(--radius-sm);
-}
-
-:host ::ng-deep .p-password-strength {
-  height: 100%;
-  border-radius: var(--radius-sm);
-  transition:
-    width 0.3s ease,
-    background 0.3s ease;
-}
-
-:host ::ng-deep .p-password-strength.weak {
-  background: var(--red-500) !important;
-}
-
-:host ::ng-deep .p-password-strength.medium {
-  background: var(--orange-500) !important;
-}
-
-:host ::ng-deep .p-password-strength.strong {
-  background: var(--green-500) !important;
 }
 
 :host ::ng-deep .p-input-icon-left > i {

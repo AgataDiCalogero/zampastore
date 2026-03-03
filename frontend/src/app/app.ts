@@ -66,6 +66,9 @@ export class App {
   protected readonly cartCount = this.cartService.cartCount;
 
   constructor() {
+    // Warm up auth state without blocking first paint.
+    void this.authService.init().catch(() => undefined);
+
     this.title.setTitle('ZampaStore - Cibo per cani e gatti di qualità');
     this.meta.addTags([
       {

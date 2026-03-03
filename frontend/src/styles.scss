@@ -3,7 +3,6 @@
 @use 'styles/tokens';
 @use 'styles/primeng-overrides';
 @include meta.load-css('primeicons/primeicons.css');
-@include meta.load-css('primeflex/primeflex.css');
 @include meta.load-css('primeng/resources/themes/lara-light-blue/theme.css');
 @include meta.load-css('primeng/resources/primeng.min.css');
 
@@ -163,6 +162,17 @@ h6 {
   .form-error {
     margin-top: 4px;
     margin-bottom: 2px;
+  }
+}
+
+/* Prevent password strength feedback from overlapping the next field. */
+.form-field:has(.p-password .p-password-overlay.p-connected-overlay-visible) {
+  padding-bottom: calc(var(--space-2xl) + var(--space-sm));
+}
+
+@media (min-width: 768px) {
+  .form-field:has(.p-password .p-password-overlay.p-connected-overlay-visible) {
+    padding-bottom: var(--space-2xl);
   }
 }
 

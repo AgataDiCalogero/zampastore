@@ -298,20 +298,15 @@ input[pInputText] {
 }
 
 .p-overlay,
-.p-overlay-content,
-.p-connected-overlay,
-.p-select-overlay,
-.p-select-panel,
-.p-dropdown-panel {
+.p-connected-overlay {
   /* Keep high stacking context for PrimeNG overlays mounted to body. */
   z-index: 9999 !important;
-  background: var(--surface-0);
 }
 
-.p-overlay-content,
 .p-select-overlay,
 .p-select-panel,
 .p-dropdown-panel {
+  background: var(--surface-0);
   box-shadow: var(--shadow-2);
   border-radius: var(--radius-md);
 }
@@ -482,9 +477,20 @@ input[pInputText] {
   white-space: nowrap !important;
 }
 
+.toast-action.p-button:disabled {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
+}
+
 .p-confirm-dialog-mask {
   backdrop-filter: blur(4px);
   background: rgba(0, 0, 0, 0.4) !important;
+}
+
+.p-confirm-dialog-mask:has(.cart-clear-confirm) {
+  backdrop-filter: blur(6px);
+  background: rgba(8, 58, 79, 0.46) !important;
 }
 
 .p-confirmdialog .p-dialog {
@@ -549,7 +555,9 @@ input[pInputText] {
   font-weight: 600;
 }
 
-:is(.p-confirmdialog, .p-confirm-dialog) .p-dialog-footer .p-button-danger:hover {
+:is(.p-confirmdialog, .p-confirm-dialog)
+  .p-dialog-footer
+  .p-button-danger:hover {
   background-color: var(--red-600);
   border-color: var(--red-600);
 }
@@ -560,7 +568,9 @@ input[pInputText] {
   font-weight: 500;
 }
 
-:is(.p-confirmdialog, .p-confirm-dialog) .p-dialog-footer .p-button-secondary:hover,
+:is(.p-confirmdialog, .p-confirm-dialog)
+  .p-dialog-footer
+  .p-button-secondary:hover,
 :is(.p-confirmdialog, .p-confirm-dialog) .p-dialog-footer .p-button-text:hover {
   color: var(--text-primary);
   background: var(--surface-50);
@@ -572,6 +582,44 @@ input[pInputText] {
   align-items: center !important;
   gap: var(--space-lg) !important;
   padding: var(--space-xl) var(--space-2xl) !important;
+  background: var(--surface-elevated, #fbf9f6) !important;
+}
+
+.cart-clear-confirm.p-dialog,
+.cart-clear-confirm .p-dialog {
+  background: var(--surface-elevated, #fbf9f6) !important;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, white) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow:
+    var(--shadow-3),
+    0 1px 0 rgba(255, 255, 255, 0.45) inset !important;
+  overflow: hidden !important;
+}
+
+.cart-clear-confirm .p-dialog-header {
+  padding: var(--space-lg) var(--space-2xl) !important;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-50) 70%, white) 0%,
+    var(--surface-elevated, #fbf9f6) 100%
+  ) !important;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-primary) 10%, transparent) !important;
+}
+
+.cart-clear-confirm .p-dialog-title {
+  font-size: var(--font-size-2xl-compact) !important;
+  font-weight: 700 !important;
+}
+
+.cart-clear-confirm .p-dialog-header-close {
+  border-radius: 999px !important;
+  color: var(--text-secondary) !important;
+}
+
+.cart-clear-confirm .p-dialog-header-close:hover {
+  background: var(--surface-50) !important;
+  color: var(--text-primary) !important;
 }
 
 .cart-clear-confirm .p-dialog-footer {
@@ -581,11 +629,13 @@ input[pInputText] {
   gap: var(--space-md);
   flex-wrap: wrap;
   padding: var(--space-lg) var(--space-2xl) var(--space-2xl) !important;
-  border-top: 1px solid var(--border-color) !important;
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-primary) 12%, transparent) !important;
+  background: color-mix(in srgb, var(--surface-50) 78%, white 22%) !important;
 }
 
 .cart-clear-confirm .p-dialog-footer .p-button {
-  min-width: 8.5rem !important;
+  min-width: 8.75rem !important;
   min-height: 2.75rem !important;
   padding: 0 var(--space-xl) !important;
   border-radius: 999px !important;
@@ -594,17 +644,37 @@ input[pInputText] {
   justify-content: center !important;
   line-height: 1 !important;
   white-space: nowrap !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 10px rgba(8, 58, 79, 0.08) !important;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background-color 0.16s ease !important;
+}
+
+.cart-clear-confirm .p-dialog-footer .p-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(8, 58, 79, 0.12) !important;
+}
+
+.cart-clear-confirm .p-dialog-footer .p-button:active {
+  transform: translateY(0);
+}
+
+.cart-clear-confirm .p-dialog-footer .p-button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 70%, white) !important;
+  outline-offset: 2px !important;
 }
 
 .cart-clear-confirm .p-dialog-footer .cart-clear-confirm-reject.p-button {
-  background: var(--surface-0) !important;
-  border-color: var(--border-color) !important;
+  background: #ffffff !important;
+  border-color: color-mix(in srgb, var(--color-primary) 22%, white) !important;
   color: var(--text-secondary) !important;
 }
 
 .cart-clear-confirm .p-dialog-footer .cart-clear-confirm-reject.p-button:hover {
   background: var(--surface-50) !important;
-  border-color: var(--border-color) !important;
+  border-color: color-mix(in srgb, var(--color-primary) 30%, white) !important;
   color: var(--text-primary) !important;
 }
 
@@ -616,12 +686,16 @@ input[pInputText] {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 999px;
 }
 
 .cart-clear-confirm :is(.p-confirmdialog-message, .p-confirm-dialog-message) {
   margin: 0 !important;
   line-height: 1.5;
   color: var(--text-primary);
+  font-size: var(--font-size-lg-compact);
 }
 
 .cart-clear-confirm .p-dialog-footer .cart-clear-confirm-accept.p-button {
@@ -636,7 +710,9 @@ input[pInputText] {
   color: #ffffff !important;
 }
 
-.cart-clear-confirm .p-dialog-footer .cart-clear-confirm-accept.p-button
+.cart-clear-confirm
+  .p-dialog-footer
+  .cart-clear-confirm-accept.p-button
   :is(.p-button-label, .p-button-icon) {
   color: #ffffff !important;
 }
@@ -644,7 +720,7 @@ input[pInputText] {
 @media (max-width: 640px) {
   .cart-clear-confirm .p-dialog-content {
     grid-template-columns: 1fr;
-    justify-items: start;
+    justify-items: center;
   }
 
   .cart-clear-confirm .p-dialog-footer {
@@ -658,52 +734,61 @@ input[pInputText] {
   }
 }
 
-.p-password-panel {
-  background: var(--surface-0) !important;
+.p-password-overlay {
+  background: var(--surface-elevated, #fbf9f6) !important;
   border: 1px solid var(--surface-border) !important;
   box-shadow: var(--shadow-2) !important;
   border-radius: var(--radius-md) !important;
   padding: var(--space-md) !important;
-  min-width: 100%;
-  margin-top: 4px;
+  margin-top: var(--space-xs) !important;
+  z-index: 10000 !important;
+}
 
-  .p-password-meter {
-    background: var(--surface-200) !important;
-    height: 6px !important;
-    border-radius: 4px !important;
-    margin-bottom: var(--space-sm) !important;
+.p-password-content {
+  display: grid !important;
+  gap: var(--space-sm) !important;
+}
 
-    .p-password-strength {
-      border-radius: 4px !important;
-      transition:
-        width 0.3s ease,
-        background 0.3s ease;
+.p-password-meter {
+  background: var(--surface-200) !important;
+  height: 6px !important;
+  border-radius: 4px !important;
+  overflow: hidden;
+}
 
-      &.weak {
-        background: var(--color-danger) !important;
-        box-shadow: 0 0 8px
-          color-mix(in srgb, var(--color-danger), transparent 50%);
-      }
+.p-password-meter-label {
+  border-radius: 4px !important;
+  transition:
+    width 0.3s ease,
+    background 0.3s ease;
+}
 
-      &.medium {
-        background: var(--color-warning) !important;
-        box-shadow: 0 0 8px
-          color-mix(in srgb, var(--color-warning), transparent 50%);
-      }
+.p-password-meter-weak {
+  background: var(--color-danger) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-danger), transparent 50%);
+}
 
-      &.strong {
-        background: var(--color-success) !important;
-        box-shadow: 0 0 8px
-          color-mix(in srgb, var(--color-success), transparent 50%);
-      }
-    }
-  }
+.p-password-meter-medium {
+  background: var(--color-warning) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-warning), transparent 50%);
+}
 
-  .p-password-info {
-    color: var(--text-primary) !important;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: capitalize;
+.p-password-meter-strong {
+  background: var(--color-success) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-success), transparent 50%);
+}
+
+.p-password-meter-text {
+  color: var(--text-primary) !important;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  line-height: 1.25;
+  text-transform: capitalize;
+}
+
+@media (max-width: 640px) {
+  .p-password-overlay {
+    max-width: calc(100vw - (var(--space-lg) * 2)) !important;
   }
 }
 

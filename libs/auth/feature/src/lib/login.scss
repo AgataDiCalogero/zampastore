@@ -19,7 +19,6 @@
   }
 
   .auth-side {
-    order: -1; /* Show help/signup prompt first on mobile? Usually better under login. let's keep default but maybe stack better */
     order: 1;
   }
 }
@@ -38,7 +37,7 @@
 }
 
 .form-field {
-  display: flex; /* Changed from grid to flex for cleaner layout */
+  display: flex;
   flex-direction: column;
   gap: var(--space-xs);
 }
@@ -89,14 +88,10 @@
   color: var(--text-primary);
 }
 
-/* .form-error moved to bottom with input overrides */
-
-/* .form-error-banner moved to bottom */
-
 /* PrimeNG Overrides */
 :host ::ng-deep .p-password input {
   width: 100%;
-  padding-right: var(--space-input-icon-offset); /* Space for toggle icon */
+  padding-right: var(--space-input-icon-offset);
 }
 
 .form-error {
@@ -110,11 +105,11 @@
 :host ::ng-deep .p-input-icon-left > i {
   top: 50%;
   margin-top: calc(var(--space-sm) * -1);
-  left: var(--space-md); /* Ensure consistent spacing */
+  left: var(--space-md);
 }
 
 :host ::ng-deep .p-input-icon-left > input {
-  padding-left: var(--space-input-icon-offset); /* Space for left icon */
+  padding-left: var(--space-input-icon-offset);
 }
 
 .form-error-banner {
@@ -123,7 +118,7 @@
   gap: var(--space-sm);
   padding: var(--space-md);
   background-color: var(--color-danger-bg);
-  color: var(--color-error); /* Use consistent error color */
+  color: var(--color-error);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
 }

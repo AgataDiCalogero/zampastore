@@ -8,7 +8,7 @@ import type {
 } from '@zampa/shared';
 import { db } from '../db/client';
 import { orderItems, orders, products, shippingAddresses } from '../db/schema';
-import { and, asc, desc, eq, gte, sql } from 'drizzle-orm';
+import { and, asc, desc, eq } from 'drizzle-orm';
 
 export type CreateOrderInput = {
   id: string;
@@ -31,35 +31,13 @@ export interface OrdersStore {
   ): Promise<boolean>;
 }
 
-export class OutOfStockError extends Error {
-  constructor(public readonly productId?: string) {
-    super('OUT_OF_STOCK');
-    this.name = 'OutOfStockError';
-  }
-}
-
 const toIsoString = (value: Date | string): string =>
   value instanceof Date ? value.toISOString() : new Date(value).toISOString();
 
 class MysqlOrdersStore implements OrdersStore {
   async createOrder(input: CreateOrderInput): Promise<void> {
     await db.transaction(async (tx) => {
-      // Sort items by productId to prevent deadlocks (deterministic locking order)
-      input.items.sort((a, b) => a.productId.localeCompare(b.productId));
-
       const createdAt = input.createdAt;
-
-      for (const item of input.items) {
-        const [result] = await tx
-          .update(products)
-          .set({ stock: sql`stock - ${item.qty}` })
-          .where(
-            and(eq(products.id, item.productId), gte(products.stock, item.qty)),
-          );
-        if (result.affectedRows === 0) {
-          throw new OutOfStockError(item.productId);
-        }
-      }
 
       await tx.insert(orders).values({
         id: input.id,

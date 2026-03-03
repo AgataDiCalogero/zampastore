@@ -1,6 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
 
+type ToastActionData = {
+  actionLabel: string;
+  actionUsed: boolean;
+  action: () => void;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -26,15 +32,7 @@ export class UiFeedbackService {
       summary: 'Rimosso dal carrello',
       detail: `${productName} è stato rimosso.`,
       life: 5000,
-      data: undo
-        ? {
-            actionLabel: 'Annulla',
-            action: () => {
-              undo();
-              this.messageService.clear(this.toastKey);
-            },
-          }
-        : undefined,
+      data: undo ? this.createSingleUseAction('Annulla', undo) : undefined,
     });
   }
 
@@ -55,15 +53,7 @@ export class UiFeedbackService {
       summary: 'Carrello svuotato',
       detail: 'Tutti i prodotti sono stati rimossi.',
       life: 4000,
-      data: undo
-        ? {
-            actionLabel: 'Ripristina',
-            action: () => {
-              undo();
-              this.messageService.clear(this.toastKey);
-            },
-          }
-        : undefined,
+      data: undo ? this.createSingleUseAction('Ripristina', undo) : undefined,
     });
   }
 
@@ -85,5 +75,29 @@ export class UiFeedbackService {
       detail: 'Accedi di nuovo per continuare.',
       life: 3500,
     });
+  }
+
+  private createSingleUseAction(
+    actionLabel: string,
+    actionCallback: () => void,
+  ): ToastActionData {
+    const data: ToastActionData = {
+      actionLabel,
+      actionUsed: false,
+      action: () => {
+        if (data.actionUsed) {
+          return;
+        }
+
+        data.actionUsed = true;
+        try {
+          actionCallback();
+        } finally {
+          this.messageService.clear(this.toastKey);
+        }
+      },
+    };
+
+    return data;
   }
 }

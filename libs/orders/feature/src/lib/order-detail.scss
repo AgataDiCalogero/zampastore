@@ -233,6 +233,22 @@
   padding-top: var(--space-lg);
 }
 
+.order-item-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.order-item-thumb {
+  display: block;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-1);
+}
+
+.order-back-icon {
+  margin-right: var(--space-xs);
+}
+
 /* ---- Responsive Views ---- */
 .desktop-view {
   display: block;

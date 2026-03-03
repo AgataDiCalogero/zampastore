@@ -62,6 +62,14 @@
         }
       }
     },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../coverage/backend"
+      }
+    },
     "db-reset": {
       "executor": "nx:run-commands",
       "options": {
