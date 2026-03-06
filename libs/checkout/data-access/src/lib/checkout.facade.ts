@@ -187,10 +187,17 @@ export class CheckoutFacade {
     effect(() => {
       const items = this.cartItems();
       this.cartSnapshot = items;
-      if (items.length === 0) {
-        // Safe navigation logic might be needed here too if using window.location, but router is safe
-        void this.router.navigateByUrl('/carrello');
+      // Guard against empty-cart access only while user is on the checkout page.
+      if (items.length > 0) {
+        return;
       }
+      if (!isPlatformBrowser(this.platformId)) {
+        return;
+      }
+      if (!this.router.url.startsWith('/checkout')) {
+        return;
+      }
+      void this.router.navigateByUrl('/carrello');
     });
   }
 
@@ -240,7 +247,7 @@ export class CheckoutFacade {
         next: (response) => {
           if (isPlatformBrowser(this.platformId)) {
             localStorage.removeItem(this.STORAGE_KEY);
-            globalThis.location.href = response.url;
+            this.navigateToCheckoutResponse(response.url);
           }
         },
         error: (error: unknown) => {
@@ -256,5 +263,26 @@ export class CheckoutFacade {
           );
         },
       });
+  }
+
+  private navigateToCheckoutResponse(url: string): void {
+    const sameOriginPath = this.getSameOriginPath(url);
+    if (sameOriginPath) {
+      void this.router.navigateByUrl(sameOriginPath);
+      return;
+    }
+    globalThis.location.assign(url);
+  }
+
+  private getSameOriginPath(url: string): string | null {
+    try {
+      const target = new URL(url, globalThis.location.origin);
+      if (target.origin !== globalThis.location.origin) {
+        return null;
+      }
+      return `${target.pathname}${target.search}${target.hash}`;
+    } catch {
+      return null;
+    }
   }
 }

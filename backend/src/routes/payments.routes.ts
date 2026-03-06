@@ -34,6 +34,21 @@ const stripe =
     : null;
 
 const clientUrl = env.clientUrl;
+const normalizeUrlBase = (url: string): string =>
+  url.endsWith('/') ? url.slice(0, -1) : url;
+const resolveCheckoutClientUrl = (
+  req: express.Request,
+  isE2e: boolean,
+): string => {
+  if (!isE2e) {
+    return normalizeUrlBase(clientUrl);
+  }
+  const origin = req.headers.origin;
+  if (typeof origin === 'string' && /^https?:\/\//i.test(origin)) {
+    return normalizeUrlBase(origin);
+  }
+  return normalizeUrlBase(clientUrl);
+};
 
 type CreatedOrder = Awaited<ReturnType<typeof createOrder>>;
 type AuthenticatedUser = NonNullable<express.Request['authUser']>;
@@ -303,9 +318,10 @@ paymentsRouter.post(
         return;
       }
 
-      const successUrl = `${clientUrl}/ordine-confermato?orderId=${order.id}`;
-      const cancelUrl = `${clientUrl}/carrello`;
       const isE2e = req.headers['x-e2e-test'] === 'true';
+      const checkoutClientUrl = resolveCheckoutClientUrl(req, isE2e);
+      const successUrl = `${checkoutClientUrl}/ordine-confermato?orderId=${order.id}`;
+      const cancelUrl = `${checkoutClientUrl}/carrello`;
 
       if (isE2e) {
         if (process.env.NODE_ENV === 'production') {

@@ -74,6 +74,32 @@ describe('ZampaStore e2e', () => {
     cy.get('#address').should('have.class', 'ng-valid');
     cy.get('#city').should('have.class', 'ng-valid');
     cy.get('#postalCode').should('have.class', 'ng-valid');
+    cy.get('#country').should('have.class', 'ng-valid');
+    cy.get('p-select[formControlName="shippingMethod"]').should(
+      'have.class',
+      'ng-valid',
+    );
+
+    // Log the class of all elements to find the culprit
+    cy.get('form').then(($form) => {
+      const controls = [
+        'email',
+        'firstName',
+        'lastName',
+        'address',
+        'city',
+        'postalCode',
+        'country',
+        'shippingMethod',
+      ];
+      controls.forEach((c) => {
+        const el = $form.find(`[formControlName="${c}"], #${c}`);
+        if (el.hasClass('ng-invalid')) {
+          throw new Error('DEBUG INVALID FIELD: ' + c);
+        }
+      });
+    });
+
     // Wait for the reactive form to become valid before submitting
     cy.get('form').should('have.class', 'ng-valid');
 
@@ -86,7 +112,7 @@ describe('ZampaStore e2e', () => {
     cy.contains('button', 'Paga con Stripe').should('be.enabled').click();
     cy.wait('@checkoutSession');
     cy.url({ timeout: 15000 }).should('include', '/ordine-confermato');
-    cy.contains('h2', 'Ordine confermato').should('be.visible');
+    cy.contains('h1', 'Ordine confermato!').should('be.visible');
 
     cy.contains('button', 'I miei ordini').click();
     cy.url().should('include', '/ordini');

@@ -76,7 +76,7 @@ const waitForHttp = async (
 
 export default defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:4200',
+    baseUrl: 'http://localhost:4299',
     specPattern: 'src/e2e/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'src/support/e2e.ts',
     video: false,

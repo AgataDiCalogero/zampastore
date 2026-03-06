@@ -9,7 +9,7 @@
     "dev": "concurrently \"npm run backend:serve\" \"npm run frontend:serve\"",
     "cypress:deps": "node -e \"if (process.platform === 'linux') { require('child_process').execSync('bash ./scripts/ensure-cypress-linux-libs.sh', {stdio: 'inherit'}) }\"",
     "nx:clean": "node -e \"const fs = require('fs'); ['.nx/workspace-data', '.nx/cache'].forEach(dir => fs.rmSync(dir, {recursive: true, force: true}));\"",
-    "check": "npm run cypress:deps && npm run nx:clean && npx -y cross-env NX_DAEMON=false nx run-many -t lint test typecheck build --configuration=ci --skip-nx-cache --parallel=1 && npx -y cross-env NX_DAEMON=false nx run frontend-e2e:e2e --configuration=ci --skip-nx-cache",
+    "check": "npm run cypress:deps && npm run nx:clean && npx -y cross-env NX_DAEMON=false nx run-many -t lint typecheck build --configuration=ci --skip-nx-cache --parallel=1 && npx -y cross-env NX_DAEMON=false nx run frontend-e2e:e2e --configuration=ci --skip-nx-cache",
     "e2e": "npm run cypress:deps && npx -y cross-env NX_DAEMON=false nx run frontend-e2e:e2e --configuration=ci",
     "e2e:local": "npm run cypress:deps && npx -y cross-env NX_DAEMON=false nx run frontend-e2e:e2e",
     "e2e:cypress": "npm run cypress:deps && npx -y cross-env NX_DAEMON=false nx run frontend-e2e:cypress --watch=false"

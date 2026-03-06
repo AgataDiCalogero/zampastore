@@ -14,10 +14,7 @@ import { paymentsRouter } from './routes/payments.routes';
 import { dbPing } from './services/db';
 import { getEnv } from './config/env';
 import { errorHandler } from './middleware/error.middleware';
-import {
-  authLimiter,
-  rateLimiter,
-} from './middleware/rate-limit.middleware';
+import { authLimiter, rateLimiter } from './middleware/rate-limit.middleware';
 import { requireCsrf } from './middleware/csrf.middleware';
 import { productsStore } from './services/products.store';
 
@@ -39,7 +36,9 @@ const isAuthPublicRequest = (req: express.Request): boolean => {
     return false;
   }
   const requestPath = getRequestPath(req);
-  return requestPath === '/api/auth/login' || requestPath === '/api/auth/register';
+  return (
+    requestPath === '/api/auth/login' || requestPath === '/api/auth/register'
+  );
 };
 
 app.disable('x-powered-by');
