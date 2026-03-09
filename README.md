@@ -8,9 +8,13 @@
 ![Nx](https://img.shields.io/badge/Nx-Monorepo-143055?logo=nx&logoColor=white)
 ![Stripe](https://img.shields.io/badge/Stripe-Test%20Mode-635BFF?logo=stripe&logoColor=white)
 
+## 🌐 Live Demo
+
+**[Visita l'applicazione live: ZampaStore](https://zampastore.vercel.app)**
+
 ## 📖 Descrizione del Progetto
 
-**ZampaStore** è un e-commerce full-stack per prodotti dedicati ad animali domestici, sviluppato come **progetto finale di Master**.
+**ZampaStore** è una piattaforma e-commerce full-stack focalizzata sulla distribuzione di prodotti per animali domestici. Progettata con i più moderni standard del web, offre un'esperienza utente fluida e sicura, dalla navigazione del catalogo fino all'elaborazione del pagamento.
 
 L'applicazione implementa un flusso completo:
 
@@ -87,27 +91,23 @@ Risultato:
 - Accesso DB via **Drizzle ORM** su TiDB (MySQL compatible)
 - Stripe webhook handling con verifica firma e deduplica eventi
 
-## ⚠️ Disclaimer per l'Esaminatore
+## 💳 Integrazione Pagamenti e Ambiente di Test
 
-Questo progetto è stato sviluppato a **scopo didattico** (Progetto Finale Master).
+Il sistema implementa un'integrazione completa con le API di **Stripe**. L'ambiente predefinito è configurato in **Test Mode** per consentire una verifica end-to-end dei flussi transazionali senza addebiti reali.
 
-- Usa un database di test (TiDB serverless).
-- Usa Stripe in **test mode**.
-- Include dati seed/mock per simulare un contesto realistico.
+Per testare il checkout localmente, è possibile utilizzare le carte di credito fornite dall'ambiente di test di Stripe:
 
-Per testare il checkout Stripe, puoi usare queste carte:
+| Scenario di Test      | Numero Carta          |
+| --------------------- | --------------------- |
+| Transazione Riuscita  | `4242 4242 4242 4242` |
+| Transazione Rifiutata | `4000 0000 0000 9995` |
+| Verifica 3D Secure    | `4000 0000 0000 3220` |
 
-| Scenario            | Numero carta          |
-| ------------------- | --------------------- |
-| Pagamento riuscito  | `4242 4242 4242 4242` |
-| Pagamento rifiutato | `4000 0000 0000 9995` |
-| 3D Secure richiesto | `4000 0000 0000 3220` |
+Dati aggiuntivi per il checkout (da compilare liberamente):
 
-Per tutti i test Stripe:
-
-- scadenza futura (es. `12/34`)
-- CVC qualsiasi (es. `123`)
-- CAP qualsiasi valido
+- Scadenza: Qualsiasi data futura (es. `12/34`)
+- CVC/CVV: Qualsiasi stringa a 3 cifre (es. `123`)
+- CAP: Qualsiasi CAP valido
 
 ## 🛠️ Come avviare il progetto in locale
 
@@ -157,17 +157,6 @@ In alternativa:
 npm run start:all
 ```
 
-### 5) URL locali utili
-
-- Frontend: `http://localhost:4200`
-- API: `http://localhost:3333/api`
-- Swagger: `http://localhost:3333/api/docs`
-
-## 🌐 Live Demo
-
-Deploy (Vercel): **[inserire link qui](https://example.vercel.app)**
-
 ---
 
-Sviluppato da **Agata Di Calogero**  
-Progetto Finale - Master in Full Stack Development
+**Autore:** [Agata Di Calogero](https://github.com/agatadicalogero)
