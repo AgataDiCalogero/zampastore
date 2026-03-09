@@ -42,9 +42,16 @@ export class CartService {
       this.cartItems.set(stored);
     }
 
-    // Effect to persist cart to localStorage whenever it changes
+    // Effect to persist cart to localStorage ONLY if user is guest.
+    // If user is logged in, their cart is in the DB, so we wipe local storage to avoid double-merging.
     effect(() => {
-      this.persistCart(this.cartItems());
+      const items = this.cartItems();
+      const user = this.authService.authState();
+      if (!user) {
+        this.persistCart(items);
+      } else {
+        this.clearStoredCart();
+      }
     });
 
     // Effect to sync with server on login/logout
@@ -205,6 +212,17 @@ export class CartService {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch {
       // Ignore storage errors (e.g. private mode).
+    }
+  }
+
+  private clearStoredCart(): void {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Ignore
     }
   }
 }
